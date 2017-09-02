@@ -3,6 +3,8 @@
 #include <socket>
 #include <ASteambot>
 
+#pragma dynamic 131072
+
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"1.00"
 #define MODULE_NAME 	"[ASteambot - Core]"
@@ -35,12 +37,16 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 {   
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
 	CreateNative("ASteambot_SendMesssage", Native_SendMesssage);
-
+	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
+	
 	RegPluginLibrary("ASteambot");
 
 	return APLRes_Success;
 }
 
+//////////////
+//  NATIVE  //
+//////////////
 public int Native_IsConnected(Handle plugin, int numParams)
 {
 	return connected;
@@ -52,16 +58,41 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	int messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
 	
-	Format(message, sizeof(message), "%s%i|%i&%s<EOF>", steambotPassword, serverID, messageType, message);
+	SendMessage(messageType, message, sizeof(message));
+}
+
+public int Native_CreateTradeOffer(Handle plugin, int numParams)
+{
+	char message[9999]; //bad
 	
-	SocketSend(clientSocket, message, sizeof(message));
+	int client = GetNativeCell(1);
+	int gameID = GetNativeCell(2);
+	Handle ItemList = GetNativeCell(3);
 	
-	PrintToServer(message);
+	char clientSteamID[40];
+	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
+	
+	Format(message, sizeof(message), "%s/%i/", clientSteamID, gameID)
+	
+	char item[30];
+	for (int i = 0; i < GetArraySize(ItemList); i++)
+	{
+		GetArrayString(ItemList, i, item, sizeof(item));
+		
+		if(i+1 != GetArraySize(ItemList))
+			Format(item, sizeof(item), "%s,", item);
+		else
+			Format(item, sizeof(item), "%s", item);
+			
+		StrCat(message, sizeof(message), item);
+	}
+	
+	SendMessage(AS_CREATE_TRADEOFFER, message, sizeof(message));
 }
 
 public void OnPluginStart()
 {
-	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String);
+	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
 
 	CVAR_SteambotServerIP = CreateConVar("sm_steambot_server_ip", "XXX.XXX.XXX.XXX", "The ip of the server where the steambot is hosted.");
 	CVAR_SteambotServerPort = CreateConVar("sm_steambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
@@ -87,6 +118,9 @@ public void AttemptSteamBotConnection()
 	SocketConnect(clientSocket, OnClientSocketConnected, OnChildSocketReceive, OnChildSocketDisconnected, steambotIP, StringToInt(steambotPort));
 }
 
+/////////////
+// SOCKET  //
+/////////////
 public OnClientSocketConnected(Handle socket, any arg)
 {
 	PrintToServer("%s - CONNECTED to the steambot.", MODULE_NAME);
@@ -111,11 +145,7 @@ public OnClientSocketConnected(Handle socket, any arg)
 	
 	SocketSend(clientSocket, data, sizeof(data));
 	
-	if (TimerReconnect != INVALID_HANDLE)
-	{
-		KillTimer(TimerReconnect);
-		TimerReconnect = INVALID_HANDLE;
-	}
+	EndTimer();
 }
 
 public OnClientSocketError(Handle socket, const int errorType, const int errorNum, any ary)
@@ -124,15 +154,22 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 	LogError("%s - socket error %d (errno %d)", MODULE_NAME, errorType, errorNum);
 	CloseHandle(socket);
 	
-	TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
+	if (TimerReconnect == INVALID_HANDLE)
+		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
 }
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
+	PrintToServer(receiveData);
+	
+	if(StrContains(receiveData, steambotPassword) == -1)
+		return;
+	
 	ReplaceString(receiveData, dataSize, steambotPassword, "");
 	
-	char bit[2][255];	
-	ExplodeString(receiveData, "|", bit, sizeof bit, sizeof bit[]);
+	char[][] bit = new char[2][dataSize];
+	
+	ExplodeString(receiveData, "|", bit, 2, dataSize);
 	
 	if(StrEqual(bit[0], "SRVID"))
 	{
@@ -144,6 +181,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		Call_StartForward(g_fwdASteambotMessage);
 		Call_PushCell(code);
 		Call_PushString(bit[1]);
+		Call_PushCell(dataSize);
 		Call_Finish();
 	}
 }
@@ -154,14 +192,37 @@ public OnChildSocketDisconnected(Handle socket, any hFile)
 	connected = false;
 	CloseHandle(socket);
 	
-	TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
+	if(TimerReconnect == INVALID_HANDLE)
+		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
 }
 
+///////////
+// TIMER //
+///////////
 public Action TMR_TryReconnection(Handle timer, any none)
 {
 	AttemptSteamBotConnection();
 }
 
+///////////
+// STOCK //
+///////////
+stock void SendMessage(int messageType, char[] message, int msgSize)
+{
+	Format(message, msgSize, "%s%i|%i&%s<EOF>", steambotPassword, serverID, messageType, message);
+	
+	PrintToServer(message);
+	SocketSend(clientSocket, message, msgSize);
+}
+
+public void EndTimer()
+{
+	if (TimerReconnect != INVALID_HANDLE)
+	{
+		KillTimer(TimerReconnect);
+		TimerReconnect = INVALID_HANDLE;
+	}
+}
 
 stock void GetHostName(char[] str, size)
 {

@@ -1,0 +1,92 @@
+"Phrases"
+{
+	//Commands
+	"ingame"
+	{
+		"en"	"This command can be usued only in game !"
+	}
+	//Common
+	"Done"
+	{
+		"en"		"Done!"
+		"de"		"Erledigt!"
+		"lv"		"Pabeigts!"
+		"hu"		"Kész!"
+		"pt-br"		"Feito!"
+		"fr"		"Fait!"
+		"tr"		"Tamamlandi!"
+	}
+	//Database
+	"Database_Success"
+	{
+		"en"		"Database connected and table created successfully !";
+	}
+	"Database_Failure"
+	{
+		"#format"	"{1:s}"
+		"en"		"Database failure: {1}";
+		"de"		"Datenbank Fehler: {1}";
+		"lv"		"Datubazes kluda: {1}"
+		"hu"		"Adatbázis hiba: {1}"
+		"pt-br"		"Falha na database: {1}"
+		"fr"		"Base de données défecteux: {1}"
+		"tr"		"Veritabani hatasi: {1}";
+	}
+	//steam
+	"Steam_NotFriends"
+	{
+		"en"		"I can't send you trade offer because we are not friends on Steam ! Add me using !friend !"
+	}
+	"Steam_FriendInvitSend"
+	{
+		"en"		"I sent you a friend invite :) !"
+	}
+	//trade offer
+	"TradeOffer_Success"
+	{
+		"#format"	"{1:.2f}"
+		"en"		"Offer accepted ! You have now {1} credits !"
+	}
+	"TradeOffer_Declined"
+	{
+		"en"	"Offer declined, no credits added to your balance."
+	}
+	"TradeOffer_WaitItems"
+	{
+		"en"	"Please wait, I'm loading your items..."
+	}
+	"TradeOffer_InventoryScanned"
+	{
+		"en"	"Creating the menu, please wait !"
+	}
+	"TradeOffer_Created"
+	{
+		"en"	"I created the trade offer, please confirm it through steam !"
+	}
+	"TradeOffer_SelectItems"
+	{
+		"en"	"Select all the times you want to donate, confirm by selecting 'OK!'"
+	}
+	//menu
+	"menu_accept"
+	{
+		"en"		"Do you accept it?"
+		"de"		"Akzeptieren Sie es?"
+		"fr"		"Est ce que tu accepte?"
+		"tr"		"Kabul ediyor musun?"
+	}
+	"menu_yes"
+	{
+		"en"		"Yes"
+		"de"		"Ja"
+		"fr"		"Oui"
+		"tr"		"Evet"
+	}
+	"menu_no"
+	{
+		"en"		"No"
+		"de"		"Nein"
+		"fr"		"Non"
+		"tr"		"Hayir"
+	}
+}
