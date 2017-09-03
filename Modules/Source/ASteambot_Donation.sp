@@ -3,6 +3,15 @@
 #include <ASteambot>
 #include <morecolors>
 #include <base64>
+#undef REQUIRE_PLUGIN
+#include <zephyrus_store>
+#include <warden>
+#include <hosties>
+#include <lastrequest>
+#include <myjailshop>
+#include <smstore/store/store-backend>
+#include <smrpg>
+#include <shavit>
 
 #pragma dynamic 131072
 
@@ -19,7 +28,11 @@
 #define GAMEID_CSGO				730
 #define GAMEID_DOTA2			570
 
-#define VALUE_MULIPLIER			250
+#define STORE_NONE				"NONE"
+#define STORE_ZEPHYRUS			"ZEPHYRUS"
+#define STORE_SMSTORE			"SMSTORE"
+#define STORE_SMRPG				"SMRPG"
+#define STORE_MYJS				"MYJS"
 
 #define QUERY_CREATE_T_CLIENTS	"CREATE TABLE IF NOT EXISTS `t_client` (`client_steamid` VARCHAR(30) NOT NULL, `client_token` VARCHAR(30) NOT NULL, `client_balance` DOUBLE NOT NULL, PRIMARY KEY (`client_steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
 #define QUERY_SELECT_MONEY		"SELECT `client_balance` FROM `t_client` WHERE `client_steamid`=\"%s\""
@@ -27,9 +40,15 @@
 #define QUERY_INSERT_MONEY		"INSERT INTO `t_client` (`client_steamid`,`client_balance`) VALUES (\"%s\", %.2f);"
 #define QUERY_UPDATE_MONEY		"UPDATE `t_client` SET `client_balance`=%.2f WHERE `client_steamid`=\"%s\""
 
+char store[15];
+
 int lastSelectedGame[MAXPLAYERS + 1];
 
+float valueMultiplier;
+
 Handle DATABASE;
+Handle CVAR_UsuedStore;
+Handle CVAR_ValueMultiplier;
 Handle CVAR_DBConfigurationName;
 Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
@@ -44,12 +63,27 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	MarkNativeAsOptional("Store_GetClientCredits");
+	MarkNativeAsOptional("Store_SetClientCredits");
+	MarkNativeAsOptional("Store_GetClientAccountID");
+	MarkNativeAsOptional("Store_GiveCreditsToUsers");
+	MarkNativeAsOptional("SMRPG_AddClientExperience");
+	
+	return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
-	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_database", "ASteambot", "The database configuration in database.cfg");
+	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
+	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "250", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
+	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
 	
 	RegConsoleCmd("sm_donate", CMD_Donate, "Create a trade offer with ASteambot as donation.");
 	RegConsoleCmd("sm_friend", CMD_AsFriends, "Send a steam invite to the player.");
+	
+	AutoExecConfig(true, "asteambot_donation", "asteambot");
 	
 	LoadTranslations("ASteambot.donation.phrases");
 }
@@ -58,7 +92,12 @@ public void OnConfigsExecuted()
 {
 	char dbconfig[45];
 	GetConVarString(CVAR_DBConfigurationName, dbconfig, sizeof(dbconfig));
-	SQL_TConnect(GotDatabase, dbconfig);
+	
+	GetConVarString(CVAR_UsuedStore, store, sizeof(store));
+	valueMultiplier = GetConVarFloat(CVAR_ValueMultiplier);
+	
+	if(StrEqual(store, STORE_NONE))
+		SQL_TConnect(GotDatabase, dbconfig);
 }
 
 public void OnClientConnected(int client)
@@ -128,14 +167,36 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		
 		Format(offerID, messageSize, parts[1]);
 		Format(value, messageSize, parts[2]);
-	
-		Handle pack = CreateDataPack();
-		WritePackString(pack, steamID);
-		WritePackString(pack, offerID);
-		WritePackFloat(pack, StringToFloat(value));
+		float credits = StringToFloat(value) * valueMultiplier;
 		
-		Format(query, sizeof(query), QUERY_SELECT_MONEY, steamID);
-		SQL_TQuery(DATABASE, GetPlayerCredits, query, pack);
+		if (StrEqual(store, STORE_NONE))
+		{
+			Handle pack = CreateDataPack();
+			WritePackString(pack, steamID);
+			WritePackString(pack, offerID);
+			WritePackFloat(pack, credits);
+			
+			Format(query, sizeof(query), QUERY_SELECT_MONEY, steamID);
+			SQL_TQuery(DATABASE, GetPlayerCredits, query, pack);
+		}
+		else if (StrEqual(store, STORE_ZEPHYRUS))
+		{
+			Store_SetClientCredits(client, Store_GetClientCredits(client) + RoundFloat(credits));
+		}
+		else if (StrEqual(store, STORE_SMSTORE))
+		{
+			int id[1];
+			id[0] = Store_GetClientAccountID(client);
+			Store_GiveCreditsToUsers(id, 1, RoundFloat(credits));
+		}
+		else if (StrEqual(store, STORE_SMRPG))
+		{
+			SMRPG_SetClientExperience(client, SMRPG_GetClientExperience(client) + RoundFloat(credits));
+		}
+		else if (StrEqual(store, STORE_MYJS))
+		{
+			MyJailShop_SetCredits(client, MyJailShop_GetCredits(client) + RoundFloat(credits));
+		}
 	}
 }
 
@@ -247,7 +308,7 @@ public void DisplayInventory(int client, int inventoryID)
 		GetTrieValue(trie, ITEM_DONATED, itemDonated);
 		
 		char menuItem[35];
-		Format(menuItem, sizeof(menuItem), "%.2f$ - %s", (itemValue*VALUE_MULIPLIER), itemName);
+		Format(menuItem, sizeof(menuItem), "%.2f$ - %s", (itemValue*valueMultiplier), itemName);
 		
 		if(itemDonated == 0)
 			AddMenuItem(menu, itemID, menuItem);
@@ -357,7 +418,7 @@ public void GetPlayerCredits(Handle db, Handle results, const char[] error, any 
 	ResetPack(data);
 	ReadPackString(data, steamID, sizeof(steamID));
 	ReadPackString(data, offerID, sizeof(offerID));
-	value = ReadPackFloat(data)*VALUE_MULIPLIER;
+	value = ReadPackFloat(data);
 	
 	int client = FindClientBySteamID(steamID);
 	
@@ -407,7 +468,7 @@ public int FindClientBySteamID(char[] steamID)
 	char clientSteamID[30];
 	for (int i = MaxClients; i > 0; --i)
 	{
-		if (IsValidClient(i))
+		if (IsValidClientASteambot(i))
 		{
 			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 			if (StrEqual(clientSteamID, steamID))
@@ -433,7 +494,7 @@ public bool DBFastQuery(const char[] sql)
 	return true;
 }
 
-stock bool IsValidClient(int client)
+stock bool IsValidClientASteambot(int client)
 {
 	if (client <= 0)return false;
 	if (client > MaxClients)return false;

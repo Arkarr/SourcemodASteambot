@@ -98,7 +98,7 @@ public void OnPluginStart()
 	CVAR_SteambotServerPort = CreateConVar("sm_steambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
 	CVAR_SteambotTCPPassword = CreateConVar("sm_steambot_tcp_password", "XYZ", "The password to allow TCP data to be read / send (TCPPassword in settings.json)");
 	
-	AutoExecConfig(true, "ASteambot_config");
+	AutoExecConfig(true, "asteambot_core", "asteambot");
 }
 
 public void OnConfigsExecuted()
