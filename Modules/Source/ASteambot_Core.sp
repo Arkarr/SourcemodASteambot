@@ -6,7 +6,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.00"
+#define PLUGIN_VERSION 	"2.00"
 #define MODULE_NAME 	"[ASteambot - Core]"
 
 Handle clientSocket;
