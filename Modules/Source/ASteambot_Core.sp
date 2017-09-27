@@ -160,8 +160,6 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
-	PrintToServer(receiveData);
-	
 	if(StrContains(receiveData, steambotPassword) == -1)
 		return;
 	
@@ -211,7 +209,6 @@ stock void SendMessage(int messageType, char[] message, int msgSize)
 {
 	Format(message, msgSize, "%s%i|%i&%s<EOF>", steambotPassword, serverID, messageType, message);
 	
-	PrintToServer(message);
 	SocketSend(clientSocket, message, msgSize);
 }
 

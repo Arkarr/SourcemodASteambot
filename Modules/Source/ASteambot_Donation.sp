@@ -147,6 +147,8 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 	
 	int client = FindClientBySteamID(steamID);
 	
+	PrintToServer(message);
+	
 	if(MessageType == AS_NOT_FRIENDS && client != -1)
 	{
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_NotFriends");
@@ -221,21 +223,24 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 
 public void CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
-	char[][] items = new char[itemCount][60];
-	
-	ExplodeString(strinventory, ",", items, itemCount, 60);
-	
-	for (int i = 0; i < itemCount; i++)
+	if(!StrEqual(strinventory, "EMPTY"))
 	{
-		char itemInfos[3][30];
-		ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
+		char[][] items = new char[itemCount][60];
 		
-		Handle TRIE_Item = CreateTrie();
-		SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
-		SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
-		SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
-		SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
-		PushArrayCell(inventory, TRIE_Item);
+		ExplodeString(strinventory, ",", items, itemCount, 60);
+		
+		for (int i = 0; i < itemCount; i++)
+		{
+			char itemInfos[3][30];
+			ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
+			
+			Handle TRIE_Item = CreateTrie();
+			SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
+			SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
+			SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
+			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
+			PushArrayCell(inventory, TRIE_Item);
+		}
 	}
 }
 
@@ -256,9 +261,23 @@ public void DisplayInventorySelectMenu(int client)
 {
 	Handle menu = CreateMenu(MenuHandle_MainMenu);
 	SetMenuTitle(menu, "Select an inventory :");
-	AddMenuItem(menu, "tf2", "Team Fortress 2");
-	AddMenuItem(menu, "csgo", "Counter-Strike: Global Offensive");
-	AddMenuItem(menu, "dota2", "Dota 2");
+	
+	if(GetArraySize(ARRAY_ItemsTF2[client]) > 0)
+		AddMenuItem(menu, "tf2", "Team Fortress 2");
+	else
+		AddMenuItem(menu, "tf2", "Team Fortress 2", ITEMDRAW_DISABLED);
+	
+	if(GetArraySize(ARRAY_ItemsCSGO[client]) > 0)
+		AddMenuItem(menu, "csgo", "Counter-Strike: Global Offensive");
+	else
+		AddMenuItem(menu, "csgo", "Counter-Strike: Global Offensive", ITEMDRAW_DISABLED);
+		
+	if(GetArraySize(ARRAY_ItemsDOTA2[client]) > 0)
+		AddMenuItem(menu, "dota2", "Dota 2");
+	else
+		AddMenuItem(menu, "dota2", "Dota 2", ITEMDRAW_DISABLED);
+	
+	
 	SetMenuExitButton(menu, true);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 }
@@ -432,7 +451,6 @@ public void GetPlayerCredits(Handle db, Handle results, const char[] error, any 
 	if (!SQL_FetchRow(results))
 	{
 		Format(query, sizeof(query), QUERY_INSERT_MONEY, steamID, value);
-		PrintToServer(query);
 		DBFastQuery(query);
 	}
 	else
@@ -440,7 +458,6 @@ public void GetPlayerCredits(Handle db, Handle results, const char[] error, any 
 		value += SQL_FetchFloat(results, 0);
 		
 		Format(query, sizeof(query), QUERY_UPDATE_MONEY, value, steamID);
-		PrintToServer(query);
 		DBFastQuery(query);
 	}
 	
