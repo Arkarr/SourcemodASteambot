@@ -4,6 +4,7 @@
 	"ingame"
 	{
 		"en"	"This command can be usued only in game !"
+		"fr"	"Cette commande ne peut être utilisée que dans le jeu !"
 	}
 	//Common
 	"Done"
@@ -20,6 +21,7 @@
 	"Database_Success"
 	{
 		"en"		"Database connected and table created successfully !";
+		"fr"		"La connection a la base de données a été effectué et le tableau a été creé !";
 	}
 	"Database_Failure"
 	{
@@ -36,36 +38,44 @@
 	"Steam_NotFriends"
 	{
 		"en"		"I can't send you trade offer because we are not friends on Steam ! Add me using !friend !"
+		"fr"		"Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam ! Ajouter en utilisant !friend !"
 	}
 	"Steam_FriendInvitSend"
 	{
 		"en"		"I sent you a friend invite :) !"
+		"fr"		"La demande d'ami a été envoyé :) !"
 	}
 	//trade offer
 	"TradeOffer_Success"
 	{
 		"#format"	"{1:.2f}"
 		"en"		"Offer accepted ! You have now {1} credits !"
+		"fr"		"L'offre d'échange a été accepté ! Vous avez maintenant {1} credits !"
 	}
 	"TradeOffer_Declined"
 	{
 		"en"	"Offer declined, no credits added to your balance."
+		"fr"	"L'offre a été refusé, aucun crédit a été ajouté à votre solde."
 	}
 	"TradeOffer_WaitItems"
 	{
 		"en"	"Please wait, I'm loading your items..."
+		"fr"	"Veuillez patienter, Chargement de vos items..."
 	}
 	"TradeOffer_InventoryScanned"
 	{
 		"en"	"Creating the menu, please wait !"
+		"fr"	"Création du menu, veuillez patienter !"
 	}
 	"TradeOffer_Created"
 	{
 		"en"	"I created the trade offer, please confirm it through steam !"
+		"fr"	"L'offre d'échange a été creé, S'il vous plaît merci de confirmer dans steam !"
 	}
 	"TradeOffer_SelectItems"
 	{
 		"en"	"Select all the times you want to donate, confirm by selecting 'OK!'"
+		"fr"	"Sélectionnez toutes les fois que vous souhaitez faire un don, confirmez en sélectionnant 'OK!'"
 	}
 	//menu
 	"menu_accept"
