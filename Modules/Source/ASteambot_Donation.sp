@@ -113,6 +113,12 @@ public Action CMD_Donate(int client, int args)
 		return Plugin_Continue;
 	}
 	
+	if(!ASteambot_IsConnected())
+	{
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "ASteambot_NotConnected");
+		return Plugin_Handled;
+	}	
+	
 	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
 	
 	char clientSteamID[40];
@@ -241,6 +247,10 @@ public void CreateInventory(int client, const char[] strinventory, int itemCount
 			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
 			PushArrayCell(inventory, TRIE_Item);
 		}
+	}
+	else if(StrEqual(strinventory, "ERROR"))
+	{
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
 	}
 }
 

@@ -146,6 +146,8 @@ public OnClientSocketConnected(Handle socket, any arg)
 	SocketSend(clientSocket, data, sizeof(data));
 	
 	EndTimer();
+	
+	connected = true;
 }
 
 public OnClientSocketError(Handle socket, const int errorType, const int errorNum, any ary)

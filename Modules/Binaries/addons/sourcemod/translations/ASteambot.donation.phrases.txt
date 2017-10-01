@@ -45,6 +45,11 @@
 		"en"		"I sent you a friend invite :) !"
 		"fr"		"La demande d'ami a été envoyé :) !"
 	}
+	//ASteambot
+	"ASteambot_NotConnected"
+	{
+		"en"		"ASteambot is not connected ! Try again later."
+	}
 	//trade offer
 	"TradeOffer_Success"
 	{
@@ -76,6 +81,11 @@
 	{
 		"en"	"Select all the times you want to donate, confirm by selecting 'OK!'"
 		"fr"	"Sélectionnez toutes les fois que vous souhaitez faire un don, confirmez en sélectionnant 'OK!'"
+	}
+	"TradeOffer_ItemsError"
+	{
+		"#format"	"{1:s}"
+		"en"	"Couldn't load your items for {1} inventory ! Retry in a moment..."
 	}
 	//menu
 	"menu_accept"
