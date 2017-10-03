@@ -20,6 +20,7 @@
 #define AS_TRADE_TOKEN			9
 #define AS_FRIEND_INVITE		10
 #define AS_REPORT_PLAYER		11
+#define AS_INVITE_GROUP			12
 
 /** 
  * Connect to ASteambot and get your server ID. Will work only after OnConfigsExecuted().
