@@ -49,7 +49,13 @@ public Action CMD_JoinSteamGroup(int client, int args)
 
 public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
 {
-	if(MessageType == AS_INVITE_GROUP)
+	if(MessageType == AS_NOT_FRIENDS)
+	{
+		int client = FindClientBySteamID(message)
+		CPrintToChat(client, "%s {green}I can't invite you in my steamgroup, because we are not friend. Please accept my friend request and try again.", MODULE_NAME);
+		ASteambot_SendMesssage(AS_FRIEND_INVITE, message);
+	}
+	else if(MessageType == AS_INVITE_GROUP)
 	{
 		int client = FindClientBySteamID(message)
 		CPrintToChat(client, "%s {green}Steam group invite sent !", MODULE_NAME);
