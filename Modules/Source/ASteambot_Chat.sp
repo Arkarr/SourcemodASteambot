@@ -5,7 +5,7 @@
 #include <chat-processor>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.00"
+#define PLUGIN_VERSION 	"1.2"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 
 
@@ -22,7 +22,12 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-	
+	ASteambot_RegisterModule("ASteambot_Chat");
+}
+
+public OnPluginEnd()
+{
+	ASteambot_RemoveModule();
 }
 
 public int ASteambot_Message(int MessageType, char[] message, const int messageSize)

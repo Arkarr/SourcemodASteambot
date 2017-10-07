@@ -16,7 +16,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.00"
+#define PLUGIN_VERSION 			"2.2"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -76,6 +76,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public void OnPluginStart()
 {
+	ASteambot_RegisterModule("ASteambot_Donation");
+	
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
 	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "250", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
@@ -86,6 +88,11 @@ public void OnPluginStart()
 	AutoExecConfig(true, "asteambot_donation", "asteambot");
 	
 	LoadTranslations("ASteambot.donation.phrases");
+}
+
+public OnPluginEnd()
+{
+	ASteambot_RemoveModule();
 }
 
 public void OnConfigsExecuted()

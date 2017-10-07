@@ -5,7 +5,7 @@
 #include <morecolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.00"
+#define PLUGIN_VERSION 	"1.2"
 #define MODULE_NAME 	"[ASteambot - Report]"
 
 Handle CVAR_Delay;
@@ -27,12 +27,19 @@ public Plugin myinfo =
 
 public OnPluginStart()
 {
+	ASteambot_RegisterModule("ASteambot_Report");
+	
 	RegConsoleCmd("sm_report", CMD_Report, "Report a player by sending a message to admins through steam chat.");
 	
 	CVAR_Delay = CreateConVar("sm_asteambot_report_delay", "30.0", "Time, in seconds, to delay the target of sm_rocket's death.", FCVAR_NONE, true, 0.0);
 	
 	LoadTranslations("common.phrases");
 	LoadTranslations("core.phrases");
+}
+
+public OnPluginEnd()
+{
+	ASteambot_RemoveModule();
 }
 
 public void OnClientPutInServer(int client)
@@ -160,8 +167,8 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		if ((target = GetClientOfUserId(userid)) == 0)PrintToChat(client, "%s %t", MODULE_NAME, "Player no longer available");
 		else
 		{
-			if (client == target) ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
-			else
+			//if (client == target) ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
+			//else
 			{
 				Target[client] = target;
 				ReasonMenu(client);

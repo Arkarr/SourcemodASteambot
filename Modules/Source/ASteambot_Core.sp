@@ -6,9 +6,10 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.00"
+#define PLUGIN_VERSION 	"2.2"
 #define MODULE_NAME 	"[ASteambot - Core]"
 
+Handle modules;
 Handle clientSocket;
 Handle CVAR_SteambotServerIP;
 Handle CVAR_SteambotServerPort;
@@ -20,6 +21,7 @@ char steambotIP[100];
 char steambotPort[10];
 char steambotPassword[25];
 
+int moduleID;
 int serverID;
 
 bool connected;
@@ -35,6 +37,10 @@ public Plugin myinfo =
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {   
+	modules = CreateArray();
+
+	CreateNative("ASteambot_RegisterModule", Native_RegisterModule);
+	CreateNative("ASteambot_RemoveModule", Native_RemoveModule);
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
 	CreateNative("ASteambot_SendMesssage", Native_SendMesssage);
 	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
@@ -47,6 +53,40 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 //////////////
 //  NATIVE  //
 //////////////
+public Native_RegisterModule(Handle plugin, int numParams)
+{
+	char mName[40];
+	GetNativeString(1, mName, sizeof(mName));
+	
+	Handle module = CreateArray(30);
+	PushArrayCell(module, plugin);
+	PushArrayString(module, mName);
+	PushArrayCell(module, moduleID);
+
+	PushArrayCell(modules, module);
+	
+	moduleID++;
+	
+	return 1;
+}
+
+public Native_RemoveModule(Handle plugin, int numParams)
+{
+	for(int i = 0; i < GetArraySize(modules); i++)
+	{
+		Handle module = GetArrayCell(modules, i);
+		
+		if(GetArrayCell(module, 0) == plugin)
+		{
+			RemoveFromArray(modules, i);
+			
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
 public int Native_IsConnected(Handle plugin, int numParams)
 {
 	return connected;
@@ -57,8 +97,12 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	char message[950];
 	int messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
+	Handle module = GetModuleByPlugin(plugin);
 	
-	SendMessage(messageType, message, sizeof(message));
+	if(module != INVALID_HANDLE)
+		SendMessage(GetArrayCell(module, 2), messageType, message, sizeof(message));
+	else
+		PrintToServer("%s ERROR: Module not found ! Is it registred?", MODULE_NAME);
 }
 
 public int Native_CreateTradeOffer(Handle plugin, int numParams)
@@ -68,6 +112,7 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	int client = GetNativeCell(1);
 	int gameID = GetNativeCell(2);
 	Handle ItemList = GetNativeCell(3);
+	Handle module = GetModuleByPlugin(plugin);
 	
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
@@ -87,7 +132,7 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 		StrCat(message, sizeof(message), item);
 	}
 	
-	SendMessage(AS_CREATE_TRADEOFFER, message, sizeof(message));
+	SendMessage(GetArrayCell(module, 2), AS_CREATE_TRADEOFFER, message, sizeof(message));
 }
 
 public void OnPluginStart()
@@ -136,7 +181,7 @@ public OnClientSocketConnected(Handle socket, any arg)
 	pieces[2] = (longip >> 8) & 0x000000FF;
 	pieces[3] = longip & 0x000000FF;
 	
-	Format(data, sizeof(data), "%s-1|%i&%d.%d.%d.%d", steambotPassword, AS_REGISTER_SERVER, pieces[0], pieces[1], pieces[2], pieces[3]);
+	Format(data, sizeof(data), "%s-1,-1|%i&%d.%d.%d.%d", steambotPassword, AS_REGISTER_SERVER, pieces[0], pieces[1], pieces[2], pieces[3]);
 	
 	Format(data, sizeof(data), "%s|%i", data, GetConVarInt(FindConVar("hostport")));
 	
@@ -167,23 +212,71 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 	
 	ReplaceString(receiveData, dataSize, steambotPassword, "");
 	
-	char[][] bit = new char[2][dataSize];
+	char[][] mc_data = new char[2][dataSize];
+	char[][] moduleID_code = new char[2][10];
 	
-	ExplodeString(receiveData, "|", bit, 2, dataSize);
+	ExplodeString(receiveData, "|", mc_data, 2, dataSize);
+	ExplodeString(mc_data[0], ")", moduleID_code, 2, dataSize);
 	
-	if(StrEqual(bit[0], "SRVID"))
+	if(StrEqual(moduleID_code[1], "SRVID"))
 	{
-		serverID = StringToInt(bit[1]);
+		serverID = StringToInt(mc_data[1]);
 	}
 	else
 	{
-		int code = StringToInt(bit[0]);
-		Call_StartForward(g_fwdASteambotMessage);
-		Call_PushCell(code);
-		Call_PushString(bit[1]);
-		Call_PushCell(dataSize);
-		Call_Finish();
+		if(GetArraySize(modules) != 0)
+		{
+			int mID = StringToInt(mc_data[0]);
+			int code = StringToInt(moduleID_code[1]);
+			
+			if(mID == -2)
+			{
+				Call_StartForward(g_fwdASteambotMessage);
+				Call_PushCell(code);
+				Call_PushString(mc_data[1]);
+				Call_PushCell(dataSize);
+				Call_Finish();
+			}
+			else
+			{
+				Handle module = GetModuleByID(mID);
+				if(module != INVALID_HANDLE)
+				{
+					Call_StartFunction(GetArrayCell(module, 0), GetFunctionByName(GetArrayCell(module, 0), "ASteambot_Message"));
+					Call_PushCell(code);
+					Call_PushString(mc_data[1]);
+					Call_PushCell(dataSize);
+					Call_Finish();
+				}
+			}
+		}		
 	}
+}
+
+public Handle GetModuleByPlugin(Handle plugin)
+{
+	for(int i = 0; i < GetArraySize(modules); i++)
+	{
+		Handle module = GetArrayCell(modules, i);
+		
+		if(GetArrayCell(module, 0) == plugin)
+			return module;
+	}
+	
+	return INVALID_HANDLE;
+}
+
+public Handle GetModuleByID(int id)
+{
+	for(int i = 0; i < GetArraySize(modules); i++)
+	{
+		Handle module = GetArrayCell(modules, i);
+		
+		if(GetArrayCell(module, 2) == id)
+			return module;
+	}
+	
+	return INVALID_HANDLE;
 }
 
 public OnChildSocketDisconnected(Handle socket, any hFile)
@@ -207,9 +300,9 @@ public Action TMR_TryReconnection(Handle timer, any none)
 ///////////
 // STOCK //
 ///////////
-stock void SendMessage(int messageType, char[] message, int msgSize)
+stock void SendMessage(int mid, int messageType, char[] message, int msgSize)
 {
-	Format(message, msgSize, "%s%i|%i&%s<EOF>", steambotPassword, serverID, messageType, message);
+	Format(message, msgSize, "%s%i,%i|%i&%s<EOF>", steambotPassword, serverID, mid, messageType, message);
 	
 	SocketSend(clientSocket, message, msgSize);
 }

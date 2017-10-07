@@ -4,7 +4,7 @@
 #include <morecolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.00"
+#define PLUGIN_VERSION 	"1.2"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 
 Handle CVAR_SteamGroupID;
@@ -20,11 +20,18 @@ public Plugin myinfo =
 
 public OnPluginStart()
 {
+	ASteambot_RegisterModule("ASteambot_InviteToGroup");
+	
 	RegConsoleCmd("sm_steamgroup", CMD_JoinSteamGroup, "Join the steam group.");
 	
 	CVAR_SteamGroupID = CreateConVar("sm_asteambot_steamgroupid", "", "The steam group id, THE BOT'S ACCOUNT HAVE TO BE IN THE GROUP AND THE RIGHT TO INVITE POEPLE !");
 	
 	AutoExecConfig(true, "asteambot_invitetogroup", "asteambot");
+}
+
+public OnPluginEnd()
+{
+	ASteambot_RemoveModule();
 }
 
 public Action CMD_JoinSteamGroup(int client, int args)
@@ -48,7 +55,7 @@ public Action CMD_JoinSteamGroup(int client, int args)
 }
 
 public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
-{
+{	
 	if(MessageType == AS_NOT_FRIENDS)
 	{
 		int client = FindClientBySteamID(message)

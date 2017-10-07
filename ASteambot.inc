@@ -23,19 +23,18 @@
 #define AS_INVITE_GROUP			12
 
 /** 
- * Connect to ASteambot and get your server ID. Will work only after OnConfigsExecuted().
- * Will automatically try to keep the connection alive, even after disconnection.
+ * Register the plugin, required to receive and send messages.
  * 
- * @return          Nothing. 
+ * @return          Nothing.
  */ 
-//native void ASteambot_Connect() 
+native void ASteambot_RegisterModule(const char[] moduleName)
 
 /** 
- * Disconnect from ASteambot. On reconnection, you will get a new server ID.
+ * Remove the module from ASteambot_Core, the plugin won't be able to receive and send messages anymore.
  * 
- * @return          Nothing. 
+ * @return          Nothing.
  */ 
-//native void ASteambot_Disconnect() 
+native void ASteambot_RemoveModule()
 
 /** 
  * Get the connection state to ASteambot
