@@ -36,7 +36,7 @@ public OnPluginEnd()
 
 public Action CMD_JoinSteamGroup(int client, int args)
 {	
-	if(client == 0)
+	if(client == 0 || client == -1)
 	{
 		PrintToServer("[SM] This command is in-game only.");
 		return Plugin_Handled;
