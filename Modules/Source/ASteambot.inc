@@ -21,6 +21,7 @@
 #define AS_FRIEND_INVITE		10
 #define AS_REPORT_PLAYER		11
 #define AS_INVITE_GROUP			12
+#define AS_SCAN_INVENTORY_IMG   13
 
 /** 
  * Register the plugin, required to receive and send messages.
@@ -55,7 +56,7 @@ native void ASteambot_SendMesssage(int MessageType, const char[] message)
  * 
  * @return          Nothing.
  */ 
-native void ASteambot_CreateTradeOffer(int client, int gameID, Handle ArrayAssetID) 
+native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID) 
 
 /** 
  * Fire when ever you get a message from ASteambot.

@@ -6,7 +6,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.2"
+#define PLUGIN_VERSION 	"3.0"
 #define MODULE_NAME 	"[ASteambot - Core]"
 
 Handle modules;
@@ -110,14 +110,13 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	char message[9999]; //bad
 	
 	int client = GetNativeCell(1);
-	int gameID = GetNativeCell(2);
-	Handle ItemList = GetNativeCell(3);
+	Handle ItemList = GetNativeCell(2);
 	Handle module = GetModuleByPlugin(plugin);
 	
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
-	Format(message, sizeof(message), "%s/%i/", clientSteamID, gameID)
+	Format(message, sizeof(message), "%s/", clientSteamID)
 	
 	char item[30];
 	for (int i = 0; i < GetArraySize(ItemList); i++)
@@ -211,13 +210,14 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		return;
 	
 	ReplaceString(receiveData, dataSize, steambotPassword, "");
+	ReplaceString(receiveData, dataSize, "<EOF>", "");
 	
 	char[][] mc_data = new char[2][dataSize];
 	char[][] moduleID_code = new char[2][10];
 	
 	ExplodeString(receiveData, "|", mc_data, 2, dataSize);
 	ExplodeString(mc_data[0], ")", moduleID_code, 2, dataSize);
-	
+
 	if(StrEqual(moduleID_code[1], "SRVID"))
 	{
 		serverID = StringToInt(mc_data[1]);

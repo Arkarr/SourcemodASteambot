@@ -150,7 +150,10 @@ public void ChooseTargetMenu(int client)
 	
 	AddTargetsToMenu2(smMenu, client, COMMAND_FILTER_NO_BOTS);
 	
-	DisplayMenu(smMenu, client, MENU_TIME_FOREVER);
+	if(GetMenuItemCount(smMenu) == 0)
+		PrintToChat(client, "%s Found nobody to report.", MODULE_NAME);
+	else
+		DisplayMenu(smMenu, client, MENU_TIME_FOREVER);
 }
 
 public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, int param2)
@@ -167,8 +170,8 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		if ((target = GetClientOfUserId(userid)) == 0)PrintToChat(client, "%s %t", MODULE_NAME, "Player no longer available");
 		else
 		{
-			//if (client == target) ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
-			//else
+			if (client == target) ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
+			else
 			{
 				Target[client] = target;
 				ReasonMenu(client);

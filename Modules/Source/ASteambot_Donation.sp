@@ -16,7 +16,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"2.2"
+#define PLUGIN_VERSION 			"2.5"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -443,7 +443,7 @@ public void CreateTradeOffer(int client)
 		}
 	}
 	
-	ASteambot_CreateTradeOffer(client, lastSelectedGame[client], items)
+	ASteambot_CreateTradeOffer(client, items)
 }
 
 public void GetPlayerCredits(Handle db, Handle results, const char[] error, any data)
