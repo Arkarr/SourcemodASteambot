@@ -72,13 +72,15 @@ public Action CMD_Report(int client, int args)
 	if (args == 1)
 	{
 		GetCmdArg(1, arg1, sizeof(arg1));
+	
+	    Target[client] = FindTarget(client, arg1, true, false);
 		
-		Target[client] = FindTarget(client, arg1, true, true);
 		if (!IsValidClient(Target[client]))
 		{
 			ReplyToCommand(client, "%s %t", MODULE_NAME, "No matching client");
 			return Plugin_Handled;
 		}
+		
 		ReasonMenu(client);
 	}
 	else if (args > 1)
@@ -86,7 +88,7 @@ public Action CMD_Report(int client, int args)
 		GetCmdArg(1, arg1, 128);
 		GetCmdArgString(arg2, 256);
 		ReplaceStringEx(arg2, 256, arg1, "");
-		int target = FindTarget(client, arg1, true, true);
+		int target = FindTarget(client, arg1, true, false);
 		if (!IsValidClient(target))
 		{
 			ReplyToCommand(client, "[PR] %t", "No matching client");
@@ -144,6 +146,7 @@ public void ChooseTargetMenu(int client)
 	Handle smMenu = CreateMenu(ChooseTargetMenuHandler);
 	SetGlobalTransTarget(client);
 	char text[128];
+	char info[20];
 	Format(text, 128, "Report player:", client);
 	SetMenuTitle(smMenu, text);
 	SetMenuExitBackButton(smMenu, true);
@@ -154,8 +157,9 @@ public void ChooseTargetMenu(int client)
 		if (!IsValidClient(z))
 			continue;
 		
+		Format(info, sizeof(info), "%i", GetClientUserId(z));
 		GetClientName(z, playerName, sizeof(playerName));
-		AddMenuItem(menu, GetClientUserId(z), playerName);
+		AddMenuItem(smMenu, info, playerName);
 	}
 	
 	if(GetMenuItemCount(smMenu) == 0)
