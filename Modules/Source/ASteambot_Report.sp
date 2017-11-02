@@ -148,7 +148,15 @@ public void ChooseTargetMenu(int client)
 	SetMenuTitle(smMenu, text);
 	SetMenuExitBackButton(smMenu, true);
 	
-	AddTargetsToMenu2(smMenu, client, COMMAND_FILTER_NO_BOTS);
+	char playerName[100];
+	for (new z = 1; z <= GetMaxClients(); z++)
+	{
+		if (!IsValidClient(z))
+			continue;
+		
+		GetClientName(z, playerName, sizeof(playerName));
+		AddMenuItem(menu, GetClientUserId(z), playerName);
+	}
 	
 	if(GetMenuItemCount(smMenu) == 0)
 		PrintToChat(client, "%s Found nobody to report.", MODULE_NAME);
