@@ -4,7 +4,7 @@
 #include <morecolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.3"
+#define PLUGIN_VERSION 	"1.5"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 
 Handle CVAR_SteamGroupID;
@@ -60,7 +60,7 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 	{
 		int client = FindClientBySteamID(message);
 		
-		if(client == -1)
+		if(client != -1)
 		{
 			CPrintToChat(client, "%s {green}I can't invite you in my steamgroup, because we are not friend. Please accept my friend request and try again.", MODULE_NAME);
 			ASteambot_SendMesssage(AS_FRIEND_INVITE, message);
@@ -74,7 +74,7 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 	{
 		int client = FindClientBySteamID(message);
 		
-		if(client == -1)
+		if(client != -1)
 			CPrintToChat(client, "%s {green}Steam group invite sent !", MODULE_NAME);
 		else
 			PrintToServer("%s Couldn't find client with steamID %s", MODULE_NAME, message);
@@ -90,9 +90,7 @@ public int FindClientBySteamID(char[] steamID)
 		{
 			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 			if (StrEqual(clientSteamID, steamID))
-			{
 				return i;
-			}
 		}
 	}
 	
