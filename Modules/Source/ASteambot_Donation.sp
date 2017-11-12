@@ -44,10 +44,15 @@ char store[15];
 
 int lastSelectedGame[MAXPLAYERS + 1];
 
+float minValue;
+float maxValue;
 float valueMultiplier;
+float tradeValue[MAXPLAYERS + 1];
 
 Handle DATABASE;
 Handle CVAR_UsuedStore;
+Handle CVAR_MaxDonation;
+Handle CVAR_MinDonation;
 Handle CVAR_ValueMultiplier;
 Handle CVAR_DBConfigurationName;
 Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
@@ -79,8 +84,10 @@ public void OnPluginStart()
 	ASteambot_RegisterModule("ASteambot_Donation");
 	
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
-	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "250", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
+	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
+	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donnation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
+	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donnation_value", "50", "Any trade offer's value below this cvar is automatically refused.");
 	
 	RegConsoleCmd("sm_donate", CMD_Donate, "Create a trade offer with ASteambot as donation.");
 	RegConsoleCmd("sm_friend", CMD_AsFriends, "Send a steam invite to the player.");
@@ -98,9 +105,15 @@ public OnPluginEnd()
 public void OnConfigsExecuted()
 {
 	char dbconfig[45];
+	char value[45];
 	GetConVarString(CVAR_DBConfigurationName, dbconfig, sizeof(dbconfig));
 	
 	GetConVarString(CVAR_UsuedStore, store, sizeof(store));
+	GetConVarString(CVAR_MinDonation, value, sizeof(value));
+	minValue = StringToFloat(value);
+	GetConVarString(CVAR_MaxDonation, value, sizeof(value));
+	maxValue = StringToFloat(value);
+	
 	valueMultiplier = GetConVarFloat(CVAR_ValueMultiplier);
 	
 	if(StrEqual(store, STORE_NONE))
@@ -127,6 +140,8 @@ public Action CMD_Donate(int client, int args)
 	}	
 	
 	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
+	
+	tradeValue[client] = 0.0;
 	
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
@@ -160,8 +175,6 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 	
 	int client = FindClientBySteamID(steamID);
 	
-	PrintToServer(message);
-	
 	if(MessageType == AS_NOT_FRIENDS && client != -1)
 	{
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_NotFriends");
@@ -182,7 +195,15 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		
 		Format(offerID, messageSize, parts[1]);
 		Format(value, messageSize, parts[2]);
-		float credits = StringToFloat(value) * valueMultiplier;
+		
+		float credits = GetItemValue(StringToFloat(value));
+		
+		PrintToChatAll(">>> %.2f > %.2f", credits, maxValue);
+		
+		if(credits > maxValue)
+			credits += ((credits - maxValue) / credits) * credits;
+			
+		PrintToChatAll(">>> final : %.2f", credits);
 		
 		if (StrEqual(store, STORE_NONE))
 		{
@@ -197,20 +218,28 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		else if (StrEqual(store, STORE_ZEPHYRUS))
 		{
 			Store_SetClientCredits(client, Store_GetClientCredits(client) + RoundFloat(credits));
+	
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_SMSTORE))
 		{
 			int id[1];
 			id[0] = Store_GetClientAccountID(client);
 			Store_GiveCreditsToUsers(id, 1, RoundFloat(credits));
+	
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_SMRPG))
 		{
 			SMRPG_SetClientExperience(client, SMRPG_GetClientExperience(client) + RoundFloat(credits));
+	
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_MYJS))
 		{
 			MyJailShop_SetCredits(client, MyJailShop_GetCredits(client) + RoundFloat(credits));
+	
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 	}
 }
@@ -276,6 +305,9 @@ public int CountCharInString(const char[] str, int c)
 
 public void DisplayInventorySelectMenu(int client)
 {
+	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_SelectItems");
+	CPrintToChat(client, "%s {yellow}%t", MODULE_NAME, "TradeOffer_Explication", minValue, maxValue);
+	
 	Handle menu = CreateMenu(MenuHandle_MainMenu);
 	SetMenuTitle(menu, "Select an inventory :");
 	
@@ -325,10 +357,9 @@ public void DisplayInventory(int client, int inventoryID)
 		inventory = GetLastInventory(client);
 	}
 	
-	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_SelectItems");
 		
 	Handle menu = CreateMenu(MenuHandle_ItemSelect);
-	SetMenuTitle(menu, "Select items to donate :");
+	SetMenuTitle(menu, "Select items to donate (%.2f$ / %.2f$) :", tradeValue[client], minValue);
 	
 	char itemName[30];
 	char itemID[30];
@@ -344,7 +375,8 @@ public void DisplayInventory(int client, int inventoryID)
 		GetTrieValue(trie, ITEM_DONATED, itemDonated);
 		
 		char menuItem[35];
-		Format(menuItem, sizeof(menuItem), "%.2f$ - %s", (itemValue*valueMultiplier), itemName);
+		
+		Format(menuItem, sizeof(menuItem), "%.2f$ - %s", GetItemValue(itemValue), itemName);
 		
 		if(itemDonated == 0)
 			AddMenuItem(menu, itemID, menuItem);
@@ -381,6 +413,7 @@ public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int
 	{
 		char description[32];
 		char itemID[32];
+		float itemValue;
 		GetMenuItem(menu, itemIndex, description, sizeof(description));
 				
 		if(StrEqual(description, "OK"))
@@ -396,10 +429,12 @@ public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int
 			{
 				Handle trie = GetArrayCell(inventory, i);
 				GetTrieString(trie, ITEM_ID, itemID, sizeof(itemID));
+				GetTrieValue(trie, ITEM_VALUE, itemValue);
 				
 				if(StrEqual(itemID, description))
 				{
 					SetTrieValue(trie, ITEM_DONATED, 1);
+					tradeValue[client] += GetItemValue(itemValue);
 					DisplayInventory(client, -1);
 					return;
 				}
@@ -526,6 +561,12 @@ public bool DBFastQuery(const char[] sql)
 	}
 	
 	return true;
+}
+
+public float GetItemValue(float itemBaseValue)
+{
+	valueMultiplier = GetConVarFloat(CVAR_ValueMultiplier);
+	return itemBaseValue * valueMultiplier;
 }
 
 stock bool IsValidClientASteambot(int client)
