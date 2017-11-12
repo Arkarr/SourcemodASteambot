@@ -86,8 +86,8 @@ public void OnPluginStart()
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
 	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
-	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donnation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
-	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donnation_value", "50", "Any trade offer's value below this cvar is automatically refused.");
+	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
+	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donation_value", "50", "Any trade offer's value below this cvar is automatically refused.");
 	
 	RegConsoleCmd("sm_donate", CMD_Donate, "Create a trade offer with ASteambot as donation.");
 	RegConsoleCmd("sm_friend", CMD_AsFriends, "Send a steam invite to the player.");
@@ -198,12 +198,8 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		
 		float credits = GetItemValue(StringToFloat(value));
 		
-		PrintToChatAll(">>> %.2f > %.2f", credits, maxValue);
-		
 		if(credits > maxValue)
 			credits += ((credits - maxValue) / credits) * credits;
-			
-		PrintToChatAll(">>> final : %.2f", credits);
 		
 		if (StrEqual(store, STORE_NONE))
 		{
@@ -418,9 +414,15 @@ public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int
 				
 		if(StrEqual(description, "OK"))
 		{
-			CreateTradeOffer(client);
-	
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
+			if(minValue <= tradeValue[client])
+			{
+				CreateTradeOffer(client);
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
+			}
+			else
+			{
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_ValueTooLow", minValue);	
+			}
 		}
 		else
 		{
