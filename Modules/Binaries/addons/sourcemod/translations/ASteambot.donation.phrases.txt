@@ -51,6 +51,10 @@
         "en"        "ASteambot is not connected ! Try again later."
     }
     //trade offer
+    "TradeOffer_NoItems"
+    {
+    	"en"        "You have to select at least 1 item !"
+   	}
     "TradeOffer_Success"
     {
         "#format"   "{1:.2f}"

@@ -414,7 +414,22 @@ public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int
 				
 		if(StrEqual(description, "OK"))
 		{
-			if(minValue <= tradeValue[client])
+			int selected = 0;
+			Handle inventory = GetLastInventory(client);
+			for (int i = 0; i < GetArraySize(inventory); i++)
+			{
+				Handle trie = GetArrayCell(inventory, i);
+				GetTrieValue(trie, ITEM_DONATED, selected);
+				
+				if(selected == 1)
+					break;
+			}
+			
+			if(selected == 0)
+			{
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_NoItems");
+			}
+			else if(minValue <= tradeValue[client])
 			{
 				CreateTradeOffer(client);
 				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
