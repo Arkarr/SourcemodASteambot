@@ -1,0 +1,69 @@
+"Phrases"
+{
+    //Commands
+    "ingame"
+    {
+        "en"    "This command can be usued only in game !"
+        "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+    }
+    //steam
+    "Steam_NotFriends"
+    {
+        "en"        "I can't send you trade offer because we are not friends on Steam ! Adding you as friend..."
+        "fr"        "Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam ! Je t'ajoutes maintenant...'"
+    }
+    "Steam_FriendInvitSend"
+    {
+        "en"        "I sent you a friend invite :) ! {lime}Try again to donate once you have accept the friend request !"
+        "fr"        "La demande d'ami a été envoyé :) ! {lime}Essaie encore une fois une fois que tu as accepter mon invitation !"
+    }
+    //ASteambot
+    "ASteambot_NotConnected"
+    {
+        "en"        "ASteambot is not connected ! Try again later."
+    }
+    //VIP things
+    "VIP_NoPackageAvailable"
+    {
+   		"en"		"No VIP package available found."
+  	}
+  	"VIP_Denied"
+  	{
+  		"en"		"You didn't clicked on 'OK'. Offer denied. Try again !"
+  	}
+    //trade offer
+    "TradeOffer_Success"
+    {
+        "#format"   "{1:s}"
+        "en"        "Offer accepted ! Welcome to the VIP community, {1} !"
+    }
+    "TradeOffer_Declined"
+    {
+    	"en"    "Offer declined. You are {fullred}NOT{default} a VIP."
+        "fr"    "L'offre a été refusé, tu n'est {fullred}PAS{default} un VIP."
+    }
+    "TradeOffer_WaitItems"
+    {
+        "en"    "Please wait, I'm loading your availabes VIP packages that you can buy..."
+        "fr"    "Veuillez patienter, je charges les offres VIP spécialisé pour vous..."
+    }
+    "TradeOffer_InventoryScanned"
+    {
+        "en"    "Creating the menu, please wait !"
+        "fr"    "Création du menu, veuillez patienter !"
+    }
+    "TradeOffer_Created"
+    {
+        "en"    "I created the trade offer, please confirm it through steam !"
+        "fr"    "L'offre d'échange a été creé, S'il vous plaît merci de confirmer dans steam !"
+    }
+    "TradeOffer_SelectTradeOffer"
+    {
+        "en"    "Please, select a VIP package."
+    }
+    "TradeOffer_ItemsError"
+    {
+        "#format"   "{1:s}"
+        "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
+    }
+}

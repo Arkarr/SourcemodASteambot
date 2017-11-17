@@ -6,11 +6,15 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"3.0"
+#define PLUGIN_VERSION 	"3.2"
 #define MODULE_NAME 	"[ASteambot - Core]"
+#define M_PLUGIN		"plugin"
+#define M_ID			"mID"
+#define M_NAME			"mName"
 
 Handle modules;
 Handle clientSocket;
+Handle CVAR_Debug;
 Handle CVAR_SteambotServerIP;
 Handle CVAR_SteambotServerPort;
 Handle CVAR_SteambotTCPPassword;
@@ -24,6 +28,7 @@ char steambotPassword[25];
 int moduleID;
 int serverID;
 
+bool DEBUG;
 bool connected;
 
 public Plugin myinfo = 
@@ -55,17 +60,48 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 //////////////
 public Native_RegisterModule(Handle plugin, int numParams)
 {
-	char mName[40];
+	Handle module;
+	char mName[50];
+	moduleID++;
+	
+	if(DEBUG)
+	{
+		PrintToServer("------------");
+		for (int i = 0; i < GetArraySize(modules); i++)
+		{
+			int mID;
+			Handle test = GetArrayCell(modules, i);
+			GetTrieString(test, M_NAME, mName, sizeof(mName));
+			GetTrieValue(test, M_ID, mID);
+			PrintToServer("%i -> Module ID: %i - %s", i, mID, mName);
+		}
+		PrintToServer("Number of modules : %i", GetArraySize(modules));
+		PrintToServer("------------");
+	}
+	
 	GetNativeString(1, mName, sizeof(mName));
 	
-	Handle module = CreateArray(30);
-	PushArrayCell(module, plugin);
-	PushArrayString(module, mName);
-	PushArrayCell(module, moduleID);
+	module = CreateTrie();
+	SetTrieValue(module, M_PLUGIN, plugin);
+	SetTrieValue(module, M_ID, moduleID);
+	SetTrieString(module, M_NAME, mName);
 
 	PushArrayCell(modules, module);
 	
-	moduleID++;
+	if(DEBUG)
+	{
+		PrintToServer("------------");
+		for (int i = 0; i < GetArraySize(modules); i++)
+		{
+			int mID;
+			module = GetArrayCell(modules, i);
+			GetTrieString(module, M_NAME, mName, sizeof(mName));
+			GetTrieValue(module, M_ID, mID);
+			PrintToServer("%i -> Module ID: %i - %s", i, mID, mName);
+		}
+		PrintToServer("Number of modules : %i", GetArraySize(modules));
+		PrintToServer("------------");
+	}
 	
 	return 1;
 }
@@ -76,7 +112,9 @@ public Native_RemoveModule(Handle plugin, int numParams)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
-		if(GetArrayCell(module, 0) == plugin)
+		Handle p;
+		GetTrieValue(module, M_PLUGIN, p);
+		if(p == plugin)
 		{
 			RemoveFromArray(modules, i);
 			
@@ -99,10 +137,13 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	GetNativeString(2, message, sizeof(message));
 	Handle module = GetModuleByPlugin(plugin);
 	
+	int id;
+	GetTrieValue(module, M_ID, id);
+	
 	if(module != INVALID_HANDLE)
-		SendMessage(GetArrayCell(module, 2), messageType, message, sizeof(message));
+		SendMessage(id, messageType, message, sizeof(message));
 	else
-		PrintToServer("%s ERROR: Module not found ! Is it registred?", MODULE_NAME);
+		PrintToServer("%s ERROR: Module not found ! Is it registred?", M_NAME);
 }
 
 public int Native_CreateTradeOffer(Handle plugin, int numParams)
@@ -131,26 +172,38 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 		StrCat(message, sizeof(message), item);
 	}
 	
-	SendMessage(GetArrayCell(module, 2), AS_CREATE_TRADEOFFER, message, sizeof(message));
+	int id;
+	GetTrieValue(module, M_ID, id);
+	
+	SendMessage(id, AS_CREATE_TRADEOFFER, message, sizeof(message));
 }
 
 public void OnPluginStart()
 {
 	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
 
-	CVAR_SteambotServerIP = CreateConVar("sm_steambot_server_ip", "XXX.XXX.XXX.XXX", "The ip of the server where the steambot is hosted.");
-	CVAR_SteambotServerPort = CreateConVar("sm_steambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
-	CVAR_SteambotTCPPassword = CreateConVar("sm_steambot_tcp_password", "XYZ", "The password to allow TCP data to be read / send (TCPPassword in settings.json)");
+	CVAR_Debug = CreateConVar("sm_asteambot_debug", "false", "Enable(true)/Disable(false) debug mode >>> WARNING <<< Enabling debug mode may print senstive infos in the game server console !");
+	CVAR_SteambotServerIP = CreateConVar("sm_asteambot_server_ip", "XXX.XXX.XXX.XXX", "The ip of the server where the steambot is hosted.");
+	CVAR_SteambotServerPort = CreateConVar("sm_asteambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
+	CVAR_SteambotTCPPassword = CreateConVar("sm_asteambot_tcp_password", "XYZ", "The password to allow TCP data to be read / send (TCPPassword in settings.json)");
 	
 	AutoExecConfig(true, "asteambot_core", "asteambot");
 }
 
 public void OnConfigsExecuted()
 {
+	char d[10];
 	GetConVarString(CVAR_SteambotServerIP, steambotIP, sizeof(steambotIP));
 	GetConVarString(CVAR_SteambotServerPort, steambotPort, sizeof(steambotPort));
 	GetConVarString(CVAR_SteambotTCPPassword, steambotPassword, sizeof(steambotPassword));
+	GetConVarString(CVAR_Debug, d, sizeof(d));
+	DEBUG = StrEqual(d, "true");
 	
+	if(DEBUG)
+		PrintToServer("ASteambot : DEBUG MODE IS 'ON'");
+	else
+		PrintToServer("ASteambot : DEBUG MODE IS 'OFF'");
+		
 	AttemptSteamBotConnection();
 }
 
@@ -206,8 +259,16 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
+	if(DEBUG)
+		PrintToServer("RECEIVED DATA : %s", receiveData);
+		
 	if(StrContains(receiveData, steambotPassword) == -1)
+	{
+		if(DEBUG)
+			PrintToServer(">>> PASSWORD INCORECT");
+			
 		return;
+	}
 	
 	ReplaceString(receiveData, dataSize, steambotPassword, "");
 	ReplaceString(receiveData, dataSize, "<EOF>", "");
@@ -217,6 +278,16 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 	
 	ExplodeString(receiveData, "|", mc_data, 2, dataSize);
 	ExplodeString(mc_data[0], ")", moduleID_code, 2, dataSize);
+	
+	if(DEBUG)
+	{
+		PrintToServer("-----------------------");
+		PrintToServer("Password : 		%s", steambotPassword);
+		PrintToServer("Module ID :		%s", moduleID_code[0]);
+		PrintToServer("ASteambot code : %s", moduleID_code[1]);
+		PrintToServer("Data : 			%s", mc_data[1]);
+		PrintToServer("-----------------------");
+	}
 
 	if(StrEqual(moduleID_code[1], "SRVID"))
 	{
@@ -242,7 +313,17 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 				Handle module = GetModuleByID(mID);
 				if(module != INVALID_HANDLE)
 				{
-					Call_StartFunction(GetArrayCell(module, 0), GetFunctionByName(GetArrayCell(module, 0), "ASteambot_Message"));
+					Handle p;
+					GetTrieValue(module, M_PLUGIN, p);
+					
+					if(DEBUG)
+					{
+						char mName[50];
+						GetTrieString(module, M_NAME, mName, sizeof(mName));
+						PrintToServer("Module ID: %i - %s", mID, mName);
+					}
+					
+					Call_StartFunction(p, GetFunctionByName(p, "ASteambot_Message"));
 					Call_PushCell(code);
 					Call_PushString(mc_data[1]);
 					Call_PushCell(dataSize);
@@ -259,7 +340,9 @@ public Handle GetModuleByPlugin(Handle plugin)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
-		if(GetArrayCell(module, 0) == plugin)
+		Handle p;
+		GetTrieValue(module, M_PLUGIN, p);
+		if(p == plugin)
 			return module;
 	}
 	
@@ -272,7 +355,9 @@ public Handle GetModuleByID(int id)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
-		if(GetArrayCell(module, 2) == id)
+		int idModule;
+		GetTrieValue(module, M_ID, idModule);
+		if(idModule == id)
 			return module;
 	}
 	
@@ -303,6 +388,9 @@ public Action TMR_TryReconnection(Handle timer, any none)
 stock void SendMessage(int mid, int messageType, char[] message, int msgSize)
 {
 	Format(message, msgSize, "%s%i,%i|%i&%s<EOF>", steambotPassword, serverID, mid, messageType, message);
+	
+	if(DEBUG)
+		PrintToServer(message);
 	
 	SocketSend(clientSocket, message, msgSize);
 }
