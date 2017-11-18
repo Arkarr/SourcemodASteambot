@@ -1,0 +1,23 @@
+"Phrases"
+{
+    //Commands
+    "ingame"
+    {
+        "en"    "This command can be usued only in game !"
+        "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+    }
+    //ASteambot
+    "ASteambot_NotConnected"
+    {
+        "en"        "ASteambot is not connected ! Try again later."
+    }
+    "TradeOffer_InventoryScanned"
+    {
+        "en"    "Inventory scanned. Searching your rank..."
+        "fr"    "Inventaire scanner, recherche du rang..."
+    }
+    "Config_reloaded"
+    {
+    	"en"	"Config reloaded sucessfully !"
+   	}
+}
