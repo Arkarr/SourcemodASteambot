@@ -49,11 +49,13 @@
     "ASteambot_NotConnected"
     {
         "en"        "ASteambot is not connected ! Try again later."
+        "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
     }
     //trade offer
     "TradeOffer_NoItems"
     {
     	"en"        "You have to select at least 1 item !"
+        "fr"        "Vous devez sélectionner au moins 1 objet !"
    	}
     "TradeOffer_Success"
     {
@@ -90,16 +92,19 @@
     {
     	"#format"   "{1:.2f},{2:.2f}"
         "en"    "You have to give at least {1}$ worth of items. Giving more than {2}$ will get you a huge extra bonus !"
+        "fr"    "Vous devez donner au moins {1} $ d'objets. Donner plus de {2} $ vous apportera un bonus !"
     }
     "TradeOffer_ItemsError"
     {
         "#format"   "{1:s}"
         "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
+        "fr"    "Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant..."
     }
     "TradeOffer_ValueTooLow"
     {
         "#format"   "{1:.2f}"
         "en"    	"You need to put at least {1}$ as items to donate !"
+        "fr"        "Vous devez mettre au moins {1} $ en tant qu'objet à donner !"
     }
     //menu
     "menu_accept"
