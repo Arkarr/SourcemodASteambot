@@ -10,6 +10,7 @@
     "ASteambot_NotConnected"
     {
         "en"        "ASteambot is not connected ! Try again later."
+        "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
     }
     "TradeOffer_InventoryScanned"
     {
@@ -19,5 +20,6 @@
     "Config_reloaded"
     {
     	"en"	"Config reloaded sucessfully !"
+        "fr"    "Config rechargée avec succès !"
    	}
 }

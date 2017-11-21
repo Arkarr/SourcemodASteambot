@@ -21,21 +21,25 @@
     "ASteambot_NotConnected"
     {
         "en"        "ASteambot is not connected ! Try again later."
+        "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
     }
     //VIP things
     "VIP_NoPackageAvailable"
     {
    		"en"		"No VIP package available found."
+        "fr"        "Aucun forfait VIP a été trouvé."
   	}
   	"VIP_Denied"
   	{
   		"en"		"You didn't clicked on 'OK'. Offer denied. Try again !"
+        "fr"        "Vous n'avez pas cliqué sur 'OK'. Offre refusée. Réessayer !"
   	}
     //trade offer
     "TradeOffer_Success"
     {
         "#format"   "{1:s}"
         "en"        "Offer accepted ! Welcome to the VIP community, {1} !"
+        "fr"        "Offre acceptée ! Bienvenue dans la communauté VIP, {1} !"
     }
     "TradeOffer_Declined"
     {
@@ -60,10 +64,12 @@
     "TradeOffer_SelectTradeOffer"
     {
         "en"    "Please, select a VIP package."
+        "fr"    "S'il vous plaît, sélectionnez un forfait VIP."
     }
     "TradeOffer_ItemsError"
     {
         "#format"   "{1:s}"
         "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
+        "fr"    "Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant ... "
     }
 }
