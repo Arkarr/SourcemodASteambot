@@ -1,0 +1,38 @@
+"Phrases"
+{
+    //Commands
+    "ingame"
+    {
+        "en"    "This command can be usued only in game !"
+        "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+    }
+    //General
+    "ItemsError"
+    {
+        "en"   		"Couldn't load your items ! Is your steam inventory private ? Try again later."
+    }
+    "ItemsReload"
+    {
+        "en"   		"Scanning your steam inventory..."
+    }
+    "InventoryScanned"
+    {
+   		"en"		"Inventory scanned sucessfully !"
+  	}
+    "MenuOfferEdit"
+    {
+   		"en"		"Select a item to edit it's offer :"
+  	}
+  	"OfferEdit"
+  	{
+  		"en"		"Edit your offer's message with command !editoffer [MESSAGE] ! {red}Color {orange}can {yellow}be {pink}added {purple}using {black}tag{default} : {COLOR}"
+ 	}
+ 	"NoOfferFound"
+ 	{
+ 		"en"		"No offer found. Create some before displaying them !"
+	}
+	"ItemSelectFirstly"
+	{
+		"en"		"You have to select an item to edit offer ! Displaying the menu now..."
+	}
+}

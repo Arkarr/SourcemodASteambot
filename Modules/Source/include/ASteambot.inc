@@ -22,6 +22,7 @@
 #define AS_REPORT_PLAYER		11
 #define AS_INVITE_GROUP			12
 #define AS_SCAN_INVENTORY_IMG   13
+#define AS_EXECUTE_CMD		    14
 
 /** 
  * Register the plugin, required to receive and send messages.
