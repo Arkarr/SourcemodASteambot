@@ -2,10 +2,9 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
-#include <chat-processor>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.2"
+#define PLUGIN_VERSION 	"1.3"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 
 
@@ -41,12 +40,12 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		CPrintToChatAll("{green}%s", message);
 }
 
-public void CP_OnChatMessagePost(int author, ArrayList recipients, const char[] flagstring, const char[] formatstring, const char[] name, const char[] message, bool processcolors, bool removecolors)
+public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs)
 {
 	if(!transferMessages)
 		return;
 		
 	char text[200];
-	Format(text, sizeof(text), "%N : %s", author, message)
+	Format(text, sizeof(text), "%N : %s", client, sArgs)
 	ASteambot_SendMesssage(AS_HOOK_CHAT, text);
 }
