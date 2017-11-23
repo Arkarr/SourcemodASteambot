@@ -5,21 +5,25 @@
     {
         "en"    "This command can be usued only in game !"
         "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+        "pl"    "Ta komenda może być użyta tylko w grze!"
     }
     //ASteambot
     "ASteambot_NotConnected"
     {
         "en"        "ASteambot is not connected ! Try again later."
         "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
+        "pl"        "ASteambot nie jest połączony! Spróbuj później."
     }
     "TradeOffer_InventoryScanned"
     {
         "en"    "Inventory scanned. Searching your rank..."
         "fr"    "Inventaire scanner, recherche du rang..."
+        "pl"    "Ekwipunek sprawdzony. Szukanie twojej rangi..."
     }
     "Config_reloaded"
     {
     	"en"	"Config reloaded sucessfully !"
         "fr"    "Config rechargée avec succès !"
+    	"pl"	"Ustawienia przeładowane!"
    	}
 }

@@ -5,6 +5,7 @@
     {
         "en"    "This command can be usued only in game !"
         "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+		"pl"    "Ta komenda może być użyta tylko w grze!"
     }
     //Common
     "Done"
@@ -16,12 +17,14 @@
         "pt-br"     "Feito!"
         "fr"        "Fait!"
         "tr"        "Tamamlandi!"
+		"pl"        "Gotowe!"
     }
     //Database
     "Database_Success"
     {
         "en"        "Database connected and table created successfully !";
         "fr"        "La connection a la base de données a été effectué et le tableau a été creé !";
+		"pl"        "Połączono z bazą danych i stworzono tabelki!";
     }
     "Database_Failure"
     {
@@ -33,78 +36,92 @@
         "pt-br"     "Falha na database: {1}"
         "fr"        "Base de données défecteux: {1}"
         "tr"        "Veritabani hatasi: {1}";
+		"pl"        "Błąd Bazy Danych: {1}";
     }
     //steam
     "Steam_NotFriends"
     {
         "en"        "I can't send you trade offer because we are not friends on Steam ! Add me using !friend !"
         "fr"        "Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam ! Ajouter en utilisant !friend !"
+		"pl"        "Nie mogę Ci wysłać ofery, bo nie jesteśmy znajomymi na Steam! Dodaj mnie komendą !friend!"
     }
     "Steam_FriendInvitSend"
     {
         "en"        "I sent you a friend invite :) !"
         "fr"        "La demande d'ami a été envoyé :) !"
+		"pl"		"Wysłałem Ci zaproszenie do znajomych :) !"
     }
     //ASteambot
     "ASteambot_NotConnected"
     {
         "en"        "ASteambot is not connected ! Try again later."
         "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
+		"pl"		"ASteambot nie jest połączony! Spróbuj ponownie później." 
     }
     //trade offer
     "TradeOffer_NoItems"
     {
     	"en"        "You have to select at least 1 item !"
         "fr"        "Vous devez sélectionner au moins 1 objet !"
+    	"pl"        "Musisz zaznaczyć przynajmniej 1 przedmiot!"
    	}
     "TradeOffer_Success"
     {
         "#format"   "{1:.2f}"
         "en"        "Offer accepted ! You have now {1} credits !"
         "fr"        "L'offre d'échange a été accepté ! Vous avez maintenant {1} credits !"
+        "pl"        "Oferta zaakceptowana! Masz teraz {1} kredytów!"
     }
     "TradeOffer_Declined"
     {
         "en"    "Offer declined, no credits added to your balance."
         "fr"    "L'offre a été refusé, aucun crédit a été ajouté à votre solde."
+        "pl"    "Oferta odrzucona, nie dodano kredytów do twojego konta."
     }
     "TradeOffer_WaitItems"
     {
         "en"    "Please wait, I'm loading your items..."
         "fr"    "Veuillez patienter, Chargement de vos items..."
+        "pl"    "Poczekaj, ładuję twoje przedmioty..."
     }
     "TradeOffer_InventoryScanned"
     {
         "en"    "Creating the menu, please wait !"
         "fr"    "Création du menu, veuillez patienter !"
+        "pl"    "Tworzę menu, poczekaj!"
     }
     "TradeOffer_Created"
     {
         "en"    "I created the trade offer, please confirm it through steam !"
         "fr"    "L'offre d'échange a été creé, S'il vous plaît merci de confirmer dans steam !"
+        "pl"    "Wysłałem ofertę wymiany, potwierdź ją poprzed Steam!"
     }
     "TradeOffer_SelectItems"
     {
         "en"    "Select all the times you want to donate, confirm by selecting 'OK!'"
         "fr"    "Sélectionnez toutes les fois que vous souhaitez faire un don, confirmez en sélectionnant 'OK!'"
+        "pl"    "Zaznacz przedmioty które chcesz podarować, zatwierdź klikając 'OK!'"
     }
     "TradeOffer_Explication"
     {
     	"#format"   "{1:.2f},{2:.2f}"
         "en"    "You have to give at least {1}$ worth of items. Giving more than {2}$ will get you a huge extra bonus !"
         "fr"    "Vous devez donner au moins {1} $ d'objets. Donner plus de {2} $ vous apportera un bonus !"
+        "pl"    "Wartość twoich itemów musi być minimum {1}$. Dając więcej niż {2}$ otrzymasz wielki bonus!"
     }
     "TradeOffer_ItemsError"
     {
         "#format"   "{1:s}"
         "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
         "fr"    "Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant..."
+        "pl"    "Nie można załadować twoich przedmiotów dla ekwipunku {1}! Ponowna próba za moment..."
     }
     "TradeOffer_ValueTooLow"
     {
         "#format"   "{1:.2f}"
         "en"    	"You need to put at least {1}$ as items to donate !"
         "fr"        "Vous devez mettre au moins {1} $ en tant qu'objet à donner !"
+        "pl"    	"Musisz dać przynajmniej {1}$ w przedmiotach aby wysłać dotację!"
     }
     //menu
     "menu_accept"
@@ -113,6 +130,7 @@
         "de"        "Akzeptieren Sie es?"
         "fr"        "Est ce que tu accepte?"
         "tr"        "Kabul ediyor musun?"
+        "pl"        "Zgadzasz się?"
     }
     "menu_yes"
     {
@@ -120,6 +138,7 @@
         "de"        "Ja"
         "fr"        "Oui"
         "tr"        "Evet"
+		"pl"		"Tak"
     }
     "menu_no"
     {
@@ -127,5 +146,6 @@
         "de"        "Nein"
         "fr"        "Non"
         "tr"        "Hayir"
+		"pl"		"Nie"
     }
 }

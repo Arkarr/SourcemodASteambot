@@ -5,34 +5,42 @@
     {
         "en"    "This command can be usued only in game !"
         "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
+        "pl"    "Ta komenda może być użyta tylko w grze!"
     }
     //General
     "ItemsError"
     {
         "en"   		"Couldn't load your items ! Is your steam inventory private ? Try again later."
+        "pl"   		"Nie można załadować twoich przedmiotów! Czy twój ekwipunek jest prywatny? Spróbuj później."
     }
     "ItemsReload"
     {
         "en"   		"Scanning your steam inventory..."
+        "pl"   		"Skanowanie twojego ekwipunku Steam..."
     }
     "InventoryScanned"
     {
    		"en"		"Inventory scanned sucessfully !"
+   		"pl"		"Ekwipunek pomyślnie zeskanowany!"
   	}
     "MenuOfferEdit"
     {
    		"en"		"Select a item to edit it's offer :"
+   		"pl"		"Wybierz przedmiot żeby edytować ofertę:"
   	}
   	"OfferEdit"
   	{
   		"en"		"Edit your offer's message with command !editoffer [MESSAGE] ! {red}Color {orange}can {yellow}be {pink}added {purple}using {black}tag{default} : {COLOR}"
+  		"pl"		"Edytuj swoją wiadomość ofert komendą !editoffer [MESSAGE]! {red}Kolor {orange}może {yellow}być {pink}dodany {purple}używając {black}tagu{default}: {COLOR}"
  	}
  	"NoOfferFound"
  	{
  		"en"		"No offer found. Create some before displaying them !"
+ 		"pl"		"Nie znaleziono ofert. Stwórz jakąś zanim będziesz chciał ją pokazać!"
 	}
 	"ItemSelectFirstly"
 	{
 		"en"		"You have to select an item to edit offer ! Displaying the menu now..."
+		"pl"		"Musisz wybrać przedmiot aby edytować ofertę! Otwieram menu..."
 	}
 }
