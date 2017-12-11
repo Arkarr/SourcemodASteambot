@@ -23,6 +23,7 @@
 #define AS_INVITE_GROUP			12
 #define AS_SCAN_INVENTORY_IMG   13
 #define AS_EXECUTE_CMD		    14
+#define AS_DISCONNECT			15
 
 /** 
  * Register the plugin, required to receive and send messages.

@@ -7,6 +7,7 @@
 #define PLUGIN_VERSION 	"1.3"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 
+int connectionCount;
 
 bool transferMessages;
 
@@ -26,16 +27,33 @@ public void OnPluginStart()
 
 public OnPluginEnd()
 {
+	connectionCount = 0;
+	ASteambot_SendMesssage(AS_UNHOOK_CHAT, "");
+	
 	ASteambot_RemoveModule();
+}
+
+public void OnMapEnd()
+{
+	connectionCount = 0;
+	transferMessages = false;
+	ASteambot_SendMesssage(AS_UNHOOK_CHAT, "");
 }
 
 public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
 {
 	if(MessageType == AS_HOOK_CHAT)
+	{
 		transferMessages = true;
+		connectionCount++;
+	}
 	else if(MessageType == AS_UNHOOK_CHAT)
-		transferMessages = false;
+	{
+		connectionCount--;
+		transferMessages = (connectionCount <= 0 ? false : true);
+	}
 		
+	PrintToChatAll("%i ---> %b", connectionCount, transferMessages);
 	if(transferMessages && MessageType == AS_SIMPLE)
 		CPrintToChatAll("{green}%s", message);
 }

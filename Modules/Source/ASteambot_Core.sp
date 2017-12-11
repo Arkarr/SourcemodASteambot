@@ -6,7 +6,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"3.2"
+#define PLUGIN_VERSION 	"3.3"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -137,13 +137,16 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	GetNativeString(2, message, sizeof(message));
 	Handle module = GetModuleByPlugin(plugin);
 	
-	int id;
-	GetTrieValue(module, M_ID, id);
-	
 	if(module != INVALID_HANDLE)
+	{
+		int id;
+		GetTrieValue(module, M_ID, id);
 		SendMessage(id, messageType, message, sizeof(message));
+	}
 	else
+	{
 		PrintToServer("%s ERROR: Module not found ! Is it registred?", M_NAME);
+	}
 }
 
 public int Native_CreateTradeOffer(Handle plugin, int numParams)
@@ -179,7 +182,7 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 }
 
 public void OnPluginStart()
-{
+{	
 	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
 
 	CVAR_Debug = CreateConVar("sm_asteambot_debug", "false", "Enable(true)/Disable(false) debug mode >>> WARNING <<< Enabling debug mode may print senstive infos in the game server console !");
@@ -188,6 +191,12 @@ public void OnPluginStart()
 	CVAR_SteambotTCPPassword = CreateConVar("sm_asteambot_tcp_password", "XYZ", "The password to allow TCP data to be read / send (TCPPassword in settings.json)");
 	
 	AutoExecConfig(true, "asteambot_core", "asteambot");
+}
+
+public void OnMapEnd()
+{
+	SendMessage(serverID, AS_DISCONNECT, "byebyelul", 9);
+	SocketDisconnect(clientSocket);
 }
 
 public void OnConfigsExecuted()
@@ -203,7 +212,7 @@ public void OnConfigsExecuted()
 		PrintToServer("ASteambot : DEBUG MODE IS 'ON'");
 	else
 		PrintToServer("ASteambot : DEBUG MODE IS 'OFF'");
-		
+	
 	AttemptSteamBotConnection();
 }
 
