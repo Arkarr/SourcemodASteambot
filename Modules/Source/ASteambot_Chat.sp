@@ -1,10 +1,10 @@
 #include <sourcemod>
 #include <sdktools>
 #include <ASteambot>
-#include <morecolors>
+#include <multicolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.3"
+#define PLUGIN_VERSION 	"1.3.1"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 
 int connectionCount;
@@ -53,7 +53,6 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		transferMessages = (connectionCount <= 0 ? false : true);
 	}
 		
-	PrintToChatAll("%i ---> %b", connectionCount, transferMessages);
 	if(transferMessages && MessageType == AS_SIMPLE)
 		CPrintToChatAll("{green}%s", message);
 }
