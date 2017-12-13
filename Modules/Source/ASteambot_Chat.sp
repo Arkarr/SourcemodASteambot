@@ -4,7 +4,7 @@
 #include <multicolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.3"
+#define PLUGIN_VERSION 	"1.3.1"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 
 int connectionCount;
