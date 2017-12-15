@@ -25,10 +25,9 @@ public void OnPluginStart()
 	ASteambot_RegisterModule("ASteambot_Chat");
 }
 
-public OnPluginEnd()
+public OnPluginEnd();
 {
 	connectionCount = 0;
-	ASteambot_SendMesssage(AS_UNHOOK_CHAT, "");
 	
 	ASteambot_RemoveModule();
 }
