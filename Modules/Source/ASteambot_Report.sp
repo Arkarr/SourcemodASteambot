@@ -5,7 +5,7 @@
 #include <morecolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.2"
+#define PLUGIN_VERSION 	"2.0"
 #define MODULE_NAME 	"[ASteambot - Report]"
 
 Handle CVAR_Delay;
