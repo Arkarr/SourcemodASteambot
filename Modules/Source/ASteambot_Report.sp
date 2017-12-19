@@ -122,14 +122,14 @@ public Action CMD_Report(int client, int args)
 
 stock ReportPlayer(client, target, char[] reason)
 {
-	if (!IsValidClient(target) && strlen(TargetOffline[client]) < 5)
+	if (!IsValidClient(target) && strlen(TargetOffline[client]) < 2)
 	{
 		PrintToChat(client, "[PR] The player you were going to report is no longer in-game.");
 		return;
 	}
 	
 	char offlineName[45];
-	if(strlen(TargetOffline[client]) > 5)
+	if(strlen(TargetOffline[client]) > 2)
 	{
 		char value[45];
 		for (int i = 0; i < GetArraySize(ARRAY_DisconnectedPlayers); i++)
@@ -154,7 +154,7 @@ stock ReportPlayer(client, target, char[] reason)
 	char time[50];
 	
 	GetClientAuthId(client, AuthId_Steam2, ID1, sizeof(ID1));
-	if(strlen(TargetOffline[client]) < 5)
+	if(strlen(TargetOffline[client]) < 2)
 		GetClientAuthId(target, AuthId_Steam2, ID2, sizeof(ID2));
 	else
 		Format(ID2, sizeof(ID2), TargetOffline[client]);
@@ -170,14 +170,14 @@ stock ReportPlayer(client, target, char[] reason)
 		if (!IsValidClient(z)) continue;
 		if (CheckCommandAccess(z, "sm_admin", ADMFLAG_GENERIC))
 		{
-			if(strlen(TargetOffline[client]) < 5)
+			if(strlen(TargetOffline[client]) < 2)
 				PrintToChat(z, "%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason);
 			else
 				PrintToChat(z, "%s %N reported %s (Reason: \"%s\")", MODULE_NAME, client, offlineName, reason);
 		}
 	}
 	
-	if(strlen(TargetOffline[client]) < 5)
+	if(strlen(TargetOffline[client]) < 2)
 		PrintToServer("%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason);
 	else
 		PrintToServer("%s %N reported %s (Reason: \"%s\")", MODULE_NAME, client, offlineName, reason);
@@ -237,8 +237,7 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		
 		GetMenuItem(menu, param2, info, sizeof(info));
 		
-		PrintToChatAll(info);
-		if(StrContains(info, "STEAM_ID:"))
+		if(StrContains(info, "STEAM_ID:") != -1 || StrContains(info, "BOT") != -1)
 		{
 			ReasonMenu(client);
 			Format(TargetOffline[client], sizeof(TargetOffline[]), info);
