@@ -203,7 +203,7 @@ public void ChooseTargetMenu(int client)
 	char playerName[100];
 	char steamID[100];
 			
-	for(new z = 0; z <= GetArraySize(ARRAY_DisconnectedPlayers); z++)
+	for(new z = 0; z < GetArraySize(ARRAY_DisconnectedPlayers); z++)
 	{
 		Handle trie = GetArrayCell(ARRAY_DisconnectedPlayers, z);
 		GetTrieString(trie, "name", playerName, sizeof(playerName));
