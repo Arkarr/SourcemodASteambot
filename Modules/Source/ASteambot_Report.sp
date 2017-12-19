@@ -207,6 +207,7 @@ public void ChooseTargetMenu(int client)
 	{
 		Handle trie = GetArrayCell(ARRAY_DisconnectedPlayers, z);
 		GetTrieString(trie, "name", playerName, sizeof(playerName));
+		GetTrieString(trie, "steamid", steamID, sizeof(steamID));
 		AddMenuItem(smMenu, steamID, playerName);
 	}
 		
@@ -236,6 +237,7 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		
 		GetMenuItem(menu, param2, info, sizeof(info));
 		
+		PrintToChatAll(info);
 		if(StrContains(info, "STEAM_ID:"))
 		{
 			ReasonMenu(client);
