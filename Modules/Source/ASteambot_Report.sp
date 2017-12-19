@@ -9,12 +9,14 @@
 #define MODULE_NAME 	"[ASteambot - Report]"
 
 Handle CVAR_Delay;
+Handle ARRAY_DisconnectedPlayers;
 
 int Target[MAXPLAYERS + 1];
 
 float LastUsedReport[MAXPLAYERS + 1];
 
 char configLines[256][192];
+char TargetOffline[MAXPLAYERS + 1][50];
 
 public Plugin myinfo = 
 {
@@ -35,6 +37,8 @@ public OnPluginStart()
 	
 	LoadTranslations("common.phrases");
 	LoadTranslations("core.phrases");
+	
+	ARRAY_DisconnectedPlayers = CreateArray();
 }
 
 public OnPluginEnd()
@@ -50,6 +54,22 @@ public void OnClientPutInServer(int client)
 	{
 		if (Target[z] == client) Target[z] = 0;
 	}
+}
+
+public void OnClientDisconnect(int client)
+{
+	char pName[65];
+	char steamID[45];
+	GetClientName(client, pName, sizeof(pName));
+	GetClientAuthId(client, AuthId_Steam2, steamID, sizeof(steamID));
+	
+	Format(pName, sizeof(pName), "%s [DISCONNECTED]", pName);
+	
+	Handle TRIE_Player = CreateTrie();
+	SetTrieString(TRIE_Player, "name", pName);
+	SetTrieString(TRIE_Player, "steamid", steamID);
+	
+	PushArrayCell(ARRAY_DisconnectedPlayers, TRIE_Player);
 }
 
 public Action CMD_Report(int client, int args)
@@ -102,10 +122,26 @@ public Action CMD_Report(int client, int args)
 
 stock ReportPlayer(client, target, char[] reason)
 {
-	if (!IsValidClient(target))
+	if (!IsValidClient(target) && strlen(TargetOffline[client]) < 5)
 	{
 		PrintToChat(client, "[PR] The player you were going to report is no longer in-game.");
 		return;
+	}
+	
+	char offlineName[45];
+	if(strlen(TargetOffline[client]) > 5)
+	{
+		char value[45];
+		for (int i = 0; i < GetArraySize(ARRAY_DisconnectedPlayers); i++)
+		{
+			Handle trie = GetArrayCell(ARRAY_DisconnectedPlayers, i);
+			GetTrieString(trie, "steamid", value, sizeof(value));
+			if(StrEqual(value, TargetOffline[client]))
+			{
+				GetTrieString(trie, "name", offlineName, sizeof(offlineName));
+				break;
+			}
+		}
 	}
 	
 	char configFile[PLATFORM_MAX_PATH];
@@ -118,7 +154,11 @@ stock ReportPlayer(client, target, char[] reason)
 	char time[50];
 	
 	GetClientAuthId(client, AuthId_Steam2, ID1, sizeof(ID1));
-	GetClientAuthId(target, AuthId_Steam2, ID2, sizeof(ID2));
+	if(strlen(TargetOffline[client]) < 5)
+		GetClientAuthId(target, AuthId_Steam2, ID2, sizeof(ID2));
+	else
+		Format(ID2, sizeof(ID2), TargetOffline[client]);
+		
 	FormatTime(date, 50, "%m/%d/%Y");
 	FormatTime(time, 50, "%H:%M:%S");
 	WriteFileLine(file, "User: %N [%s]\nReported: %N [%s]\nDate: %s\nTime: %s\nReason: \"%s\"\n-------\n\n", client, ID1, target, ID2, date, time, reason);
@@ -129,10 +169,19 @@ stock ReportPlayer(client, target, char[] reason)
 	{
 		if (!IsValidClient(z)) continue;
 		if (CheckCommandAccess(z, "sm_admin", ADMFLAG_GENERIC))
-			PrintToChat(z, "%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason)
+		{
+			if(strlen(TargetOffline[client]) < 5)
+				PrintToChat(z, "%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason);
+			else
+				PrintToChat(z, "%s %N reported %s (Reason: \"%s\")", MODULE_NAME, client, offlineName, reason);
+		}
 	}
 	
-	PrintToServer("%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason);
+	if(strlen(TargetOffline[client]) < 5)
+		PrintToServer("%s %N reported %N (Reason: \"%s\")", MODULE_NAME, client, target, reason);
+	else
+		PrintToServer("%s %N reported %s (Reason: \"%s\")", MODULE_NAME, client, offlineName, reason);
+		
 	
 	char message[100];
 	Format(message, sizeof(message), "%s/%s/%s", ID1, ID2, reason);
@@ -152,6 +201,15 @@ public void ChooseTargetMenu(int client)
 	SetMenuExitBackButton(smMenu, true);
 	
 	char playerName[100];
+	char steamID[100];
+			
+	for(new z = 1; z <= GetArraySize(ARRAY_DisconnectedPlayers); z++)
+	{
+		Handle trie = GetArrayCell(ARRAY_DisconnectedPlayers, z);
+		GetTrieString(trie, "name", playerName, sizeof(playerName));
+		AddMenuItem(smMenu, steamID, playerName);
+	}
+		
 	for (new z = 1; z <= GetMaxClients(); z++)
 	{
 		if (!IsValidClient(z))
@@ -177,16 +235,32 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		int target;
 		
 		GetMenuItem(menu, param2, info, sizeof(info));
-		userid = StringToInt(info);
-
-		if ((target = GetClientOfUserId(userid)) == 0)PrintToChat(client, "%s %t", MODULE_NAME, "Player no longer available");
+		
+		if(StrContains(info, "STEAM_ID:"))
+		{
+			ReasonMenu(client);
+			Format(TargetOffline[client], sizeof(TargetOffline[]), info);
+		}
 		else
 		{
-			if (client == target) ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
+			userid = StringToInt(info);
+			Format(TargetOffline[client], sizeof(TargetOffline[]), "");
+	
+			if ((target = GetClientOfUserId(userid)) == 0)
+			{
+				PrintToChat(client, "%s %t", MODULE_NAME, "Player no longer available");
+			}	
 			else
 			{
-				Target[client] = target;
-				ReasonMenu(client);
+				if (client == target)
+				{
+					ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
+				}	
+				else
+				{
+					Target[client] = target;
+					ReasonMenu(client);
+				}
 			}
 		}
 	}
@@ -214,7 +288,9 @@ public void ReasonMenu(int client)
 
 public int ReasonMenuHandler(Handle menu, MenuAction action, int client, int item)
 {
-	if (action == MenuAction_Cancel && item == MenuCancel_ExitBack) CloseHandle(menu);
+	if (action == MenuAction_Cancel && item == MenuCancel_ExitBack)
+		CloseHandle(menu);
+		
 	if (action == MenuAction_Select)
 	{
 		char selection[128];
