@@ -5,7 +5,7 @@
 #include <morecolors>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.0"
+#define PLUGIN_VERSION 	"2.1"
 #define MODULE_NAME 	"[ASteambot - Report]"
 
 Handle CVAR_Delay;
@@ -237,7 +237,7 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 		
 		GetMenuItem(menu, param2, info, sizeof(info));
 		
-		if(StrContains(info, "STEAM_ID:") != -1 || StrContains(info, "BOT") != -1)
+		if(StrContains(info, "STEAM_") != -1 || StrContains(info, "BOT") != -1)
 		{
 			ReasonMenu(client);
 			Format(TargetOffline[client], sizeof(TargetOffline[]), info);
