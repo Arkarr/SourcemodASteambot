@@ -401,7 +401,16 @@ stock void SendMessage(int mid, int messageType, char[] message, int msgSize)
 	if(DEBUG)
 		PrintToServer(message);
 	
-	SocketSend(clientSocket, message, msgSize);
+	if(clientSocket != INVALID_HANDLE)
+	{
+		SocketSend(clientSocket, message, msgSize);
+	}
+	else
+	{
+		EndTimer();
+		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
+	}
+		
 }
 
 public void EndTimer()
