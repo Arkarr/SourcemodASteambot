@@ -299,8 +299,10 @@ public Handle AvailabeVIPPackage(int client)
 		Handle items;
 		int itemFound = 0;
 		char mainItemName[100];
+		char packageName[100];
 		
 		GetTrieValue(trie, VIPP_ITEMS, items);
+		GetTrieString(trie, VIPP_NAME, packageName, sizeof(packageName));
 		
 		for (int j = 0; j < GetArraySize(items); j++)
 		{
@@ -311,13 +313,18 @@ public Handle AvailabeVIPPackage(int client)
 			bool result = GetItemID(client, mainItemName, itemID, sizeof(itemID));
 
 			if(result && StrEqual(itemID, "NOT_FOUND") == false)
+			{
 				itemFound++;
+			}
 			else
-				break;
+			{
+				CPrintToChat(client, "%s {fullred}Item %s not found for package %s !", MODULE_NAME, mainItemName, packageName);
+			}
 		}
 		
 		if (itemFound == GetArraySize(items))
 			PushArrayCell(ARRAY_ClientPackages, trie);
+			
 	
 		ResetInventories(client);
 	}
