@@ -318,7 +318,7 @@ public Handle AvailabeVIPPackage(int client)
 			}
 			else
 			{
-				CPrintToChat(client, "%s {fullred}Item %s not found for package %s !", MODULE_NAME, mainItemName, packageName);
+				//CPrintToChat(client, "%s {fullred}Item %s not found for package %s !", MODULE_NAME, mainItemName, packageName);
 			}
 		}
 		

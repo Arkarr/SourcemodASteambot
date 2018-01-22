@@ -195,7 +195,7 @@ public void OnPluginStart()
 
 public void OnMapEnd()
 {
-	SendMessage(serverID, AS_DISCONNECT, "byebyelul", 9);
+	//SendMessage(serverID, AS_DISCONNECT, "byebyelul", 9);
 	SocketDisconnect(clientSocket);
 }
 
