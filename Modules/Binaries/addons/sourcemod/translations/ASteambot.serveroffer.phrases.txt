@@ -3,9 +3,10 @@
     //Commands
     "ingame"
     {
-        "en"    "This command can be usued only in game !"
+        "en"    "This command can be used only in game !"
         "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
         "pl"    "Ta komenda może być użyta tylko w grze!"
+	"ru"    "Эта команда может быть использована только в игре!"
     }
     //General
     "ItemsError"
@@ -13,41 +14,48 @@
         "en"   		"Couldn't load your items ! Is your steam inventory private ? Try again later."
         "pl"   		"Nie można załadować twoich przedmiotów! Czy twój ekwipunek jest prywatny? Spróbuj później."
 	"fr"		"Impossible de charger vos objets! Votre inventaire est-il privé? Réessayez plus tard."
+	"ru"    "Не могу загрузить Ваши предметы! Похоже, что Ваш инвентарь в скрытый! Попробуйте позже."
     }
     "ItemsReload"
     {
         "en"   		"Scanning your steam inventory..."
         "pl"   		"Skanowanie twojego ekwipunku Steam..."
 	"fr"		"Analyse de votre inventaire..."
+	"ru"    "Сканирую Ваш инвентарь в Стиме..."
     }
     "InventoryScanned"
     {
    		"en"		"Inventory scanned sucessfully !"
    		"pl"		"Ekwipunek pomyślnie zeskanowany!"
 		"fr"		'Analyse de votre inventaire réussi !"
+	"ru"    "Инвентарь успешно проскандирован!"
   	}
     "MenuOfferEdit"
     {
    		"en"		"Select a item to edit it's offer :"
    		"pl"		"Wybierz przedmiot żeby edytować ofertę:"
 		"fr"		"Sélectionnez un élément pour modifier son offre :"
+	"ru"    "Выберите предмет, чтобы отредактировать предложение : "
   	}
   	"OfferEdit"
   	{
   		"en"		"Edit your offer's message with command !editoffer [MESSAGE] ! {red}Color {orange}can {yellow}be {pink}added {purple}using {black}tag{default} : {COLOR}"
   		"pl"		"Edytuj swoją wiadomość ofert komendą !editoffer [MESSAGE]! {red}Kolor {orange}może {yellow}być {pink}dodany {purple}używając {black}tagu{default}: {COLOR}"
 		"fr"		"Modifiez le message de votre offre avec la commande !editoffer [MESSAGE]! {rouge} La couleur {orange} peut {yellow} être {rose} ajoutée {violet}en utilisant {black}tag{default}: {COLOR} "
+	"ru"    "«Изменить предложение можно с помощью команды !editoffer [MESSAGE]! {Red} Цвет {orange} может {yellow} быть {pink} добавлен {purple} с помощью {black} тега {default}: {COLOR}""
  	}
  	"NoOfferFound"
  	{
  		"en"		"No offer found. Create some before displaying them !"
  		"pl"		"Nie znaleziono ofert. Stwórz jakąś zanim będziesz chciał ją pokazać!"
 		"fr"		"Aucune offre trouvée. En créer avant de les afficher !"
+	"ru"    "Предложение не было найдено. Создайте одно, прежде чем показывать его!"
 	}
 	"ItemSelectFirstly"
 	{
 		"en"		"You have to select an item to edit offer ! Displaying the menu now..."
 		"pl"		"Musisz wybrać przedmiot aby edytować ofertę! Otwieram menu..."
 		"fr"		"Vous devez sélectionner un élément pour modifier l'offre ! Afficher le menu maintenant ... "
+	"ru"    "Необходимо выбрать предмет, чтобы редактировать предложение! Отображаю меню..."
 	}
 }
