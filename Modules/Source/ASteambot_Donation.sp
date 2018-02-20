@@ -116,7 +116,7 @@ public void OnConfigsExecuted()
 	
 	valueMultiplier = GetConVarFloat(CVAR_ValueMultiplier);
 	
-	if(StrEqual(store, STORE_NONE))
+	if(!StrEqual(store, STORE_NONE))
 		SQL_TConnect(GotDatabase, dbconfig);
 }
 
