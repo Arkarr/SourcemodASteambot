@@ -48,6 +48,7 @@
         "en"        "I can't send you trade offer because we are not friends on Steam ! Add me using !friend !"
         "fr"        "Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam ! Ajouter en utilisant !friend !"
 		"pl"        "Nie mogę Ci wysłać ofery, bo nie jesteśmy znajomymi na Steam! Dodaj mnie komendą !friend!"
+		"ru"        "Я не могу отправить вам трейд, потому что мы не друзья в Steam! Добавьте меня, используя команду !friend !"
     }
     "Steam_FriendInvitSend"
     {
