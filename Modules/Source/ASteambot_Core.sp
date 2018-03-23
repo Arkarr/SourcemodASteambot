@@ -11,9 +11,11 @@
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
 #define M_NAME			"mName"
+#define MAX_DATA_SIZE   1000
 
 Handle modules;
 Handle clientSocket;
+Handle ARRAY_Data;
 Handle CVAR_Debug;
 Handle CVAR_SteambotServerIP;
 Handle CVAR_SteambotServerPort;
@@ -31,6 +33,7 @@ int serverID;
 bool DEBUG;
 bool connected;
 
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Core", 
@@ -42,6 +45,7 @@ public Plugin myinfo =
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {   
+	ARRAY_Data = CreateArray(MAX_DATA_SIZE);
 	modules = CreateArray();
 
 	CreateNative("ASteambot_RegisterModule", Native_RegisterModule);
@@ -132,6 +136,9 @@ public int Native_IsConnected(Handle plugin, int numParams)
 
 public int Native_SendMesssage(Handle plugin, int numParams)
 {
+	if(!ASteambot_IsConnected())
+		return false;
+		
 	char message[950];
 	int messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
@@ -145,16 +152,21 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	}
 	else
 	{
-		PrintToServer("%s ERROR: Module not found ! Is it registred?", M_NAME);
+		PrintToServer("%s ERROR: Module not found ! Is it registred ?", MODULE_NAME);
+		PrintToChatAll("%s ERROR: Module not found !", MODULE_NAME);
 	}
+	
+	return true;
 }
 
 public int Native_CreateTradeOffer(Handle plugin, int numParams)
 {
-	char message[9999]; //bad
+	char message[MAX_DATA_SIZE]; //bad
 	
 	int client = GetNativeCell(1);
 	Handle ItemList = GetNativeCell(2);
+	Handle MyItemList = GetNativeCell(3);
+	float fakeValue = GetNativeCell(4);
 	Handle module = GetModuleByPlugin(plugin);
 	
 	char clientSteamID[40];
@@ -175,6 +187,39 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 		StrCat(message, sizeof(message), item);
 	}
 	
+	StrCat(message, sizeof(message), "/");
+	
+	if(MyItemList != INVALID_HANDLE && GetArraySize(MyItemList) > 0)
+	{
+		for (int i = 0; i < GetArraySize(MyItemList); i++)
+		{
+			GetArrayString(MyItemList, i, item, sizeof(item));
+			
+			if(i+1 != GetArraySize(MyItemList))
+				Format(item, sizeof(item), "%s,", item);
+			else
+				Format(item, sizeof(item), "%s", item);
+				
+			StrCat(message, sizeof(message), item);
+		}
+	}
+	else
+	{
+		StrCat(message, sizeof(message), "NULL");
+	}
+	
+	
+	if(fakeValue != 1.0)
+	{
+		char fakeVal[100];
+		Format(fakeVal, sizeof(fakeVal), "/%.2f", fakeValue);
+		StrCat(message, sizeof(message), fakeVal);
+	}
+	else
+	{
+		StrCat(message, sizeof(message), "/-1");
+	}
+	
 	int id;
 	GetTrieValue(module, M_ID, id);
 	
@@ -190,13 +235,20 @@ public void OnPluginStart()
 	CVAR_SteambotServerPort = CreateConVar("sm_asteambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
 	CVAR_SteambotTCPPassword = CreateConVar("sm_asteambot_tcp_password", "XYZ", "The password to allow TCP data to be read / send (TCPPassword in settings.json)");
 	
+	HookConVarChange(CVAR_Debug, CVARHOOK_DebugMode);
+	
 	AutoExecConfig(true, "asteambot_core", "asteambot");
+}
+
+public void CVARHOOK_DebugMode(Handle cvar, const char[] oldValue, const char[] newValue)
+{
+	DEBUG = GetConVarBool(cvar);
 }
 
 public void OnMapEnd()
 {
-	//SendMessage(serverID, AS_DISCONNECT, "byebyelul", 9);
-	SocketDisconnect(clientSocket);
+	/*SendMessage(serverID, AS_DISCONNECT, "byebyelul", 9);
+	SocketDisconnect(clientSocket);*/
 }
 
 public void OnConfigsExecuted()
@@ -218,8 +270,12 @@ public void OnConfigsExecuted()
 
 public void AttemptSteamBotConnection()
 {
+	if(connected)
+		return;
+		
 	connected = false;
 	clientSocket = SocketCreate(SOCKET_TCP, OnClientSocketError);
+	SocketSetOption(clientSocket, SocketReceiveBuffer, MAX_DATA_SIZE);
 	PrintToServer("%s - Attempt to connect to %s:%i ...", MODULE_NAME, steambotIP, StringToInt(steambotPort));
 	SocketConnect(clientSocket, OnClientSocketConnected, OnChildSocketReceive, OnChildSocketDisconnected, steambotIP, StringToInt(steambotPort));
 }
@@ -268,10 +324,27 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
-	if(DEBUG)
-		PrintToServer("RECEIVED DATA : %s", receiveData);
+	if(StrContains(receiveData, "<EOF>") == -1)
+	{
+		if(DEBUG)
+			PrintToServer("Data Size : %i", dataSize);
+			
+		PushArrayString(ARRAY_Data, receiveData);
+		return;
+	}
+	PushArrayString(ARRAY_Data, receiveData);
+	
+	int stringSize = (MAX_DATA_SIZE) * GetArraySize(ARRAY_Data);
+	char[] finalData = new char[stringSize];
+	for (int i = 0; i < GetArraySize(ARRAY_Data); i++)
+	{
+		char[] data = new char[MAX_DATA_SIZE];
+		GetArrayString(ARRAY_Data, i, data, MAX_DATA_SIZE);
+		StrCat(finalData, stringSize, data);
+	}
+	ClearArray(ARRAY_Data);
 		
-	if(StrContains(receiveData, steambotPassword) == -1)
+	if(StrContains(finalData, steambotPassword) == -1)
 	{
 		if(DEBUG)
 			PrintToServer(">>> PASSWORD INCORECT");
@@ -279,14 +352,16 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		return;
 	}
 	
-	ReplaceString(receiveData, dataSize, steambotPassword, "");
-	ReplaceString(receiveData, dataSize, "<EOF>", "");
+	PrintToServer(">>> %s", finalData);
 	
-	char[][] mc_data = new char[2][dataSize];
+	ReplaceString(finalData, stringSize, steambotPassword, "");
+	ReplaceString(finalData, stringSize, "<EOF>", "");
+	
+	char[][] mc_data = new char[2][stringSize];
 	char[][] moduleID_code = new char[2][10];
 	
-	ExplodeString(receiveData, "|", mc_data, 2, dataSize);
-	ExplodeString(mc_data[0], ")", moduleID_code, 2, dataSize);
+	ExplodeString(finalData, "|", mc_data, 2, stringSize);
+	ExplodeString(mc_data[0], ")", moduleID_code, 2, stringSize);
 	
 	if(DEBUG)
 	{
@@ -314,7 +389,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 				Call_StartForward(g_fwdASteambotMessage);
 				Call_PushCell(code);
 				Call_PushString(mc_data[1]);
-				Call_PushCell(dataSize);
+				Call_PushCell(stringSize);
 				Call_Finish();
 			}
 			else
@@ -335,7 +410,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 					Call_StartFunction(p, GetFunctionByName(p, "ASteambot_Message"));
 					Call_PushCell(code);
 					Call_PushString(mc_data[1]);
-					Call_PushCell(dataSize);
+					Call_PushCell(stringSize);
 					Call_Finish();
 				}
 			}

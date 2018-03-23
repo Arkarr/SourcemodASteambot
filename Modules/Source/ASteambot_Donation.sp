@@ -16,7 +16,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"2.5"
+#define PLUGIN_VERSION 			"3.0"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -40,6 +40,10 @@
 #define QUERY_INSERT_MONEY		"INSERT INTO `t_client` (`client_steamid`,`client_balance`) VALUES (\"%s\", %.2f);"
 #define QUERY_UPDATE_MONEY		"UPDATE `t_client` SET `client_balance`=%.2f WHERE `client_steamid`=\"%s\""
 
+#define CONFIG_OverridPrices	"configs/ASDonation_Prices.ini"
+#define CONFIG_ExcludedItems	"configs/ASDonation_ExcludedItems.ini"
+#define CONFIG_IncludedItems	"configs/ASDonation_IncludedItems.ini"
+
 char store[15];
 
 int lastSelectedGame[MAXPLAYERS + 1];
@@ -55,6 +59,9 @@ Handle CVAR_MaxDonation;
 Handle CVAR_MinDonation;
 Handle CVAR_ValueMultiplier;
 Handle CVAR_DBConfigurationName;
+Handle TRIE_OverridedPrices;
+Handle ARRAY_ExcludedItems;		
+Handle ARRAY_IncludedItems;
 Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
@@ -92,6 +99,10 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_donate", CMD_Donate, "Create a trade offer with ASteambot as donation.");
 	RegConsoleCmd("sm_friend", CMD_AsFriends, "Send a steam invite to the player.");
 	
+	RegAdminCmd("sm_asdonation_reload_config", CMD_ReloadConfig, ADMFLAG_CONFIG, "Reload the configs file");
+	
+	LoadOverridedPrices();
+	
 	AutoExecConfig(true, "asteambot_donation", "asteambot");
 	
 	LoadTranslations("ASteambot.donation.phrases");
@@ -118,6 +129,55 @@ public void OnConfigsExecuted()
 	
 	if(!StrEqual(store, STORE_NONE))
 		SQL_TConnect(GotDatabase, dbconfig);
+}
+
+public void LoadOverridedPrices()
+{
+	TRIE_OverridedPrices = CreateTrie();
+	ARRAY_ExcludedItems = CreateArray(100);
+	ARRAY_IncludedItems = CreateArray(100);
+	
+	char path[PLATFORM_MAX_PATH], line[128];
+	BuildPath(Path_SM, path, PLATFORM_MAX_PATH, CONFIG_OverridPrices);
+	Handle fileHandle = OpenFile(path, "r");
+	
+	PrintToServer(path);
+	
+	while(!IsEndOfFile(fileHandle) && ReadFileLine(fileHandle, line, sizeof(line)))
+	{
+		char bit[2][64];
+		if(StrContains(line, "=") != -1 && ExplodeString(line, "=", bit, sizeof bit, sizeof bit[]) == 2)
+			SetTrieValue(TRIE_OverridedPrices, bit[0], (StringToFloat(bit[1])/GetConVarFloat(CVAR_ValueMultiplier)));
+	}
+	
+	CloseHandle(fileHandle);
+	
+	BuildPath(Path_SM, path, PLATFORM_MAX_PATH, CONFIG_ExcludedItems);
+	fileHandle = OpenFile(path, "r");
+	
+	while(!IsEndOfFile(fileHandle) && ReadFileLine(fileHandle, line, sizeof(line)))
+	{
+		ReplaceString(line, sizeof(line), "\n", "");
+		ReplaceString(line, sizeof(line), "\r", "");
+		ReplaceString(line, sizeof(line), "\t", "");
+		PushArrayString(ARRAY_ExcludedItems, line);
+	}
+		
+	CloseHandle(fileHandle);
+	
+	BuildPath(Path_SM, path, PLATFORM_MAX_PATH, CONFIG_IncludedItems);
+	fileHandle = OpenFile(path, "r");
+	
+	while(!IsEndOfFile(fileHandle) && ReadFileLine(fileHandle, line, sizeof(line)))
+	{
+		ReplaceString(line, sizeof(line), "\n", "");
+		ReplaceString(line, sizeof(line), "\r", "");
+		ReplaceString(line, sizeof(line), "\t", "");
+		
+		PushArrayString(ARRAY_IncludedItems, line);
+	}
+		
+	CloseHandle(fileHandle);
 }
 
 public void OnClientConnected(int client)
@@ -149,6 +209,18 @@ public Action CMD_Donate(int client, int args)
 	ASteambot_SendMesssage(AS_SCAN_INVENTORY, clientSteamID);
 	
 	return Plugin_Handled;
+}
+
+public Action CMD_ReloadConfig(int client, int args)		
+{		
+	LoadOverridedPrices();		
+		
+	if(client != 0)		
+		CPrintToChat(client, "%s {green}Done !", MODULE_NAME);		
+	else		
+		PrintToServer("%s Done !", MODULE_NAME);		
+			
+	return Plugin_Handled;		
 }
 
 public Action CMD_AsFriends(int client, int args)
@@ -196,7 +268,8 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		Format(offerID, messageSize, parts[1]);
 		Format(value, messageSize, parts[2]);
 		
-		float credits = GetItemValue(StringToFloat(value));
+		float credits = StringToFloat(value);
+		//float credits = GetItemValue(StringToFloat(value));
 		
 		if(credits > maxValue)
 			credits += ((credits - maxValue) / credits) * credits;
@@ -250,16 +323,78 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 	ARRAY_ItemsCSGO[client] = CreateArray(csgo_icount);
 	ARRAY_ItemsDOTA2[client] = CreateArray(dota2_icount);
 	
+	bool inv_tf2 = CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
+	bool inv_csgo = CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
+	bool inv_dota2 = CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
+	
 	CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
 	CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
 	CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
 	
-	lastSelectedGame[client] = -1;
-	
-	DisplayInventorySelectMenu(client);
+	if(!inv_tf2 && !inv_csgo && !inv_dota2)
+    {
+		lastSelectedGame[client] = -1;
+		
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_InventoryError");
+	}
+	else
+	{
+		lastSelectedGame[client] = -1;
+		
+		DisplayInventorySelectMenu(client);
+	}
 }
 
-public void CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
+public bool IsItemAllowed(const char[] itemName)
+{
+	bool excluded = false;
+	bool allowed = false;
+	
+	for (int i = 0; i < GetArraySize(ARRAY_ExcludedItems); i++)
+	{
+		if(excluded)
+			continue;
+			
+		char excludedItem[100];
+		GetArrayString(ARRAY_ExcludedItems, i, excludedItem, sizeof(excludedItem));
+		
+		if(!StrEqual(excludedItem, "*"))
+		{
+			if(StrContains(itemName, excludedItem, false) != -1)
+			{
+				excluded = true;
+			}
+		}
+		else
+		{
+			excluded = true;
+		}
+	}
+
+	if(excluded)
+	{
+		for (int i = 0; i < GetArraySize(ARRAY_IncludedItems); i++)
+		{
+			if(allowed)
+				continue;
+				
+			char includedItem[100];
+			GetArrayString(ARRAY_IncludedItems, i, includedItem, sizeof(includedItem));
+			
+			if(!StrEqual(includedItem, "*"))
+			{
+				if(StrContains(itemName, includedItem, false) != -1)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	
+	return !excluded;
+}
+
+/*public void CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
 	if(!StrEqual(strinventory, "EMPTY"))
 	{
@@ -284,6 +419,45 @@ public void CreateInventory(int client, const char[] strinventory, int itemCount
 	{
 		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
 	}
+}*/
+public bool CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
+{
+	PrintToServer("DEBUG: %i", itemCount);
+	if(!StrEqual(strinventory, "EMPTY"))
+	{
+		char[][] items = new char[itemCount][60];
+		
+		ExplodeString(strinventory, ",", items, itemCount, 60);
+		
+		for (int i = 0; i < itemCount; i++)
+		{
+			char itemInfos[3][100];
+			ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
+			
+			Handle TRIE_Item = CreateTrie();
+			SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
+			SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
+			
+			if(IsItemAllowed(itemInfos[1]))
+			{
+				float value;
+				if(GetTrieValue(TRIE_OverridedPrices, itemInfos[1], value))
+					SetTrieValue(TRIE_Item, ITEM_VALUE, value);
+				else
+					SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
+				
+				SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
+				PushArrayCell(inventory, TRIE_Item);
+			}
+		}
+	}
+	else if(StrEqual(strinventory, "ERROR"))
+	{
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
+		return false;
+	}
+	
+	return true;
 }
 
 public int CountCharInString(const char[] str, int c)
@@ -431,7 +605,7 @@ public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int
 			}
 			else if(minValue <= tradeValue[client])
 			{
-				CreateTradeOffer(client);
+				CreateTradeOffer(client, tradeValue[client]);
 				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
 			}
 			else
@@ -476,7 +650,7 @@ public Handle GetLastInventory(int client)
 	return INVALID_HANDLE;
 }
 
-public void CreateTradeOffer(int client)
+public void CreateTradeOffer(int client, float tv)
 {
 	char itemID[32];
 	int selected = 0;
@@ -495,7 +669,7 @@ public void CreateTradeOffer(int client)
 		}
 	}
 	
-	ASteambot_CreateTradeOffer(client, items)
+	ASteambot_CreateTradeOffer(client, items, INVALID_HANDLE, tv);
 }
 
 public void GetPlayerCredits(Handle db, Handle results, const char[] error, any data)
@@ -592,4 +766,4 @@ stock bool IsValidClientASteambot(int client)
 	if (client > MaxClients)return false;
 	if (!IsClientConnected(client))return false;
 	return IsClientInGame(client);
-} 
+}

@@ -65,3 +65,5 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
 	Format(text, sizeof(text), "%N : %s", client, sArgs)
 	ASteambot_SendMesssage(AS_HOOK_CHAT, text);
 }
+
+public void 

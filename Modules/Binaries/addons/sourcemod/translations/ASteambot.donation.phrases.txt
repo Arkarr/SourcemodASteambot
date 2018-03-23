@@ -123,6 +123,10 @@
         "pl"    "Wartość twoich itemów musi być minimum {1}$. Dając więcej niż {2}$ otrzymasz wielki bonus!"
 	"ru"        "Стоимость Ваших товаров должна быть не менее {1} кредитов. Предоставляя больше, чем {2} кредитов, Вы получите огромный дополнительный бонус!"
     }
+    "TradeOffer_InventoryError"
+    {
+    	"en"    "There was an error loading your inventory. Try again in a few minutes !"
+    }
     "TradeOffer_ItemsError"
     {
         "#format"   "{1:s}"

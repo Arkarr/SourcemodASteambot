@@ -59,7 +59,7 @@ native void ASteambot_SendMesssage(int MessageType, const char[] message)
  * 
  * @return          Nothing.
  */ 
-native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID) 
+native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID, Handle ArrayMyAssetID = null, float fakeValue = -1.0) 
 
 /** 
  * Fire when ever you get a message from ASteambot.
