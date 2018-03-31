@@ -285,7 +285,7 @@ public void AttemptSteamBotConnection()
 /////////////
 public OnClientSocketConnected(Handle socket, any arg)
 {
-	PrintToServer("%s - CONNECTED to the steambot.", MODULE_NAME);
+	PrintToServer("%s - CONNECTED to ASteambot.", MODULE_NAME);
 	
 	char data[200];
 	char map[100];
@@ -298,7 +298,9 @@ public OnClientSocketConnected(Handle socket, any arg)
 	pieces[2] = (longip >> 8) & 0x000000FF;
 	pieces[3] = longip & 0x000000FF;
 	
-	Format(data, sizeof(data), "%s-1,-1|%i&%d.%d.%d.%d", steambotPassword, AS_REGISTER_SERVER, pieces[0], pieces[1], pieces[2], pieces[3]);
+	char gslttoken[50];
+	GetServerAuthId(AuthId_SteamID64, gslttoken, sizeof(gslttoken));
+	Format(data, sizeof(data), "%s-1,-1|%i&%s|%d.%d.%d.%d", steambotPassword, AS_REGISTER_SERVER, gslttoken, pieces[0], pieces[1], pieces[2], pieces[3]);
 	
 	Format(data, sizeof(data), "%s|%i", data, GetConVarInt(FindConVar("hostport")));
 	
@@ -450,7 +452,7 @@ public Handle GetModuleByID(int id)
 
 public OnChildSocketDisconnected(Handle socket, any hFile)
 {
-	PrintToServer("%s - DISCONNECTED to the steambot.", MODULE_NAME);
+	PrintToServer("%s - DISCONNECTED to ASteambot.", MODULE_NAME);
 	connected = false;
 	CloseHandle(socket);
 	
