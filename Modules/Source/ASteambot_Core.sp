@@ -326,6 +326,7 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
+	PrintToServer(receiveData);
 	if(StrContains(receiveData, "<EOF>") == -1)
 	{
 		if(DEBUG)
