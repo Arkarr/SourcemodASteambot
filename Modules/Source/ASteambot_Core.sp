@@ -320,6 +320,15 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 	LogError("%s - socket error %d (errno %d)", MODULE_NAME, errorType, errorNum);
 	CloseHandle(socket);
 	
+	if(errorNum == 3)
+	{
+		PrintToServer("*********************** ASTEAMBOT CORE ***********************");
+		PrintToServer("* This error means you failed to configure the TCP port !    *");
+		PrintToServer("* Check the documentation again. Have you opened the port on *");
+		PrintToServer("* the machine running ASteambot ?                            *");
+		PrintToServer("**************************************************************");
+	}
+	
 	if (TimerReconnect == INVALID_HANDLE)
 		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
 }
