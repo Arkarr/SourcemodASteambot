@@ -6,6 +6,8 @@
 #include <morecolors>
 #include <redirect/version.sp>
 
+#define MODULE_NAME		"[ASteambot - Redirect]"
+
 public Plugin myinfo =
 {
     name = "Server Redirect: Ask connect with ASteambot",
@@ -53,11 +55,11 @@ public ASteambot_Message(int MessageType, char[] msg, const int msgSize)
 	}
 	else if(MessageType == AS_NOT_FRIENDS)
 	{
-		int clientID = FindClientBySteamID(msg);
-		if(clientID != -1)
+		int client = FindClientBySteamID(msg);
+		if(client != -1)
 		{
 			ASteambot_SendMesssage(AS_FRIEND_INVITE, msg);
-			PrintToServer("You are not friend with me and I can't send you steam messages. I sent you a friend invite.");
+			CPrintToChat(client, "{green}%s{default} You are not friend with me and I can't send you steam messages. I sent you a friend invite.", MODULE_NAME);
 		}
 	}
 }
