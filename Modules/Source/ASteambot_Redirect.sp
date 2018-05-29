@@ -71,11 +71,10 @@ public int FindClientBySteamID(char[] steamID)
 	{
 		if (IsValidClient(i))
 		{
-			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-			if (StrEqual(clientSteamID, steamID))
-			{
-				return i;
-			}
+			if (GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID)) && StrEqual(clientSteamID, steamID))
+            {
+                return i;
+            }
 		}
 	}
 	
