@@ -57,6 +57,7 @@ Handle DATABASE;
 Handle CVAR_UsuedStore;
 Handle CVAR_MaxDonation;
 Handle CVAR_MinDonation;
+Handle CVAR_RCONOnSucess;
 Handle CVAR_ValueMultiplier;
 Handle CVAR_DBConfigurationName;
 Handle TRIE_OverridedPrices;
@@ -95,6 +96,7 @@ public void OnPluginStart()
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
 	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
 	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donation_value", "50", "Any trade offer's value below this cvar is automatically refused.");
+	CVAR_RCONOnSucess = CreateConVar("sm_asteambot_trade_sucess_rcon", "sm_say \"Hello World\";sm_slap [PLAYER] 0", "The following command will be executed on trade sucess. [PLAYER] is the steamID of the one who made the trade.");
 	
 	RegConsoleCmd("sm_donate", CMD_Donate, "Create a trade offer with ASteambot as donation.");
 	RegConsoleCmd("sm_friend", CMD_AsFriends, "Send a steam invite to the player.");
@@ -287,29 +289,35 @@ public int ASteambot_Message(int MessageType, char[] message, const int messageS
 		else if (StrEqual(store, STORE_ZEPHYRUS))
 		{
 			Store_SetClientCredits(client, Store_GetClientCredits(client) + RoundFloat(credits));
-	
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_SMSTORE))
 		{
 			int id[1];
 			id[0] = Store_GetClientAccountID(client);
 			Store_GiveCreditsToUsers(id, 1, RoundFloat(credits));
-	
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_SMRPG))
 		{
 			SMRPG_SetClientExperience(client, SMRPG_GetClientExperience(client) + RoundFloat(credits));
-	
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
 		else if (StrEqual(store, STORE_MYJS))
 		{
 			MyJailShop_SetCredits(client, MyJailShop_GetCredits(client) + RoundFloat(credits));
-	
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		}
+		
+		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
+		
+		char rconcmds[1000];
+		char target[10];
+		char rconcmd[10][100];
+		
+		Format(target, sizeof(target), "#%i", client);
+		GetConVarString(CVAR_RCONOnSucess, rconcmds, sizeof(rconcmds));
+		ReplaceString(rconcmds, sizeof(rconcmds), "[PLAYER]", target);
+		
+		int size = ExplodeString(rconcmds, ";", rconcmd, sizeof rconcmd, sizeof rconcmd[]);
+		for (int i = 0; i < size; i++)
+			ServerCommand(rconcmd[i]);
 	}
 }
 
