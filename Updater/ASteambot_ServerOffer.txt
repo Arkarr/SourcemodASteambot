@@ -1,0 +1,19 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.0"
+		}
+		
+		"Notes"	"Initial release."
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_ServerOffer.smx"
+		"Source"	"Path_SM/scripting/ASteambot_ServerOffer.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.serveroffer.phrases.txt"
+	}
+}

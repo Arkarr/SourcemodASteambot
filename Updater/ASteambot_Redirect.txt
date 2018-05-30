@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.1"
+		}
+		
+		"Notes"	"Is automatic updater working ?"
+		"Notes"	"Yes !"
+		"Notes"	"-----------"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_Redirect.smx"
+		"Source"	"Path_SM/scripting/ASteambot_Redirect.sp"
+	}
+}

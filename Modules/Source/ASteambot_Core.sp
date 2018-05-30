@@ -2,6 +2,8 @@
 #include <sdktools>
 #include <socket>
 #include <ASteambot>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -12,6 +14,7 @@
 #define M_ID			"mID"
 #define M_NAME			"mName"
 #define MAX_DATA_SIZE   1000
+#define UPDATE_URL    	"http://website.com/myplugin/updatefile.txt"
 
 Handle modules;
 Handle clientSocket;
@@ -33,7 +36,6 @@ int serverID;
 bool DEBUG;
 bool connected;
 
-
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Core", 
@@ -42,6 +44,18 @@ public Plugin myinfo =
 	version = PLUGIN_VERSION, 
 	url = "http://www.sourcemod.net"
 };
+
+public void OnPluginStart()
+{
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL)
+}
+
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL)
+}
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {   

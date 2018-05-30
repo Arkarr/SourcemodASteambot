@@ -1,0 +1,18 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.5"
+		}
+		
+		"Notes"	"Initial release."
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_InviteToGroup.smx"
+		"Source"	"Path_SM/scripting/ASteambot_InviteToGroup.sp"
+	}
+}

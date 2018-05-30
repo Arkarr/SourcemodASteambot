@@ -7,13 +7,20 @@
 #include <redirect/version.sp>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
+#define PLUGIN_VERSION 	"1.1"
+
+//Release note
+/*
+*Is automatic updater working ?
+*Yes !
+*/
 
 public Plugin myinfo =
 {
     name = "Server Redirect: Ask connect with ASteambot",
     author = "Arkarr",
     description = "Server redirection/follow: Ask connect with ASteambot",
-    version = VERSION,
+    version = PLUGIN_VERSION,
     url = "http://www.sourcemod.net"
 };
 

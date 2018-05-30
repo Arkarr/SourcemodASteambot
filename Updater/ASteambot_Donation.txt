@@ -1,0 +1,22 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"3.0"
+		}
+		
+		"Notes"	"Initial release."
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_Donation.smx"
+		"Source"	"Path_SM/scripting/ASteambot_Donation.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.donation.phrases.txt"
+		"Plugin"	"Path_SM/configs/ASDonation_ExcludedItems.ini"
+		"Plugin"	"Path_SM/configs/ASDonation_IncludedItems.ini"
+		"Plugin"	"Path_SM/configs/ASDonation_Prices.ini"
+	}
+}

@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.0"
+		}
+		
+		"Notes"	"Initial release."
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_VIP.smx"
+		"Source"	"Path_SM/scripting/ASteambot_VIP.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.vip.phrases.txt"
+		"Plugin"	"Path_SM/configs/vippackages.cfg"
+	}
+}

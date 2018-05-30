@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.0"
+		}
+		
+		"Notes"	"Initial release."
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_InventoryRank.smx"
+		"Source"	"Path_SM/scripting/ASteambot_InventoryRank.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.invrank.phrases.txt"
+		"Plugin"	"Path_SM/configs/inventoryranks.cfg"
+	}
+}
