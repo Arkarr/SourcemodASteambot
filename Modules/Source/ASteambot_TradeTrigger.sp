@@ -2,6 +2,8 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -24,6 +26,8 @@
 #define QUERY_INSERT_MONEY		"INSERT INTO `t_client` (`client_steamid`,`client_balance`) VALUES (\"%s\", %.2f);"
 #define QUERY_UPDATE_MONEY		"UPDATE `t_client` SET `client_balance`=%.2f WHERE `client_steamid`=\"%s\""
 
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_TradeTrigger.txt"
+
 int lastSelectedGame[MAXPLAYERS + 1];
 
 float minValue;
@@ -44,6 +48,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public void OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_TradeTrigger");
@@ -55,6 +65,9 @@ public void OnPluginStart()
 	AutoExecConfig(true, "asteambot_tradetrigger", "asteambot");
 	
 	LoadTranslations("ASteambot.tradetrigger.phrases");
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

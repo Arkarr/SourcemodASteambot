@@ -3,6 +3,8 @@
 #include <ASteambot>
 #include <morecolors>
 #include <chat-processor>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -16,6 +18,7 @@
 #define ITEM_DONATED			"itemDonated"
 #define TRIE_RNAME				"rank_name"
 #define TRIE_RVALUE				"rank_value"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InventoryRank.txt"
 
 EngineVersion Game;
 
@@ -33,6 +36,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public void OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_InvRank");
@@ -46,6 +55,9 @@ public void OnPluginStart()
 	LoadTranslations("ASteambot.invrank.phrases");
 	
 	Game = GetEngineVersion();
+	
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

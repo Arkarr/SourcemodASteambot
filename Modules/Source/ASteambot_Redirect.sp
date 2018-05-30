@@ -5,9 +5,12 @@
 #include <adminmenu>
 #include <morecolors>
 #include <redirect/version.sp>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
 #define PLUGIN_VERSION 	"1.1"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 //Release note
 /*
@@ -24,11 +27,20 @@ public Plugin myinfo =
     url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_Redirect");
 	
 	LoadTranslations("redirect.phrases");
+	
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

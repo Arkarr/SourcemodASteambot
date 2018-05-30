@@ -2,10 +2,13 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"1.5"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InviteToGroup.txt"
 
 Handle CVAR_SteamGroupID;
 
@@ -18,6 +21,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_InviteToGroup");
@@ -27,6 +36,9 @@ public OnPluginStart()
 	CVAR_SteamGroupID = CreateConVar("sm_asteambot_steamgroupid", "", "The steam group id, THE BOT'S ACCOUNT HAVE TO BE IN THE GROUP AND THE RIGHT TO INVITE POEPLE !");
 	
 	AutoExecConfig(true, "asteambot_invitetogroup", "asteambot");
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

@@ -3,6 +3,8 @@
 #include <ASteambot>
 #include <morecolors>
 #include <VIP-Manager>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -18,6 +20,8 @@
 #define VIPP_TIME				"vip_time"
 #define VIPP_NAME				"package_name"
 #define VIPP_ID					"id"
+
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ ASteambot_VIP.txt "
 
 float tradeValue[MAXPLAYERS + 1];
 
@@ -37,6 +41,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 {	
 	MarkNativeAsOptional("ModVIP");
@@ -51,6 +61,9 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_donatevip", CMD_GetVP, "Create a trade offer and send it to the player.");
 	
 	LoadTranslations("ASteambot.vip.phrases");
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

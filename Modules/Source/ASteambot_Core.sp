@@ -14,7 +14,7 @@
 #define M_ID			"mID"
 #define M_NAME			"mName"
 #define MAX_DATA_SIZE   1000
-#define UPDATE_URL    	"http://website.com/myplugin/updatefile.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Core.txt"
 
 Handle modules;
 Handle clientSocket;
@@ -44,12 +44,6 @@ public Plugin myinfo =
 	version = PLUGIN_VERSION, 
 	url = "http://www.sourcemod.net"
 };
-
-public void OnPluginStart()
-{
-	if (LibraryExists("updater"))
-        Updater_AddPlugin(UPDATE_URL)
-}
 
 public void OnLibraryAdded(const char[] name)
 {
@@ -252,6 +246,9 @@ public void OnPluginStart()
 	HookConVarChange(CVAR_Debug, CVARHOOK_DebugMode);
 	
 	AutoExecConfig(true, "asteambot_core", "asteambot");
+	
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL)
 }
 
 public void CVARHOOK_DebugMode(Handle cvar, const char[] oldValue, const char[] newValue)

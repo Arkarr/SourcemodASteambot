@@ -2,10 +2,13 @@
 #include <sdktools>
 #include <ASteambot>
 #include <multicolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"1.3.1"
 #define MODULE_NAME 	"[ASteambot - Chat]"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Chat.txt"
 
 int connectionCount;
 
@@ -20,12 +23,21 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public void OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_Chat");
+	
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
-public OnPluginEnd();
+public OnPluginEnd()
 {
 	connectionCount = 0;
 	
@@ -65,5 +77,3 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
 	Format(text, sizeof(text), "%N : %s", client, sArgs)
 	ASteambot_SendMesssage(AS_HOOK_CHAT, text);
 }
-
-public void 

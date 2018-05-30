@@ -2,10 +2,13 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"1.0"
 #define MODULE_NAME 	"[ANY] ASteambot Steam Group Annoucement"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_SteamGroupAnnoucement.txt"
 
 Handle CVAR_SteamGroupID;
 
@@ -20,6 +23,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_SGAnnoucement");
@@ -29,6 +38,9 @@ public OnPluginStart()
 	CVAR_SteamGroupID = CreateConVar("sm_asteambot_steamgroupid", "", "The steam group id, THE BOT'S ACCOUNT HAVE TO BE IN THE GROUP AND HAVE THE RIGHT TO POST ANNOUCEMNTS !");
 	
 	AutoExecConfig(true, "asteambot_sgannoucement", "asteambot");
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

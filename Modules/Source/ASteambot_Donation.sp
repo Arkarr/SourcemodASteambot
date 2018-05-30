@@ -12,6 +12,7 @@
 #include <smstore/store/store-backend>
 #include <smrpg>
 #include <shavit>
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -43,6 +44,8 @@
 #define CONFIG_OverridPrices	"configs/ASDonation_Prices.ini"
 #define CONFIG_ExcludedItems	"configs/ASDonation_ExcludedItems.ini"
 #define CONFIG_IncludedItems	"configs/ASDonation_IncludedItems.ini"
+
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Donation.txt"
 
 char store[15];
 
@@ -108,6 +111,15 @@ public void OnPluginStart()
 	AutoExecConfig(true, "asteambot_donation", "asteambot");
 	
 	LoadTranslations("ASteambot.donation.phrases");
+	
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

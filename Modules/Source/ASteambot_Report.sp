@@ -3,10 +3,13 @@
 #include <ASteambot>
 #include <adminmenu>
 #include <morecolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"2.1"
 #define MODULE_NAME 	"[ASteambot - Report]"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 Handle CVAR_Delay;
 Handle ARRAY_DisconnectedPlayers;
@@ -27,6 +30,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_Report");
@@ -39,6 +48,9 @@ public OnPluginStart()
 	LoadTranslations("core.phrases");
 	
 	ARRAY_DisconnectedPlayers = CreateArray();
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()

@@ -2,6 +2,8 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
+#undef REQUIRE_PLUGIN
+#include <updater>
 
 #pragma dynamic 131072
 
@@ -14,6 +16,7 @@
 #define ITEM_VALUE				"itemValue"
 #define ITEM_DISPLAY			"itemDisplay"
 #define ITEM_MESSAGE			"itemMsg"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_ServerOffer.txt"
 
 EngineVersion Game;
 
@@ -32,6 +35,12 @@ public Plugin myinfo =
 	url = "http://www.sourcemod.net"
 };
 
+public void OnLibraryAdded(const char[] name)
+{
+    if (StrEqual(name, "updater"))
+        Updater_AddPlugin(UPDATE_URL);
+}
+
 public void OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_ServerItem");
@@ -45,6 +54,9 @@ public void OnPluginStart()
 	LoadTranslations("ASteambot.serveroffer.phrases");
 	
 	Game = GetEngineVersion();
+
+	if (LibraryExists("updater"))
+        Updater_AddPlugin(UPDATE_URL);
 }
 
 public OnPluginEnd()
