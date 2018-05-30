@@ -106,7 +106,7 @@ public Action CMD_InventoryRank(int client, int args)
 	return Plugin_Handled;
 }
 
-public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
+public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
 {
 	char[][] parts = new char[4][messageSize];	
 	char steamID[40];

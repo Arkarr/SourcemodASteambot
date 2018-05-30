@@ -37,7 +37,7 @@ public OnPluginEnd()
 	ASteambot_RemoveModule();
 }
 
-public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
+public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
 {
 	if (MessageType == AS_EXECUTE_CMD)
 		ServerCommand(message);

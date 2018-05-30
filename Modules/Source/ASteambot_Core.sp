@@ -148,7 +148,7 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 		return false;
 		
 	char message[950];
-	int messageType = GetNativeCell(1);
+	AS_MessageType messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
 	Handle module = GetModuleByPlugin(plugin);
 	
@@ -492,7 +492,7 @@ public Action TMR_TryReconnection(Handle timer, any none)
 ///////////
 // STOCK //
 ///////////
-stock void SendMessage(int mid, int messageType, char[] message, int msgSize)
+stock void SendMessage(int mid, AS_MessageType messageType, char[] message, int msgSize)
 {
 	Format(message, msgSize, "%s%i,%i|%i&%s<EOF>", steambotPassword, serverID, mid, messageType, message);
 	

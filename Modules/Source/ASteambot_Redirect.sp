@@ -66,7 +66,7 @@ public OnAskClientConnect(int client, char[] ip, char[] password)
 	}
 }
 
-public ASteambot_Message(int MessageType, char[] msg, const int msgSize)
+public ASteambot_Message(AS_MessageType MessageType, char[] msg, const int msgSize)
 {
 	if(MessageType == AS_SIMPLE)
 	{

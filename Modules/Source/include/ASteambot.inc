@@ -8,23 +8,27 @@
 #endif
 #define _INCLUDE_ASteambot
 
-#define AS_REGISTER_SERVER		0
-#define AS_HOOK_CHAT			1
-#define AS_UNHOOK_CHAT			2
-#define AS_SIMPLE				3
-#define AS_TRADEOFFER_SUCCESS	4
-#define AS_TRADEOFFER_DECLINED	5
-#define AS_SCAN_INVENTORY		6
-#define AS_CREATE_TRADEOFFER	7
-#define AS_NOT_FRIENDS			8
-#define AS_TRADE_TOKEN			9
-#define AS_FRIEND_INVITE		10
-#define AS_REPORT_PLAYER		11
-#define AS_INVITE_GROUP			12
-#define AS_SCAN_INVENTORY_IMG   13
-#define AS_EXECUTE_CMD		    14
-#define AS_DISCONNECT			15
-#define AS_SG_ANNOUCEMENT	    16
+
+enum AS_MessageType
+{
+    AS_REGISTER_SERVER = 0,
+    AS_HOOK_CHAT,
+    AS_UNHOOK_CHAT,
+    AS_SIMPLE,
+    AS_TRADEOFFER_SUCCESS,
+    AS_TRADEOFFER_DECLINED,
+    AS_SCAN_INVENTORY,
+    AS_CREATE_TRADEOFFER,
+    AS_NOT_FRIENDS,
+    AS_TRADE_TOKEN,
+    AS_FRIEND_INVITE,
+    AS_REPORT_PLAYER,
+    AS_INVITE_GROUP,
+    AS_SCAN_INVENTORY_IMG,
+    AS_EXECUTE_CMD,
+    AS_DISCONNECT,
+    AS_SG_ANNOUCEMENT
+};
 
 /** 
  * Register the plugin, required to receive and send messages.
@@ -52,7 +56,7 @@ native bool ASteambot_IsConnected()
  * 
  * @return          Nothing.
  */ 
-native void ASteambot_SendMesssage(int MessageType, const char[] message) 
+native void ASteambot_SendMesssage(AS_MessageType MessageType, const char[] message) 
 
 /** 
  * Send a message to ASteambot (Maximum char 900). 
@@ -66,7 +70,7 @@ native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID, Handle A
  * 
  * @return          Nothing.
  */ 
-forward int ASteambot_Message(int MessageType, char[] message, const int messageSize);
+forward int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize);
 
 /**
 Shared plugin information

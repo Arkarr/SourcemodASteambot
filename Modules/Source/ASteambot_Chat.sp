@@ -51,7 +51,7 @@ public void OnMapEnd()
 	ASteambot_SendMesssage(AS_UNHOOK_CHAT, "");
 }
 
-public int ASteambot_Message(int MessageType, char[] message, const int messageSize)
+public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
 {
 	if(MessageType == AS_HOOK_CHAT)
 	{
