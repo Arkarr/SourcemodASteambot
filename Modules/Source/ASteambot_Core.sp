@@ -14,7 +14,7 @@
 #define M_ID			"mID"
 #define M_NAME			"mName"
 #define MAX_DATA_SIZE   1000
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Core.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Core.txt"
 
 Handle modules;
 Handle clientSocket;

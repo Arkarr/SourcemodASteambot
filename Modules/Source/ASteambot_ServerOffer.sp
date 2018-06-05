@@ -16,7 +16,7 @@
 #define ITEM_VALUE				"itemValue"
 #define ITEM_DISPLAY			"itemDisplay"
 #define ITEM_MESSAGE			"itemMsg"
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_ServerOffer.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_ServerOffer.txt"
 
 EngineVersion Game;
 

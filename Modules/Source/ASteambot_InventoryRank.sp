@@ -18,7 +18,7 @@
 #define ITEM_DONATED			"itemDonated"
 #define TRIE_RNAME				"rank_name"
 #define TRIE_RVALUE				"rank_value"
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InventoryRank.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InventoryRank.txt"
 
 EngineVersion Game;
 

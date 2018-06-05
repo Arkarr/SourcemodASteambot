@@ -21,7 +21,7 @@
 #define VIPP_NAME				"package_name"
 #define VIPP_ID					"id"
 
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ ASteambot_VIP.txt "
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_VIP.txt"
 
 float tradeValue[MAXPLAYERS + 1];
 

@@ -8,7 +8,7 @@
 #define PLUGIN_AUTHOR 	"Arkarr"
 #define PLUGIN_VERSION 	"1.5"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InviteToGroup.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InviteToGroup.txt"
 
 Handle CVAR_SteamGroupID;
 

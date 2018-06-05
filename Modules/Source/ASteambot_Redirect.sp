@@ -10,7 +10,7 @@
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
 #define PLUGIN_VERSION 	"1.1"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
 //Release note
 /*
