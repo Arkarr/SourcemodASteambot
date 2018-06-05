@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"3.6"
+			"Latest"	"3.7"
 		}
 		
 		"Notes"	"Testing updater support"

@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"3.6"
+#define PLUGIN_VERSION 	"3.7"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
