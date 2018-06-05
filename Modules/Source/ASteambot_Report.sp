@@ -104,8 +104,8 @@ public Action CMD_Report(int client, int args)
 	if (args == 1)
 	{
 		GetCmdArg(1, arg1, sizeof(arg1));
-	
-	    Target[client] = FindTarget(client, arg1, true, false);
+
+		Target[client] = FindTarget(client, arg1, true, false);
 		
 		if (!IsValidClient(Target[client]))
 		{
