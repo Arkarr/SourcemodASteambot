@@ -1,0 +1,21 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"3.6"
+		}
+		
+		"Notes"	"Testing updater support"
+		"Notes"	"If you see this, updater is already updating ASteambot Core by himself!"
+		"Notes"	"Updater version: 3"
+		"Notes"	"-----------"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_Core.smx"
+		"Source"	"Path_SM/scripting/ASteambot_Core.sp"
+	}
+}

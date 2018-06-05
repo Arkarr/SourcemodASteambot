@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"3.3"
+#define PLUGIN_VERSION 	"3.6"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -35,6 +35,13 @@ int serverID;
 
 bool DEBUG;
 bool connected;
+
+//Release note
+/*
+*Testing updater support
+*If you see this, updater is already updating ASteambot Core by himself!
+*Updater version: 3
+*/
 
 public Plugin myinfo = 
 {
