@@ -6,13 +6,19 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.0"
+#define PLUGIN_VERSION 	"1.1"
 #define MODULE_NAME 	"[ANY] ASteambot Steam Group Annoucement"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_SteamGroupAnnoucement.txt"
 
 Handle CVAR_SteamGroupID;
 
 char groupID[50];
+
+/*
+*Added a typo fix
+*I misspelled the command. It's now fixed. Thanks for the notice, CodeX
+*Updater version: 1.1
+*/
 
 public Plugin myinfo = 
 {
@@ -33,8 +39,8 @@ public OnPluginStart()
 {
 	ASteambot_RegisterModule("ASteambot_SGAnnoucement");
 	
-	RegAdminCmd("sm_annoucement", CMD_PostAnnoucement, ADMFLAG_CHAT, "Post a new annoucement in the steam group.");
-	
+	RegAdminCmd("sm_announcement", CMD_PostAnnoucement, ADMFLAG_CHAT, "Post a new annoucement in the steam group.");
+	 
 	CVAR_SteamGroupID = CreateConVar("sm_asteambot_steamgroupid", "", "The steam group id, THE BOT'S ACCOUNT HAVE TO BE IN THE GROUP AND HAVE THE RIGHT TO POST ANNOUCEMNTS !");
 	
 	AutoExecConfig(true, "asteambot_sgannoucement", "asteambot");
