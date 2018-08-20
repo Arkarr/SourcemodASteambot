@@ -1,0 +1,186 @@
+﻿"Phrases"
+{
+    "Back"
+    {
+        "en"    "Back"
+        "fr"    "Retour"
+    }
+    
+    "Next"
+    {
+        "en"    "Next"
+        "fr"    "Suivant"
+    }
+    
+    "Exit"
+    {
+        "en"    "Exit"
+        "fr"    "Quitter"
+    }
+    
+    "Player switched to server short"
+    {
+        "#format"	"{1:s},{2:s},{3:s},{4:i},{5:i}"
+        "en"    " Player {1} switched to server {2} on map {3} with {4}/{5} Players"
+        "fr"    " Le joueur {1} est parti sur le serveur {2} sur la map {3} avec {4}/{5} Joueurs"
+    }
+    
+    "Player switched to server"
+    {
+        "#format"	"{1:s}"
+        "en"    " Player {1} switched to server"
+        "fr"    " Le joueur {1} est parti sur le serveur"
+    }
+    
+    "Server name"
+    {
+        "#format"	"{1:s}"
+        "en"    " {1}"
+        "fr"    " {1}"
+    }
+    
+    "Server short advertise"
+    {
+        "#format"	"{1:s},{2:s},{3:i},{4:i}"
+        "en"    " Server {1} on map {2} with {3}/{4} Players"
+        "fr"    " Serveur {1} sur la map {2} avec {3}/{4} Joueurs"
+    }
+    
+    "Server advertise"
+    {
+        "#format"	"{1:s},{2:s}"
+        "en"    " Server {1} running at IP {2}"
+        "fr"    " Serveur {1} sur l'IP {2}"
+    }
+    
+    "Server info"
+    {
+        "#format"	"{1:s},{2:i},{3:i}"
+        "en"    " On map {1} with {2}/{3} Players"
+        "fr"    " Sur la map {1} avec {2}/{3} Joueurs"
+    }
+    
+    "Server info menu"
+    {
+        "#format"	"{1:i},{2:i},{3:s},"
+        "en"    "On map {3} with {1}/{2} Players"
+        "fr"    "Sur la map {3} avec {1}/{2} Joueurs"
+    }
+    
+    "Private"
+    {
+        "en"    "PRIVATE"
+        "fr"    "PRIVÉ"
+    }
+    
+    "Follow to follow"
+    {
+        "en"    " Type 	!follow to follow him"
+        "fr"    " Ecris 	!follow pour le suivre"
+    }
+    
+    "Server to connect"
+    {
+        "en"    " Type 	!servers to connect"
+        "fr"    " Ecris 	!servers pour t'y connecter"
+    }
+    
+    "No server in database"
+    {
+        "en"    " No server available"
+        "fr"    " Aucun serveur disponible"
+    }
+    
+    "Choose a server"
+    {
+        "en"    "Choose a server"
+        "fr"    "Choisis un serveur"
+    }
+    
+    "Join this server"
+    {
+        "en"    "Join this server"
+        "fr"    "Rejoindre ce serveur"
+    }
+    
+    "Show players"
+    {
+        "en"    "Show players"
+        "fr"    "Afficher les joueurs"
+    }
+    
+    "Players"
+    {
+        "en"    "Players:"
+        "fr"    "Joueurs:"
+    }
+    
+    "Score Time"
+    {
+        "#format"	"{1:i},{2:s}"
+        "en"    "   Score: {1}    Time: {2}"
+        "fr"    "   Score: {1}    Temps: {2}"
+    }
+    
+    "Refreshing infos"
+    {
+        "en"    "Refreshing infos..."
+        "fr"    "Rafraîchissement en cours..."
+    }
+    
+    "Error refreshing infos"
+    {
+        "en"    "Error refreshing infos"
+        "fr"    "Impossible de rafraîchir le serveur"
+    }
+    
+    "Who do you want to follow?"
+    {
+        "en"    "Who do you want to follow?"
+        "fr"    "Qui veux-tu suivre?"
+    }
+    
+    "No one to follow"
+    {
+        "en"    " No one to follow"
+        "fr"    " Aucune personne à suivre trouvée"
+    }
+    
+    "Connect by Clicking Link"
+    {
+        "en"    "Connect by clicking on this link:"
+        "fr"    "Connectes-toi en cliquant sur ce lien:"
+    }
+    
+    "Connect by CC URL"
+    {
+        "en"    " Connect by copy-pasting this URL in your steam browser (SHIFT+TAB):"
+        "fr"    " Connecte toi en Copiant-Collant l'URL suivant dans ton navigateur steam (SHIFT+TAB):"
+    }
+    
+    "Connect URL"
+    {
+        "#format"	"{1:s},{2:s}"
+        "en"    " steam://connect/{1}/{2}"
+        "fr"    " steam://connect/{1}/{2}"
+    }
+    
+    "Connect infos in console"
+    {
+        "en"    " Bring up your console, connect info are there!"
+        "fr"    " Affiche ta console, les infos de connection sont là"
+    }
+    
+    "Connect by CC console"
+    {
+        "en"    "Connect by copy-pasting this command:"
+        "fr"    "Connecte toi en Copiant-Collant cette commande:"
+    }
+    
+    "Offers redirect"
+    {
+        "#format" "{1:d}"
+        "en"    " You will be kicked in {1} seconds to free a reserved slot unless you choose a server!"
+        "fr"    " Tu sera kické dans {1} secondes pour libérer un slot réservé sauf si tu choisis un serveur!"
+    }
+}
