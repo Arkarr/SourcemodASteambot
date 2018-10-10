@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"3.9"
+#define PLUGIN_VERSION 	"4.0"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -29,18 +29,27 @@ Handle g_fwdASteambotMessage;
 char steambotIP[100];
 char steambotPort[10];
 char steambotPassword[25];
+char bigestDataModuleS[50];
+char smallestDataModuleS[50];
+char bigestDataModuleR[50];
+char smallestDataModuleR[50];
 
 int moduleID;
 int serverID;
+int maxDataSizeS;
+int minDataSizeS;
+int maxDataSizeR;
+int minDataSizeR;
+int totalDataSend;
+int totalDataReceived;
 
 bool DEBUG;
 bool connected;
 
 //Release note
 /*
-*Testing updater support
-*If you see this, updater is already updating ASteambot Core by himself!
-*Updater version: 5
+*Added a statistic command to ASteambot Core.
+*sm_asteambot_stats
 */
 
 public Plugin myinfo = 
@@ -59,7 +68,7 @@ public void OnLibraryAdded(const char[] name)
 }
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
-{   
+{   	
 	ARRAY_Data = CreateArray(MAX_DATA_SIZE);
 	modules = CreateArray();
 
@@ -72,6 +81,44 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	RegPluginLibrary("ASteambot");
 
 	return APLRes_Success;
+}
+
+public Action CMD_AStats(int client, int args)
+{
+	if(client == 0)
+	{
+		PrintToServer("------ ASteambot network usage ------");
+		PrintToServer("");
+		PrintToServer("Module that have send the most data :");
+		PrintToServer("%s - %i bytes", bigestDataModuleS, maxDataSizeS);
+		PrintToServer("Module that have send the less data :");
+		PrintToServer("%s - %i bytes", smallestDataModuleS, minDataSizeS);
+		PrintToServer("Module that have received the most data :");
+		PrintToServer("%s - %i bytes", bigestDataModuleR, maxDataSizeR);
+		PrintToServer("Module that have received the less data :");
+		PrintToServer("%s - %i bytes", smallestDataModuleR, minDataSizeR);
+		PrintToServer("Total data stats :");
+		PrintToServer("Sent : %i bytes\tReceived : %i bytes", totalDataSend, totalDataReceived);
+		PrintToServer("Sent : %i mb\t\tReceived : %i mb", totalDataSend/1000000, totalDataReceived/1000000);
+	}
+	else
+	{
+		PrintToConsole(client, "------ ASteambot network usage ------");
+		PrintToConsole(client, "");
+		PrintToConsole(client, "Module that have send the most data :");
+		PrintToConsole(client, "%s - %i bytes", bigestDataModuleS, maxDataSizeS);
+		PrintToConsole(client, "Module that have send the less data :");
+		PrintToConsole(client, "%s - %i bytes", smallestDataModuleS, minDataSizeS);
+		PrintToConsole(client, "Module that have received the most data :");
+		PrintToConsole(client, "%s - %i bytes", bigestDataModuleR, maxDataSizeR);
+		PrintToConsole(client, "Module that have received the less data :");
+		PrintToConsole(client, "%s - %i bytes", smallestDataModuleR, minDataSizeR);
+		PrintToConsole(client, "Total data stats :");
+		PrintToConsole(client, "Sent : %i bytes\tReceived : %i bytes", totalDataSend, totalDataReceived);
+		PrintToConsole(client, "Sent : %i mb\t\tReceived : %i mb", totalDataSend/1000000, totalDataReceived/1000000);
+	}
+	
+	return Plugin_Handled;
 }
 
 //////////////
@@ -157,7 +204,7 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	char message[950];
 	AS_MessageType messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
-	Handle module = GetModuleByPlugin(plugin);
+	/*Handle module = GetModuleByPlugin(plugin);
 	
 	if(module != INVALID_HANDLE)
 	{
@@ -169,7 +216,8 @@ public int Native_SendMesssage(Handle plugin, int numParams)
 	{
 		PrintToServer("%s ERROR: Module not found ! Is it registred ?", MODULE_NAME);
 		PrintToChatAll("%s ERROR: Module not found !", MODULE_NAME);
-	}
+	}*/
+	SendMessage(plugin, messageType, message, sizeof(message));
 	
 	return true;
 }
@@ -182,7 +230,8 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	Handle ItemList = GetNativeCell(2);
 	Handle MyItemList = GetNativeCell(3);
 	float fakeValue = GetNativeCell(4);
-	Handle module = GetModuleByPlugin(plugin);
+	
+	//Handle module = GetModuleByPlugin(plugin);
 	
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
@@ -235,14 +284,18 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 		StrCat(message, sizeof(message), "/-1");
 	}
 	
-	int id;
-	GetTrieValue(module, M_ID, id);
+	//int id;
+	//GetTrieValue(module, M_ID, id);
 	
-	SendMessage(id, AS_CREATE_TRADEOFFER, message, sizeof(message));
+	//SendMessage(id, AS_CREATE_TRADEOFFER, message, sizeof(message));
+	
+	SendMessage(plugin, AS_CREATE_TRADEOFFER, message, sizeof(message));
 }
 
 public void OnPluginStart()
 {	
+	RegAdminCmd("sm_asteambot_stats", CMD_AStats, ADMFLAG_CONFIG, "Display stats about network data of ASteambot.");
+	
 	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
 
 	CVAR_Debug = CreateConVar("sm_asteambot_debug", "false", "Enable(true)/Disable(false) debug mode >>> WARNING <<< Enabling debug mode may print senstive infos in the game server console !");
@@ -335,7 +388,7 @@ public OnClientSocketConnected(Handle socket, any arg)
 public OnClientSocketError(Handle socket, const int errorType, const int errorNum, any ary)
 {
 	connected = false;
-	LogError("%s - socket error %d (errno %d)", MODULE_NAME, errorType, errorNum);
+	LogError("%s - socket error %d (error number %d)", MODULE_NAME, errorType, errorNum);
 	CloseHandle(socket);
 	
 	if(errorNum == 3)
@@ -353,15 +406,20 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
-	PrintToServer(receiveData);
+	if(DEBUG)
+	{
+		PrintToServer("%s %s", MODULE_NAME, receiveData);
+		PrintToServer("%s Data Size : %i", MODULE_NAME, dataSize);
+	}
+					
+	totalDataReceived += dataSize;
+		
 	if(StrContains(receiveData, "<EOF>") == -1)
 	{
-		if(DEBUG)
-			PrintToServer("Data Size : %i", dataSize);
-			
 		PushArrayString(ARRAY_Data, receiveData);
 		return;
 	}
+	
 	PushArrayString(ARRAY_Data, receiveData);
 	
 	int stringSize = (MAX_DATA_SIZE) * GetArraySize(ARRAY_Data);
@@ -381,8 +439,6 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 			
 		return;
 	}
-	
-	PrintToServer(">>> %s", finalData);
 	
 	ReplaceString(finalData, stringSize, steambotPassword, "");
 	ReplaceString(finalData, stringSize, "<EOF>", "");
@@ -421,6 +477,18 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 				Call_PushString(mc_data[1]);
 				Call_PushCell(stringSize);
 				Call_Finish();
+				
+				if(maxDataSizeR < dataSize || maxDataSizeR == 0)
+				{	
+					maxDataSizeR = dataSize;
+					Format(bigestDataModuleR, sizeof(bigestDataModuleR), "<unknow>");
+				}
+					
+				if(minDataSizeR > dataSize || minDataSizeR == 0)
+				{
+					minDataSizeR = dataSize;
+					Format(smallestDataModuleR, sizeof(smallestDataModuleR), "<unknow>");
+				}
 			}
 			else
 			{
@@ -430,13 +498,24 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 					Handle p;
 					GetTrieValue(module, M_PLUGIN, p);
 					
-					if(DEBUG)
-					{
-						char mName[50];
-						GetTrieString(module, M_NAME, mName, sizeof(mName));
-						PrintToServer("Module ID: %i - %s", mID, mName);
-					}
+					char mName[50];
+					GetTrieString(module, M_NAME, mName, sizeof(mName));
 					
+					if(DEBUG)
+						PrintToServer("Module ID: %i - %s", mID, mName);
+					
+					if(dataSize > maxDataSizeR || maxDataSizeR == 0)
+					{	
+						maxDataSizeR = dataSize;
+						Format(bigestDataModuleR, sizeof(bigestDataModuleR), mName);
+					}
+						
+					if(minDataSizeR > dataSize || minDataSizeR == 0)
+					{
+						minDataSizeR = dataSize;
+						Format(smallestDataModuleR, sizeof(smallestDataModuleR), mName);
+					}
+						
 					Call_StartFunction(p, GetFunctionByName(p, "ASteambot_Message"));
 					Call_PushCell(code);
 					Call_PushString(mc_data[1]);
@@ -499,12 +578,41 @@ public Action TMR_TryReconnection(Handle timer, any none)
 ///////////
 // STOCK //
 ///////////
-stock void SendMessage(int mid, AS_MessageType messageType, char[] message, int msgSize)
+public bool SendMessage(Handle plugin, AS_MessageType messageType, char[] message, int msgSize)
 {
+	Handle module = GetModuleByPlugin(plugin);
+	
+	int mid;
+	if(module != INVALID_HANDLE)
+	{
+		GetTrieValue(module, M_ID, mid);
+	}
+	else
+	{
+		PrintToServer("%s ERROR: Module not found ! Is it registred ?", MODULE_NAME);
+		PrintToChatAll("%s ERROR: Module not found !", MODULE_NAME);
+		
+		return false;
+	}
+	
 	Format(message, msgSize, "%s%i,%i|%i&%s<EOF>", steambotPassword, serverID, mid, messageType, message);
 	
 	if(DEBUG)
 		PrintToServer(message);
+		
+	if(msgSize > maxDataSizeS)
+	{	
+		maxDataSizeS = msgSize;
+		GetTrieString(module, M_NAME, bigestDataModuleS, sizeof(bigestDataModuleS));
+	}
+		
+	if(minDataSizeS > msgSize || minDataSizeS == 0)
+	{
+		minDataSizeS = msgSize;
+		GetTrieString(module, M_NAME, smallestDataModuleS, sizeof(smallestDataModuleS));
+	}
+	
+	totalDataSend += msgSize;
 	
 	if(clientSocket != INVALID_HANDLE)
 	{
@@ -515,7 +623,8 @@ stock void SendMessage(int mid, AS_MessageType messageType, char[] message, int 
 		EndTimer();
 		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
 	}
-		
+	
+	return true;
 }
 
 public void EndTimer()

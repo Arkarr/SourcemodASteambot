@@ -41,7 +41,7 @@
   	{
   		"en"		"Edit your offer's message with command !editoffer [MESSAGE] ! {red}Color {orange}can {yellow}be {pink}added {purple}using {black}tag{default} : {COLOR}"
   		"pl"		"Edytuj swoją wiadomość ofert komendą !editoffer [MESSAGE]! {red}Kolor {orange}może {yellow}być {pink}dodany {purple}używając {black}tagu{default}: {COLOR}"
-		"fr"		"Modifiez le message de votre offre avec la commande !editoffer [MESSAGE]! {rouge} La couleur {orange} peut {yellow} être {rose} ajoutée {violet}en utilisant {black}tag{default}: {COLOR} "
+		"fr"		"Modifiez le message de votre offre avec la commande !editoffer [MESSAGE]! {red} La couleur {orange} peut {yellow} être {rose} ajoutée {violet}en utilisant {black}tag{default}: {COLOR} "
 	"ru"    "«Изменить предложение можно с помощью команды !editoffer [MESSAGE]! {Red} Цвет {orange} может {yellow} быть {pink} добавлен {purple} с помощью {black} тега {default}: {COLOR}""
  	}
  	"NoOfferFound"

@@ -4,12 +4,11 @@
 	{
 		"Version"
 		{
-			"Latest"	"3.9"
+			"Latest"	"4.0"
 		}
 		
-		"Notes"	"Testing updater support"
-		"Notes"	"If you see this, updater is already updating ASteambot Core by himself!"
-		"Notes"	"Updater version: 5"
+		"Notes"	"Added a statistic command to ASteambot Core."
+		"Notes"	"sm_asteambot_stats"
 		"Notes"	"-----------"
 	}
 	

@@ -68,11 +68,7 @@ public OnAskClientConnect(int client, char[] ip, char[] password)
 
 public ASteambot_Message(AS_MessageType MessageType, char[] msg, const int msgSize)
 {
-	if(MessageType == AS_SIMPLE)
-	{
-		SetFailState(msg);
-	}
-	else if(MessageType == AS_NOT_FRIENDS)
+	if(MessageType == AS_NOT_FRIENDS)
 	{
 		int client = FindClientBySteamID(msg);
 		if(client != -1)
