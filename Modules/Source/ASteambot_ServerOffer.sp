@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.0"
+#define PLUGIN_VERSION 			"1.2"
 #define MODULE_NAME 			"[ASteambot - Server Offer]"
 
 #define ITEM_ID					"itemID"
@@ -26,6 +26,11 @@ char itemID[MAXPLAYERS + 1][30];
 
 Handle ARRAY_Items[MAXPLAYERS + 1];
 
+//Release note
+/*
+*Fixed late load problems
+*/
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Server Offer", 
@@ -41,10 +46,15 @@ public void OnLibraryAdded(const char[] name)
         Updater_AddPlugin(UPDATE_URL);
 }
 
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_ServerItem");
+}
+
 public void OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_ServerItem");
-	
 	RegConsoleCmd("sm_editoffer", CMD_EditOffers, "Edit your current offers");
 	RegConsoleCmd("sm_showitems", CMD_ShowItems, "Show your current items");
 	RegConsoleCmd("sm_reloaditems", CMD_ReloadItems, "Reload your inventory offer");

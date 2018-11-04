@@ -4,11 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"4.0"
+			"Latest"	"4.1"
 		}
 		
-		"Notes"	"Added a statistic command to ASteambot Core."
-		"Notes"	"sm_asteambot_stats"
+		"Notes"	"Fixed late load problems"
 		"Notes"	"-----------"
 	}
 	

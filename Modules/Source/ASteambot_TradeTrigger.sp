@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.0"
+#define PLUGIN_VERSION 			"1.1"
 #define MODULE_NAME 			"[ASteambot - Trade Trigger]"
 
 #define ITEM_ID					"itemID"
@@ -39,6 +39,11 @@ Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
+//Release note
+/*
+*Fixed late load problems
+*/
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Trade Trigger", 
@@ -54,9 +59,15 @@ public void OnLibraryAdded(const char[] name)
         Updater_AddPlugin(UPDATE_URL);
 }
 
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_TradeTrigger");
+}
+
 public void OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_TradeTrigger");
 	
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
 

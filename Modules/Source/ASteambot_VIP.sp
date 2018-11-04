@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.0"
+#define PLUGIN_VERSION 			"1.1"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -32,6 +32,12 @@ Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
+
+//Release note
+/*
+*Fixed late load problems
+*/
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot VIP", 
@@ -52,6 +58,14 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 	MarkNativeAsOptional("ModVIP");
 
 	return APLRes_Success;
+}
+
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_TradeTrigger");
 }
 
 public void OnPluginStart()

@@ -6,13 +6,19 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.3.1"
+#define PLUGIN_VERSION 	"1.4"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Chat.txt"
 
 int connectionCount;
 
 bool transferMessages;
+
+
+//Release note
+/*
+*Fixed late load problems
+*/
 
 public Plugin myinfo = 
 {
@@ -27,6 +33,13 @@ public void OnLibraryAdded(const char[] name)
 {
     if (StrEqual(name, "updater"))
         Updater_AddPlugin(UPDATE_URL);
+}
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_TradeTrigger");
 }
 
 public void OnPluginStart()

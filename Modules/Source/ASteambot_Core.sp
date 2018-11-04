@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"4.0"
+#define PLUGIN_VERSION 	"4.1"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,8 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Added a statistic command to ASteambot Core.
-*sm_asteambot_stats
+*Fixed late load problems
 */
 
 public Plugin myinfo = 
@@ -128,6 +127,7 @@ public Native_RegisterModule(Handle plugin, int numParams)
 {
 	Handle module;
 	char mName[50];
+	char mOldName[50];
 	moduleID++;
 	
 	if (DEBUG)
@@ -146,6 +146,23 @@ public Native_RegisterModule(Handle plugin, int numParams)
 	}
 	
 	GetNativeString(1, mName, sizeof(mName));
+	
+	for (int i = 0; i < GetArraySize(modules); i++)
+	{
+		Handle test = GetArrayCell(modules, i);
+		GetTrieString(test, M_NAME, mOldName, sizeof(mOldName));
+		
+		if(StrEqual(mName, mOldName))
+		{
+			PrintToServer("*********************** ASTEAMBOT CORE ***********************");
+			PrintToServer("* Warning: a module with the same registring name is already *");
+			PrintToServer("* loaded ! Ignoring...									*");
+			PrintToServer("* Module name : %s										*", mName);
+			PrintToServer("* Total module registred : %i					     	*", GetArraySize(modules));
+			PrintToServer("**************************************************************");
+			return 1;
+		}
+	}
 	
 	module = CreateTrie();
 	SetTrieValue(module, M_PLUGIN, plugin);

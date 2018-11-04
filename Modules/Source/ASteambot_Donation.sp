@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.0"
+#define PLUGIN_VERSION 			"3.1"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -70,6 +70,11 @@ Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
+//Release note
+/*
+*Fixed late load problems
+*/
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Donation", 
@@ -88,6 +93,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	MarkNativeAsOptional("SMRPG_AddClientExperience");
 	
 	return APLRes_Success;
+}
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Donation");
 }
 
 public void OnPluginStart()
