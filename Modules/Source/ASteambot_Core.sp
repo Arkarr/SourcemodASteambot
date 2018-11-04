@@ -63,15 +63,15 @@ public Plugin myinfo =
 
 public void OnLibraryAdded(const char[] name)
 {
-    if (StrEqual(name, "updater"))
-        Updater_AddPlugin(UPDATE_URL)
+	if (StrEqual(name, "updater"))
+		Updater_AddPlugin(UPDATE_URL)
 }
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
-{   	
+{
 	ARRAY_Data = CreateArray(MAX_DATA_SIZE);
 	modules = CreateArray();
-
+	
 	CreateNative("ASteambot_RegisterModule", Native_RegisterModule);
 	CreateNative("ASteambot_RemoveModule", Native_RemoveModule);
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
@@ -79,13 +79,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
 	
 	RegPluginLibrary("ASteambot");
-
+	
 	return APLRes_Success;
 }
 
 public Action CMD_AStats(int client, int args)
 {
-	if(client == 0)
+	if (client == 0)
 	{
 		PrintToServer("------ ASteambot network usage ------");
 		PrintToServer("");
@@ -99,7 +99,7 @@ public Action CMD_AStats(int client, int args)
 		PrintToServer("%s - %i bytes", smallestDataModuleR, minDataSizeR);
 		PrintToServer("Total data stats :");
 		PrintToServer("Sent : %i bytes\tReceived : %i bytes", totalDataSend, totalDataReceived);
-		PrintToServer("Sent : %i mb\t\tReceived : %i mb", totalDataSend/1000000, totalDataReceived/1000000);
+		PrintToServer("Sent : %i mb\t\tReceived : %i mb", totalDataSend / 1000000, totalDataReceived / 1000000);
 	}
 	else
 	{
@@ -115,7 +115,7 @@ public Action CMD_AStats(int client, int args)
 		PrintToConsole(client, "%s - %i bytes", smallestDataModuleR, minDataSizeR);
 		PrintToConsole(client, "Total data stats :");
 		PrintToConsole(client, "Sent : %i bytes\tReceived : %i bytes", totalDataSend, totalDataReceived);
-		PrintToConsole(client, "Sent : %i mb\t\tReceived : %i mb", totalDataSend/1000000, totalDataReceived/1000000);
+		PrintToConsole(client, "Sent : %i mb\t\tReceived : %i mb", totalDataSend / 1000000, totalDataReceived / 1000000);
 	}
 	
 	return Plugin_Handled;
@@ -130,7 +130,7 @@ public Native_RegisterModule(Handle plugin, int numParams)
 	char mName[50];
 	moduleID++;
 	
-	if(DEBUG)
+	if (DEBUG)
 	{
 		PrintToServer("------------");
 		for (int i = 0; i < GetArraySize(modules); i++)
@@ -151,10 +151,10 @@ public Native_RegisterModule(Handle plugin, int numParams)
 	SetTrieValue(module, M_PLUGIN, plugin);
 	SetTrieValue(module, M_ID, moduleID);
 	SetTrieString(module, M_NAME, mName);
-
+	
 	PushArrayCell(modules, module);
 	
-	if(DEBUG)
+	if (DEBUG)
 	{
 		PrintToServer("------------");
 		for (int i = 0; i < GetArraySize(modules); i++)
@@ -174,13 +174,13 @@ public Native_RegisterModule(Handle plugin, int numParams)
 
 public Native_RemoveModule(Handle plugin, int numParams)
 {
-	for(int i = 0; i < GetArraySize(modules); i++)
+	for (int i = 0; i < GetArraySize(modules); i++)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
 		Handle p;
 		GetTrieValue(module, M_PLUGIN, p);
-		if(p == plugin)
+		if (p == plugin)
 		{
 			RemoveFromArray(modules, i);
 			
@@ -198,9 +198,9 @@ public int Native_IsConnected(Handle plugin, int numParams)
 
 public int Native_SendMesssage(Handle plugin, int numParams)
 {
-	if(!ASteambot_IsConnected())
+	if (!ASteambot_IsConnected())
 		return false;
-		
+	
 	char message[950];
 	AS_MessageType messageType = GetNativeCell(1);
 	GetNativeString(2, message, sizeof(message));
@@ -243,27 +243,27 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	{
 		GetArrayString(ItemList, i, item, sizeof(item));
 		
-		if(i+1 != GetArraySize(ItemList))
+		if (i + 1 != GetArraySize(ItemList))
 			Format(item, sizeof(item), "%s,", item);
 		else
 			Format(item, sizeof(item), "%s", item);
-			
+		
 		StrCat(message, sizeof(message), item);
 	}
 	
 	StrCat(message, sizeof(message), "/");
 	
-	if(MyItemList != INVALID_HANDLE && GetArraySize(MyItemList) > 0)
+	if (MyItemList != INVALID_HANDLE && GetArraySize(MyItemList) > 0)
 	{
 		for (int i = 0; i < GetArraySize(MyItemList); i++)
 		{
 			GetArrayString(MyItemList, i, item, sizeof(item));
 			
-			if(i+1 != GetArraySize(MyItemList))
+			if (i + 1 != GetArraySize(MyItemList))
 				Format(item, sizeof(item), "%s,", item);
 			else
 				Format(item, sizeof(item), "%s", item);
-				
+			
 			StrCat(message, sizeof(message), item);
 		}
 	}
@@ -273,7 +273,7 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	}
 	
 	
-	if(fakeValue != 1.0)
+	if (fakeValue != 1.0)
 	{
 		char fakeVal[100];
 		Format(fakeVal, sizeof(fakeVal), "/%.2f", fakeValue);
@@ -293,11 +293,11 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 }
 
 public void OnPluginStart()
-{	
+{
 	RegAdminCmd("sm_asteambot_stats", CMD_AStats, ADMFLAG_CONFIG, "Display stats about network data of ASteambot.");
 	
 	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
-
+	
 	CVAR_Debug = CreateConVar("sm_asteambot_debug", "false", "Enable(true)/Disable(false) debug mode >>> WARNING <<< Enabling debug mode may print senstive infos in the game server console !");
 	CVAR_SteambotServerIP = CreateConVar("sm_asteambot_server_ip", "XXX.XXX.XXX.XXX", "The ip of the server where the steambot is hosted.");
 	CVAR_SteambotServerPort = CreateConVar("sm_asteambot_server_port", "4765", "The port of the server where the steambot is hosted, WATCH OUT ! In version 1.0 of the bot, the port is hardcoded and is 11000 !!");
@@ -308,7 +308,7 @@ public void OnPluginStart()
 	AutoExecConfig(true, "asteambot_core", "asteambot");
 	
 	if (LibraryExists("updater"))
-        Updater_AddPlugin(UPDATE_URL)
+		Updater_AddPlugin(UPDATE_URL)
 }
 
 public void CVARHOOK_DebugMode(Handle cvar, const char[] oldValue, const char[] newValue)
@@ -331,7 +331,7 @@ public void OnConfigsExecuted()
 	GetConVarString(CVAR_Debug, d, sizeof(d));
 	DEBUG = StrEqual(d, "true");
 	
-	if(DEBUG)
+	if (DEBUG)
 		PrintToServer("ASteambot : DEBUG MODE IS 'ON'");
 	else
 		PrintToServer("ASteambot : DEBUG MODE IS 'OFF'");
@@ -341,9 +341,9 @@ public void OnConfigsExecuted()
 
 public void AttemptSteamBotConnection()
 {
-	if(connected)
+	if (connected)
 		return;
-		
+	
 	connected = false;
 	clientSocket = SocketCreate(SOCKET_TCP, OnClientSocketError);
 	SocketSetOption(clientSocket, SocketReceiveBuffer, MAX_DATA_SIZE);
@@ -391,7 +391,7 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 	LogError("%s - socket error %d (error number %d)", MODULE_NAME, errorType, errorNum);
 	CloseHandle(socket);
 	
-	if(errorNum == 3)
+	if (errorNum == 3)
 	{
 		PrintToServer("*********************** ASTEAMBOT CORE ***********************");
 		PrintToServer("* This error means you failed to configure the TCP port !    *");
@@ -406,15 +406,15 @@ public OnClientSocketError(Handle socket, const int errorType, const int errorNu
 
 public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSize, any hFile)
 {
-	if(DEBUG)
+	if (DEBUG)
 	{
 		PrintToServer("%s %s", MODULE_NAME, receiveData);
 		PrintToServer("%s Data Size : %i", MODULE_NAME, dataSize);
 	}
-					
+	
 	totalDataReceived += dataSize;
-		
-	if(StrContains(receiveData, "<EOF>") == -1)
+	
+	if (StrContains(receiveData, "<EOF>") == -1)
 	{
 		PushArrayString(ARRAY_Data, receiveData);
 		return;
@@ -431,12 +431,12 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		StrCat(finalData, stringSize, data);
 	}
 	ClearArray(ARRAY_Data);
-		
-	if(StrContains(finalData, steambotPassword) == -1)
+	
+	if (StrContains(finalData, steambotPassword) == -1)
 	{
-		if(DEBUG)
+		if (DEBUG)
 			PrintToServer(">>> PASSWORD INCORECT");
-			
+		
 		return;
 	}
 	
@@ -449,7 +449,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 	ExplodeString(finalData, "|", mc_data, 2, stringSize);
 	ExplodeString(mc_data[0], ")", moduleID_code, 2, stringSize);
 	
-	if(DEBUG)
+	if (DEBUG)
 	{
 		PrintToServer("-----------------------");
 		PrintToServer("Password : 		%s", steambotPassword);
@@ -458,19 +458,19 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		PrintToServer("Data : 			%s", mc_data[1]);
 		PrintToServer("-----------------------");
 	}
-
-	if(StrEqual(moduleID_code[1], "SRVID"))
+	
+	if (StrEqual(moduleID_code[1], "SRVID"))
 	{
 		serverID = StringToInt(mc_data[1]);
 	}
 	else
 	{
-		if(GetArraySize(modules) != 0)
+		if (GetArraySize(modules) != 0)
 		{
 			int mID = StringToInt(mc_data[0]);
 			int code = StringToInt(moduleID_code[1]);
 			
-			if(mID == -2)
+			if (mID == -2)
 			{
 				Call_StartForward(g_fwdASteambotMessage);
 				Call_PushCell(code);
@@ -478,13 +478,13 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 				Call_PushCell(stringSize);
 				Call_Finish();
 				
-				if(maxDataSizeR < dataSize || maxDataSizeR == 0)
-				{	
+				if (maxDataSizeR < dataSize || maxDataSizeR == 0)
+				{
 					maxDataSizeR = dataSize;
 					Format(bigestDataModuleR, sizeof(bigestDataModuleR), "<unknow>");
 				}
-					
-				if(minDataSizeR > dataSize || minDataSizeR == 0)
+				
+				if (minDataSizeR > dataSize || minDataSizeR == 0)
 				{
 					minDataSizeR = dataSize;
 					Format(smallestDataModuleR, sizeof(smallestDataModuleR), "<unknow>");
@@ -493,7 +493,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 			else
 			{
 				Handle module = GetModuleByID(mID);
-				if(module != INVALID_HANDLE)
+				if (module != INVALID_HANDLE)
 				{
 					Handle p;
 					GetTrieValue(module, M_PLUGIN, p);
@@ -501,41 +501,54 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 					char mName[50];
 					GetTrieString(module, M_NAME, mName, sizeof(mName));
 					
-					if(DEBUG)
+					if (DEBUG)
 						PrintToServer("Module ID: %i - %s", mID, mName);
 					
-					if(dataSize > maxDataSizeR || maxDataSizeR == 0)
-					{	
+					if (dataSize > maxDataSizeR || maxDataSizeR == 0)
+					{
 						maxDataSizeR = dataSize;
 						Format(bigestDataModuleR, sizeof(bigestDataModuleR), mName);
 					}
-						
-					if(minDataSizeR > dataSize || minDataSizeR == 0)
+					
+					if (minDataSizeR > dataSize || minDataSizeR == 0)
 					{
 						minDataSizeR = dataSize;
 						Format(smallestDataModuleR, sizeof(smallestDataModuleR), mName);
 					}
-						
-					Call_StartFunction(p, GetFunctionByName(p, "ASteambot_Message"));
-					Call_PushCell(code);
-					Call_PushString(mc_data[1]);
-					Call_PushCell(stringSize);
-					Call_Finish();
+					
+					Function address = GetFunctionByName(p, "ASteambot_Message");
+					
+					if (address == INVALID_FUNCTION)
+					{
+						PrintToServer("****                    ASTEAMBOT                    ****");
+						PrintToServer("Trying to call function ASteambot_Message");
+						PrintToServer("on plugin '%s' but addresse is invalid !", mName);
+						PrintToServer("Is the plugin registred with ASteambot_RegisterModule ?");
+						PrintToServer("*********************************************************");
+					}
+					else
+					{
+						Call_StartFunction(p, address);
+						Call_PushCell(code);
+						Call_PushString(mc_data[1]);
+						Call_PushCell(stringSize);
+						Call_Finish();
+					}
 				}
 			}
-		}		
+		}
 	}
 }
 
 public Handle GetModuleByPlugin(Handle plugin)
 {
-	for(int i = 0; i < GetArraySize(modules); i++)
+	for (int i = 0; i < GetArraySize(modules); i++)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
 		Handle p;
 		GetTrieValue(module, M_PLUGIN, p);
-		if(p == plugin)
+		if (p == plugin)
 			return module;
 	}
 	
@@ -544,13 +557,13 @@ public Handle GetModuleByPlugin(Handle plugin)
 
 public Handle GetModuleByID(int id)
 {
-	for(int i = 0; i < GetArraySize(modules); i++)
+	for (int i = 0; i < GetArraySize(modules); i++)
 	{
 		Handle module = GetArrayCell(modules, i);
 		
 		int idModule;
 		GetTrieValue(module, M_ID, idModule);
-		if(idModule == id)
+		if (idModule == id)
 			return module;
 	}
 	
@@ -563,7 +576,7 @@ public OnChildSocketDisconnected(Handle socket, any hFile)
 	connected = false;
 	CloseHandle(socket);
 	
-	if(TimerReconnect == INVALID_HANDLE)
+	if (TimerReconnect == INVALID_HANDLE)
 		TimerReconnect = CreateTimer(10.0, TMR_TryReconnection, _, TIMER_REPEAT);
 }
 
@@ -583,7 +596,7 @@ public bool SendMessage(Handle plugin, AS_MessageType messageType, char[] messag
 	Handle module = GetModuleByPlugin(plugin);
 	
 	int mid;
-	if(module != INVALID_HANDLE)
+	if (module != INVALID_HANDLE)
 	{
 		GetTrieValue(module, M_ID, mid);
 	}
@@ -597,16 +610,16 @@ public bool SendMessage(Handle plugin, AS_MessageType messageType, char[] messag
 	
 	Format(message, msgSize, "%s%i,%i|%i&%s<EOF>", steambotPassword, serverID, mid, messageType, message);
 	
-	if(DEBUG)
+	if (DEBUG)
 		PrintToServer(message);
-		
-	if(msgSize > maxDataSizeS)
-	{	
+	
+	if (msgSize > maxDataSizeS)
+	{
 		maxDataSizeS = msgSize;
 		GetTrieString(module, M_NAME, bigestDataModuleS, sizeof(bigestDataModuleS));
 	}
-		
-	if(minDataSizeS > msgSize || minDataSizeS == 0)
+	
+	if (minDataSizeS > msgSize || minDataSizeS == 0)
 	{
 		minDataSizeS = msgSize;
 		GetTrieString(module, M_NAME, smallestDataModuleS, sizeof(smallestDataModuleS));
@@ -614,7 +627,7 @@ public bool SendMessage(Handle plugin, AS_MessageType messageType, char[] messag
 	
 	totalDataSend += msgSize;
 	
-	if(clientSocket != INVALID_HANDLE)
+	if (clientSocket != INVALID_HANDLE)
 	{
 		SocketSend(clientSocket, message, msgSize);
 	}
