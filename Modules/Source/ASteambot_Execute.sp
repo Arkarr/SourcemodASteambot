@@ -5,9 +5,15 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.0"
+#define PLUGIN_VERSION 			"1.1"
 #define MODULE_NAME 			"[ASteambot - Execute]"
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
+
+
+//Release note
+/*
+*Fixed late load problems
+*/
 
 public Plugin myinfo = 
 {
@@ -30,6 +36,13 @@ public void OnPluginStart()
 	
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
+}
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_TradeTrigger");
 }
 
 public OnPluginEnd()

@@ -1,0 +1,23 @@
+"Phrases"
+{
+    "cmd_wrong_1"
+    {
+        "en"    "Usage : sm_savetradetoken [TRADE URL]"
+    }
+	
+	"cmd_wrong_2"
+	{
+		"en"	"Trade taken can be found here:"
+	}
+	
+	"cmd_wrong_3"
+	{
+		"en"	"Bottom of the page (Third-Party Sites)"
+	}
+	
+	"token_saved"
+	{
+		"#format"   "{1:s}"
+		"en"		"Token ({1}) has been saved !"
+	}
+}

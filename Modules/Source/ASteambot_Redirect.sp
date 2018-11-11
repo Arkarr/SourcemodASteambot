@@ -9,14 +9,22 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.1"
+#define PLUGIN_VERSION 	"1.2"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
+
+
 
 //Release note
 /*
-*Is automatic updater working ?
-*Yes !
+*Fixed late load problems
 */
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Report");
+}
 
 public Plugin myinfo =
 {

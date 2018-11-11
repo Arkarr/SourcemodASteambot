@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.0"
+#define PLUGIN_VERSION 			"1.1"
 #define MODULE_NAME 			"[ASteambot - Inventory Rank]"
 
 #define ITEM_ID					"itemID"
@@ -27,6 +27,12 @@ char rankTag[MAXPLAYERS + 1][150];
 Handle ARRAY_Ranks;
 Handle ARRAY_Items[MAXPLAYERS + 1];
 
+
+//Release note
+/*
+*Fixed late load problems
+*/
+
 public Plugin myinfo = 
 {
 	name = "[ANY] ASteambot Inventory Rank", 
@@ -40,6 +46,13 @@ public void OnLibraryAdded(const char[] name)
 {
     if (StrEqual(name, "updater"))
         Updater_AddPlugin(UPDATE_URL);
+}
+
+public OnAllPluginsLoaded()
+{
+	//Ensure that there is not late-load problems.
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Report");
 }
 
 public void OnPluginStart()

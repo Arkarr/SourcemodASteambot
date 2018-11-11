@@ -4,10 +4,11 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.5"
+			"Latest"	"1.6"
 		}
 		
-		"Notes"	"Initial release."
+		"Notes"	"Fixed late load problems"
+		"Notes"	"-----------"
 	}
 	
 	"Files"
