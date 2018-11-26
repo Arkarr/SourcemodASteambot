@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.4"
+#define PLUGIN_VERSION 	"1.5"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Chat.txt"
 
@@ -17,7 +17,7 @@ bool transferMessages;
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, add more infos
 */
 
 public Plugin myinfo = 
@@ -39,12 +39,15 @@ public OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_TradeTrigger");
+		ASteambot_RegisterModule("ASteambot_Chat");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public void OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_Chat");
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Chat");
 	
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);

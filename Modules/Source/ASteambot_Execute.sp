@@ -32,7 +32,8 @@ public void OnLibraryAdded(const char[] name)
 
 public void OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_Execute");
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Execute");
 	
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
@@ -42,7 +43,9 @@ public OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_TradeTrigger");
+		ASteambot_RegisterModule("ASteambot_Execute");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public OnPluginEnd()

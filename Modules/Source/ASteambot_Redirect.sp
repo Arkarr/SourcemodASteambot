@@ -9,14 +9,14 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.2"
+#define PLUGIN_VERSION 	"1.5"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
 
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems add more infos
 */
 
 public OnAllPluginsLoaded()
@@ -24,6 +24,8 @@ public OnAllPluginsLoaded()
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
 		ASteambot_RegisterModule("ASteambot_Report");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public Plugin myinfo =
@@ -42,9 +44,7 @@ public void OnLibraryAdded(const char[] name)
 }
 
 public OnPluginStart()
-{
-	ASteambot_RegisterModule("ASteambot_Redirect");
-	
+{	
 	LoadTranslations("redirect.phrases");
 	
 	if (LibraryExists("updater"))

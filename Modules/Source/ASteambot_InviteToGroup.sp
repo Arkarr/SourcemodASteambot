@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.6"
+#define PLUGIN_VERSION 	"1.9"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InviteToGroup.txt"
 
@@ -15,14 +15,17 @@ Handle CVAR_SteamGroupID;
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more iunfos
 */
 
 public OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Report");
+		ASteambot_RegisterModule("ASteambot_InviteToGroup");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
+		
 }
 
 public Plugin myinfo = 
@@ -42,7 +45,8 @@ public void OnLibraryAdded(const char[] name)
 
 public OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_InviteToGroup");
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_InviteToGroup");
 	
 	RegConsoleCmd("sm_steamgroup", CMD_JoinSteamGroup, "Join the steam group.");
 	

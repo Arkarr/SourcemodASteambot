@@ -7,7 +7,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.3"
+#define PLUGIN_VERSION 	"2.4"
 #define MODULE_NAME 	"[ASteambot - Report]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
@@ -23,7 +23,7 @@ char TargetOffline[MAXPLAYERS + 1][50];
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more infos
 */
 
 public Plugin myinfo = 
@@ -46,10 +46,15 @@ public OnAllPluginsLoaded()
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
 		ASteambot_RegisterModule("ASteambot_Report");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public OnPluginStart()
 {
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Report");
+		
 	RegConsoleCmd("sm_report", CMD_Report, "Report a player by sending a message to admins through steam chat.");
 	
 	CVAR_Delay = CreateConVar("sm_asteambot_report_delay", "30.0", "Time, in seconds, to delay the target of sm_rocket's death.", FCVAR_NONE, true, 0.0);

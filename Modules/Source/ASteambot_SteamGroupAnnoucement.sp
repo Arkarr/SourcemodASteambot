@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.4"
+#define PLUGIN_VERSION 	"1.5"
 #define MODULE_NAME 	"[ANY] ASteambot Steam Group Annoucement"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_SteamGroupAnnoucement.txt"
 
@@ -17,7 +17,7 @@ char groupID[50];
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more infos
 */
 
 public Plugin myinfo = 
@@ -40,6 +40,8 @@ public OnAllPluginsLoaded()
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
 		ASteambot_RegisterModule("ASteambot_SteamGroupAnnoucement");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public void OnPluginStart()
@@ -52,6 +54,9 @@ public void OnPluginStart()
 
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
+        
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_SteamGroupAnnoucement");
 }
 
 public OnPluginEnd()

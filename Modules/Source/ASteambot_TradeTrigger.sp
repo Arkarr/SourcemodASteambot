@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.1"
+#define PLUGIN_VERSION 			"1.2"
 #define MODULE_NAME 			"[ASteambot - Trade Trigger]"
 
 #define ITEM_ID					"itemID"
@@ -41,7 +41,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more infos
 */
 
 public Plugin myinfo = 
@@ -64,6 +64,8 @@ public OnAllPluginsLoaded()
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
 		ASteambot_RegisterModule("ASteambot_TradeTrigger");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public void OnPluginStart()

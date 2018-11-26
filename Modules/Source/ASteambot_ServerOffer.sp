@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.2"
+#define PLUGIN_VERSION 			"1.3"
 #define MODULE_NAME 			"[ASteambot - Server Offer]"
 
 #define ITEM_ID					"itemID"
@@ -28,7 +28,7 @@ Handle ARRAY_Items[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more infos
 */
 
 public Plugin myinfo = 
@@ -50,7 +50,9 @@ public OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_ServerItem");
+		ASteambot_RegisterModule("ASteambot_ServerOffer");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public void OnPluginStart()

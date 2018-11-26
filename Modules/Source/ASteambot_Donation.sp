@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.1"
+#define PLUGIN_VERSION 			"3.2"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problems, added more infos
 */
 
 public Plugin myinfo = 
@@ -100,11 +100,14 @@ public OnAllPluginsLoaded()
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
 		ASteambot_RegisterModule("ASteambot_Donation");
+	else
+		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
 
 public void OnPluginStart()
 {
-	ASteambot_RegisterModule("ASteambot_Donation");
+    if (LibraryExists("ASteambot"))
+		ASteambot_RegisterModule("ASteambot_Donation");
 	
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
 	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
