@@ -110,7 +110,7 @@ public void OnPluginStart()
 		ASteambot_RegisterModule("ASteambot_Donation");
 	
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
-	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
+	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.");
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
 	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
 	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donation_value", "50", "Any trade offer's value below this cvar is automatically refused.");

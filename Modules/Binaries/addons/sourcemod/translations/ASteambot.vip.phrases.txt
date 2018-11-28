@@ -95,7 +95,7 @@
         "#format"   "{1:s}"
         "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
         "fr"    "Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant ... "
-        "pl"    Nie można załadować przedmiotów z ekwipunku {1}! Próbuję ponownie..."
+        "pl"    "Nie można załadować przedmiotów z ekwipunku {1}! Próbuję ponownie..."
         "ru"    "Не могу загрузить Ваши товары для инвентаря {1}! Попробуйте еще раз..."
     }
 }
