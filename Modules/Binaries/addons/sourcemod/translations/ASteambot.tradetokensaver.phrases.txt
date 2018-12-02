@@ -1,23 +1,27 @@
 "Phrases"
 {
-    "cmd_wrong_1"
-    {
-        "en"    "Usage : sm_savetradetoken [TRADE URL]"
-    }
+	"cmd_wrong_1"
+	{
+		"en"	"Usage: sm_savetradetoken [TRADE-URL]"
+		"de"	"Anwendung: sm_savetradetoken [Handels-URL]"
+	}
 	
 	"cmd_wrong_2"
 	{
 		"en"	"Trade taken can be found here:"
+		"de"	"Der aufgenommene Handel findet sich hier:"
 	}
 	
 	"cmd_wrong_3"
 	{
-		"en"	"Bottom of the page (Third-Party Sites)"
+		"en"	"Bottom of the page (Websites von Dritten)"
+		"de"	"Ende der Seite ()"
 	}
 	
 	"token_saved"
 	{
-		"#format"   "{1:s}"
-		"en"		"Token ({1}) has been saved !"
+		"#format"	"{1:s}"
+		"en"	"Token ({1}) has been saved!"
+		"de"	"Token ({1}) wurde gespeichert!"
 	}
 }

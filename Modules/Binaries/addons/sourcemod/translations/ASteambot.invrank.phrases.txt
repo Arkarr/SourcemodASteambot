@@ -1,33 +1,40 @@
 "Phrases"
 {
-    //Commands
-    "ingame"
-    {
-        "en"    "This command can be usued only in game !"
-        "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
-        "pl"    "Ta komenda może być użyta tylko w grze!"
-	"ru"    "Это команда может быть использована только в игре!"
-    }
-    //ASteambot
-    "ASteambot_NotConnected"
-    {
-        "en"        "ASteambot is not connected ! Try again later."
-        "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
-        "pl"        "ASteambot nie jest połączony! Spróbuj później."
-	"ru"        "ASteambot не подключен! Попробуйте позже."
-    }
-    "TradeOffer_InventoryScanned"
-    {
-        "en"    "Inventory scanned. Searching your rank..."
-        "fr"    "Inventaire scanner, recherche du rang..."
-        "pl"    "Ekwipunek sprawdzony. Szukanie twojej rangi..."
-	"ru"    "Инвентарь просканирован. Ищем Ваш ранк..."
-    }
-    "Config_reloaded"
-    {
-    	"en"	"Config reloaded sucessfully !"
-        "fr"    "Config rechargée avec succès !"
-    	"pl"	"Ustawienia przeładowane!"
-	"ru"    "Конфигурированиях успешно перезагружен!"
-   	}
-}
+	// Commands
+	"ingame"
+	{
+		"en"	"This command can be usued only in game!"
+		"fr"	"Cette commande ne peut être utilisée que dans le jeu!"
+		"pl"	"Ta komenda może być użyta tylko w grze!"
+		"ru"	"Это команда может быть использована только в игре!"
+		"de"	"Dieses Kommando kann nur ingame genutzt werden!"
+	}
+	
+	// ASteambot
+	"ASteambot_NotConnected"
+	{
+		"en"	"ASteambot is not connected! Try again later."
+		"fr"	"ASteambot n'est pas connecté! Réessayez plus tard."
+		"pl"	"ASteambot nie jest połączony! Spróbuj później."
+		"ru"	"ASteambot не подключен! Попробуйте позже."
+		"de"	"ASteambot ist nicht verbunden! Versuche es später erneut."
+	}
+	
+	"TradeOffer_InventoryScanned"
+	{
+		"en"	"Inventory scanned. Searching your rank..."
+		"fr"	"Inventaire scanner. Recherche du rang..."
+		"pl"	"Ekwipunek sprawdzony. Szukanie twojej rangi..."
+		"ru"	"Инвентарь просканирован. Ищем Ваш ранк..."
+		"de"	"Inventar gescannt. Ermittle deinen Rang..."
+	}
+	
+	"Config_reloaded"
+	{
+		"en"	"Config reloaded sucessfully!"
+		"fr"	"Config rechargée avec succès!"
+		"pl"	"Ustawienia przeładowane!"
+		"ru"	"Конфигурированиях успешно перезагружен!"
+		"de"	"Konfiguration wurde erneut geladen!"
+	}
+} 
