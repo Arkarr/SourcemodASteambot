@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.2"
+#define PLUGIN_VERSION 			"3.4"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Fixed bug with steamID 64 thing
 */
 
 public Plugin myinfo = 
@@ -105,12 +105,9 @@ public OnAllPluginsLoaded()
 }
 
 public void OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Donation");
-	
+{	
 	CVAR_UsuedStore = CreateConVar("sm_asteambot_donation_store_select", "NONE", "NONE=No store usage/ZEPHYRUS=use zephyrus store/SMSTORE=use sourcemod store/MYJS=use MyJailShop");
-	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.");
+	CVAR_ValueMultiplier = CreateConVar("sm_asteambot_donation_vm", "100", "By how much the steam market prices have to be multiplied to get a correct ammount of store credits.", _, true, 1.0);
 	CVAR_DBConfigurationName = CreateConVar("sm_asteambot_donation_database", "ASteambot", "SET THIS PARAMETER IF YOU DON'T HAVE ANY STORE (sm_asteambot_donation_store_select=NONE) ! The database configuration in database.cfg");
 	CVAR_MaxDonation = CreateConVar("sm_asteambot_max_donation_value", "500", "If the trade offer's value is higher than this one, the player will get additional credits like this : (([TRADE OFFER VALUE] - [THIS CVAR])/[TRADE OFFER VALUE])*[TRADE OFFER VALUE], view : https://forums.alliedmods.net/showpost.php?p=2559559&postcount=16");
 	CVAR_MinDonation = CreateConVar("sm_asteambot_min_donation_value", "50", "Any trade offer's value below this cvar is automatically refused.");
@@ -274,7 +271,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	ExplodeString(message, "/", parts, 4, messageSize);
 	Format(steamID, sizeof(steamID), parts[0]);
 	
-	int client = FindClientBySteamID(steamID);
+	int client = ASteambot_FindClientBySteam64(steamID);
 	
 	if(MessageType == AS_NOT_FRIENDS && client != -1)
 	{
@@ -457,7 +454,6 @@ public bool IsItemAllowed(const char[] itemName)
 }*/
 public bool CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
-	PrintToServer("DEBUG: %i", itemCount);
 	if(!StrEqual(strinventory, "EMPTY"))
 	{
 		char[][] items = new char[itemCount][60];
@@ -717,7 +713,7 @@ public void GetPlayerCredits(Handle db, Handle results, const char[] error, any 
 	ReadPackString(data, offerID, sizeof(offerID));
 	value = ReadPackFloat(data);
 	
-	int client = FindClientBySteamID(steamID);
+	int client = ASteambot_FindClientBySteam64(steamID);
 	
 	if (results == INVALID_HANDLE)
 	{
@@ -756,24 +752,6 @@ public void GotDatabase(Handle owner, Handle hndl, const char[] error, any data)
 		if (DBFastQuery(QUERY_CREATE_T_CLIENTS))
 			PrintToServer("%s %t", MODULE_NAME, "Database_Success");
 	}
-}
-
-public int FindClientBySteamID(char[] steamID)
-{
-	char clientSteamID[30];
-	for (int i = MaxClients; i > 0; --i)
-	{
-		if (IsValidClientASteambot(i))
-		{
-			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-			if (StrEqual(clientSteamID, steamID))
-			{
-				return i;
-			}
-		}
-	}
-	
-	return -1;
 }
 
 public bool DBFastQuery(const char[] sql)

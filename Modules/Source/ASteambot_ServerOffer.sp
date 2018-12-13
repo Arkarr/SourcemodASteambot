@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.3"
+#define PLUGIN_VERSION 			"1.4"
 #define MODULE_NAME 			"[ASteambot - Server Offer]"
 
 #define ITEM_ID					"itemID"
@@ -274,24 +274,6 @@ public int CountCharInString(const char[] str, int c)
     }
 
     return count;
-}
-
-public int FindClientBySteamID(char[] steamID)
-{
-	char clientSteamID[30];
-	for (int i = MaxClients; i > 0; --i)
-	{
-		if (IsValidClient(i))
-		{
-			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-			if (StrEqual(clientSteamID, steamID))
-			{
-				return i;
-			}
-		}
-	}
-	
-	return -1;
 }
 
 public int MenuHandle_ItemSelect(Handle menu, MenuAction action, int client, int itemIndex)

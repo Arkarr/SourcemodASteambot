@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.2"
+#define PLUGIN_VERSION 			"1.3"
 #define MODULE_NAME 			"[ASteambot - Trade Trigger]"
 
 #define ITEM_ID					"itemID"

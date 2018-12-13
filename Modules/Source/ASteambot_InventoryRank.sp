@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.2"
+#define PLUGIN_VERSION 			"1.3"
 #define MODULE_NAME 			"[ASteambot - Inventory Rank]"
 
 #define ITEM_ID					"itemID"
@@ -130,7 +130,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	ExplodeString(message, "/", parts, 4, messageSize);
 	Format(steamID, sizeof(steamID), parts[0]);
 	
-	int client = FindClientBySteamID(steamID);
+	int client = ASteambot_FindClientBySteam64(steamID);
 	
 	if(MessageType == AS_SCAN_INVENTORY && client != -1)
 	{		
@@ -202,24 +202,6 @@ public int CountCharInString(const char[] str, int c)
     }
 
     return count;
-}
-
-public int FindClientBySteamID(char[] steamID)
-{
-	char clientSteamID[30];
-	for (int i = MaxClients; i > 0; --i)
-	{
-		if (IsValidClient(i))
-		{
-			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-			if (StrEqual(clientSteamID, steamID))
-			{
-				return i;
-			}
-		}
-	}
-	
-	return -1;
 }
 
 //Helper functions

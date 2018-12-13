@@ -5,14 +5,14 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.1"
+#define PLUGIN_VERSION 			"1.2"
 #define MODULE_NAME 			"[ASteambot - Execute]"
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
 
 //Release note
 /*
-*Fixed late load problems
+*Fixed late load problem
 */
 
 public Plugin myinfo = 
@@ -31,10 +31,7 @@ public void OnLibraryAdded(const char[] name)
 }
 
 public void OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Execute");
-	
+{	
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
 }

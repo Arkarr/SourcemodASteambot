@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"2.4"
+			"Latest"	"2.5"
 		}
 		
 		"Notes"	"Fixed late load problems, added more infos"

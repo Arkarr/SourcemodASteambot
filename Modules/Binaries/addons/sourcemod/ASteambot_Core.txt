@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"4.1"
+			"Latest"	"4.3"
 		}
 		
-		"Notes"	"Fixed late load problems"
+		"Notes"	"Steam ID 64 fix"
 		"Notes"	"-----------"
 	}
 	

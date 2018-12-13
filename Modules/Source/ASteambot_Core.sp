@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"4.1"
+#define PLUGIN_VERSION 	"4.3"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Fixed late load problems
+*Steam ID 64 fix
 */
 
 public Plugin myinfo = 
@@ -76,6 +76,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
 	CreateNative("ASteambot_SendMesssage", Native_SendMesssage);
 	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
+	CreateNative("ASteambot_FindClientBySteam64", Native_FindClientBySteam64);
 	
 	RegPluginLibrary("ASteambot");
 	
@@ -675,4 +676,34 @@ stock void GetHostName(char[] str, size)
 		return;
 	
 	GetConVarString(hHostName, str, size);
-} 
+}
+
+public bool IsValidClient(client)
+{
+	if (client <= 0 || client > MaxClients) return false;
+	if (!IsClientInGame(client)) return false;
+	if (IsClientSourceTV(client) || IsClientReplay(client)) return false;
+	return true;
+}
+
+public int Native_FindClientBySteam64(Handle plugin, int numParams)
+{
+	char clientSteamID[100];
+	
+	GetNativeString(1, clientSteamID, sizeof(clientSteamID));
+	
+	char pSteamID64[100];
+	for (int i = MaxClients; i > 0; --i)
+	{
+		if (IsValidClient(i))
+		{
+			GetClientAuthId(i, AuthId_SteamID64, pSteamID64, sizeof(pSteamID64));
+			if (StrEqual(clientSteamID, pSteamID64))
+			{
+				return i;
+			}
+		}
+	}
+	
+	return -1;
+}

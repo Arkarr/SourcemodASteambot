@@ -87,23 +87,6 @@ public ASteambot_Message(AS_MessageType MessageType, char[] msg, const int msgSi
 	}
 }
 
-public int FindClientBySteamID(char[] steamID)
-{
-	char clientSteamID[30];
-	for (int i = MaxClients; i > 0; --i)
-	{
-		if (IsValidClient(i))
-		{
-			if (GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID)) && StrEqual(clientSteamID, steamID))
-            {
-                return i;
-            }
-		}
-	}
-	
-	return -1;
-}
-
 stock bool IsValidClient(int client)
 {
 	if (client <= 0)return false;

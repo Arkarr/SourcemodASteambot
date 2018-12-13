@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.5"
+#define PLUGIN_VERSION 	"1.7"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Chat.txt"
 
@@ -17,7 +17,7 @@ bool transferMessages;
 
 //Release note
 /*
-*Fixed late load problems, add more infos
+*Steam ID 64 fix
 */
 
 public Plugin myinfo = 
@@ -45,10 +45,7 @@ public OnAllPluginsLoaded()
 }
 
 public void OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Chat");
-	
+{	
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
 }

@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.9"
+#define PLUGIN_VERSION 	"2.0"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InviteToGroup.txt"
 
@@ -44,10 +44,7 @@ public void OnLibraryAdded(const char[] name)
 }
 
 public OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_InviteToGroup");
-	
+{	
 	RegConsoleCmd("sm_steamgroup", CMD_JoinSteamGroup, "Join the steam group.");
 	
 	CVAR_SteamGroupID = CreateConVar("sm_asteambot_steamgroupid", "", "The steam group id, THE BOT'S ACCOUNT HAVE TO BE IN THE GROUP AND THE RIGHT TO INVITE POEPLE !");
@@ -87,7 +84,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 {	
 	if(MessageType == AS_NOT_FRIENDS)
 	{
-		int client = FindClientBySteamID(message);
+		int client = ASteambot_FindClientBySteam64(message);
 		
 		if(client != -1)
 		{
@@ -101,29 +98,13 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	}
 	else if(MessageType == AS_INVITE_GROUP)
 	{
-		int client = FindClientBySteamID(message);
+		int client = ASteambot_FindClientBySteam64(message);
 		
 		if(client != -1)
 			CPrintToChat(client, "%s {green}Steam group invite sent !", MODULE_NAME);
 		else
 			PrintToServer("%s Couldn't find client with steamID %s", MODULE_NAME, message);
 	}
-}
-
-public int FindClientBySteamID(char[] steamID)
-{
-	char clientSteamID[30];
-	for (int i = MaxClients; i > 0; --i)
-	{
-		if (IsValidClient(i))
-		{
-			GetClientAuthId(i, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-			if (StrEqual(clientSteamID, steamID))
-				return i;
-		}
-	}
-	
-	return -1;
 }
 
 stock bool IsValidClient(client)
