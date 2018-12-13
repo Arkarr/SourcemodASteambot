@@ -31,6 +31,13 @@ enum AS_MessageType
 };
 
 /** 
+ * Find client by steamID64
+ * 
+ * @return          A client id.
+ */ 
+native int ASteambot_FindClientBySteam64(const char[] steamid64)
+
+/** 
  * Register the plugin, required to receive and send messages.
  * 
  * @return          Nothing.
