@@ -1,101 +1,126 @@
 "Phrases"
 {
-    //Commands
-    "ingame"
-    {
-        "en"    "This command can be used only in game !"
-        "fr"    "Cette commande ne peut être utilisée que dans le jeu !"
-        "pl"    "Ta komenda może być użyta tylko w grze!"
-        "ru"    "Эта команда может быть использована только в игре!"
-    }
-    //steam
-    "Steam_NotFriends"
-    {
-        "en"        "I can't send you trade offer because we are not friends on Steam ! Adding you as friend..."
-        "fr"        "Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam ! Je t'ajoutes maintenant...'"
-        "pl"        "Nie mogę wysłać Ci oferty wymiany bo nie jesteśmy znajomymi na Steam! Dodaję Cię do znajomych..."
-        "ru"    "Я не могу отправить предложение обмена, потому что мы не друзья в Steam! Добавляю Вас в друзья..."
-    }
-    "Steam_FriendInvitSend"
-    {
-        "en"        "I sent you a friend invite :) ! {lime}Try again to donate once you have accept the friend request !"
-        "fr"        "La demande d'ami a été envoyé :) ! {lime}Essaie encore une fois une fois que tu as accepter mon invitation !"
-        "pl"        "Wysłałem Ci zaproszenie do znajomych :) ! {lime}Spróbuj wysłać dotację jeszcze raz jak zaakceptujesz zaproszenie!"
-        "ru"    "Я отправил тебе приглашение в друзья :) !{lime}Попробуй сделать пожертвование, после того, как добавишь меня в друзья!"
-    }
-    //ASteambot
-    "ASteambot_NotConnected"
-    {
-        "en"        "ASteambot is not connected ! Try again later."
-        "fr"        "ASteambot n'est pas connecté! Réessayez plus tard."
-        "pl"        "ASteambot nie jest połączony! Spróbuj później."
-        "ru"        "ASteambot не подключен! Попробуйте позже."
-    }
-    //VIP things
-    "VIP_NoPackageAvailable"
-    {
-   		"en"		"No VIP package available found."
-        "fr"        "Aucun forfait VIP a été trouvé."
-   		"pl"		"Nie znaleziono żadnej paczki VIP."
-        "ru"    "Нету доступных VIP пакетов."
-  	}
-  	"VIP_Denied"
-  	{
-  		"en"		"You didn't clicked on 'OK'. Offer denied. Try again !"
-        "fr"        "Vous n'avez pas cliqué sur 'OK'. Offre refusée. Réessayer !"
-  		"pl"		"Nie wcisnąłeś 'OK'. Oferta anulowana. Spróbuj jeszcze raz!"
-        "ru"    "Вы не нажали 'OK'. Предложение отклонено. Попробуйте еще !"
-  	}
-    //trade offer
-    "TradeOffer_Success"
-    {
-        "#format"   "{1:s}"
-        "en"        "Offer accepted ! Welcome to the VIP community, {1} !"
-        "fr"        "Offre acceptée ! Bienvenue dans la communauté VIP, {1} !"
-        "pl"        "Oferta zaakceptowana! Witaj {1} w społeczności VIPów!"
-        "ru"    "Предложение принято ! Добро пожаловать в VIP группу, {1} !"
-    }
-    "TradeOffer_Declined"
-    {
-    	"en"    "Offer declined. You are {fullred}NOT{default} a VIP."
-        "fr"    "L'offre a été refusé, tu n'est {fullred}PAS{default} un VIP."
-    	"pl"    "Oferta anulowana. {fullred}Nie{default} jesteś VIP'em."
-        "ru"    "Предложение отклонено. Вы {fullred}не{default} VIP."
-    }
-    "TradeOffer_WaitItems"
-    {
-        "en"    "Please wait, I'm loading your availabes VIP packages that you can buy..."
-        "fr"    "Veuillez patienter, je charges les offres VIP spécialisé pour vous..."
-        "en"    "Poczekaj, ładuję wszystkie możliwe paczki VIPów do kupienia..."
-        "ru"    "Пожалуйста подождите, загружаю доступные VIP группы, которые Вы можете купить..."
-    }
-    "TradeOffer_InventoryScanned"
-    {
-        "en"    "Creating the menu, please wait !"
-        "fr"    "Création du menu, veuillez patienter !"
-        "pl"    "Tworzę menu, poczekaj!"
-        "ru"    "Создаю меню, пожалуйста подождите !"
-    }
-    "TradeOffer_Created"
-    {
-        "en"    "I created the trade offer, please confirm it through steam !"
-        "fr"    "L'offre d'échange a été creé, S'il vous plaît merci de confirmer dans steam !"
-        "pl"    "Wysłałem ofertę wymiany, potwierdź ją przez Steam!"
-        "ru"    "Я создал предложение обмена, пожалуйста подтвердите его в Steam !"
-    }
-    "TradeOffer_SelectTradeOffer"
-    {
-        "en"    "Please, select a VIP package."
-        "fr"    "S'il vous plaît, sélectionnez un forfait VIP."
-        "pl"    "Proszę wybrać paczkę VIP."
-        "ru"    "Пожалуйста, выберете нужную группу VIP"
-    }
-    "TradeOffer_ItemsError"
-    {
-        "#format"   "{1:s}"
-        "en"    "Couldn't load your items for {1} inventory ! Retry in a moment..."
-        "fr"    "Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant ... "
-        "pl"    "Nie można załadować przedmiotów z ekwipunku {1}! Próbuję ponownie..."
-        "ru"    "Не могу загрузить Ваши товары для инвентаря {1}! Попробуйте еще раз..."
-    }
+	// Commands
+	"ingame"
+	{
+		"en"	"This command can be used only in game!"
+		"fr"	"Cette commande ne peut être utilisée que dans le jeu!"
+		"pl"	"Ta komenda może być użyta tylko w grze!"
+		"ru"	"Эта команда может быть использована только в игре!"
+		"de"	"Du kannst dieses Kommando nur Ingame anwenden!"
+	}
+	
+	// Steam
+	"Steam_NotFriends"
+	{
+		"en"	"I can't send you trade offer because we are not friends on Steam! Adding you as friend..."
+		"fr"	"Je peux pas vous envoyer d'offre d'échange car vous ne m'avez pas en ami sur Steam! Je t'ajoutes maintenant...'"
+		"pl"	"Nie mogę wysłać Ci oferty wymiany bo nie jesteśmy znajomymi na Steam! Dodaję Cię do znajomych..."
+		"ru"	"Я не могу отправить предложение обмена, потому что мы не друзья в Steam! Добавляю Вас в друзья..."
+		"de"	"Ich kann dir keine Handelsanfrage senden weil wir auf Steam noch nicht befreundet sind! Ich füge dich jetzt hinzu..."
+	}
+	
+	"Steam_FriendInvitSend"
+	{
+		"en"	"I sent you a friend invite :-) ! {lime}Try again to donate once you have accept the friend request!"
+		"fr"	"La demande d'ami a été envoyé :-) ! {lime}Essaie encore une fois une fois que tu as accepter mon invitation!"
+		"pl"	"Wysłałem Ci zaproszenie do znajomych :-) ! {lime}Spróbuj wysłać dotację jeszcze raz jak zaakceptujesz zaproszenie!"
+		"ru"	"Я отправил тебе приглашение в друзья :-) ! {lime}Попробуй сделать пожертвование, после того, как добавишь меня в друзья!"
+		"de"	"Ich habe dir eine Freundschaftanfrage gesendet :-) ! {lime}Versuche erneut zu spenden sobald du mich als Freund angenommen hast!"
+	}
+	
+	// ASteambot
+	"ASteambot_NotConnected"
+	{
+		"en"	"ASteambot is not connected! Try again later."
+		"fr"	"ASteambot n'est pas connecté! Réessayez plus tard."
+		"pl"	"ASteambot nie jest połączony! Spróbuj później."
+		"ru"	"ASteambot не подключен! Попробуйте позже."
+		"de"	"ASteambot ist nicht verbunden! Versuche es später erneut."
+	}
+	
+	// VIP things
+	"VIP_NoPackageAvailable"
+	{
+		"en"	"No VIP package available found."
+		"fr"	"Aucun forfait VIP a été trouvé."
+		"pl"	"Nie znaleziono żadnej paczki VIP."
+		"ru"	"Нету доступных VIP пакетов."
+		"de"	"Es wurden keine VIP Pakete gefunden."
+	}
+	
+	"VIP_Denied"
+	{
+		"en"	"You didn't clicked on 'OK'. Offer denied. Try again!"
+		"fr"	"Vous n'avez pas cliqué sur 'OK'. Offre refusée. Réessayer!"
+		"pl"	"Nie wcisnąłeś 'OK'. Oferta anulowana. Spróbuj jeszcze raz!"
+		"ru"	"Вы не нажали 'OK'. Предложение отклонено. Попробуйте еще!"
+		"de"	"Du hast nicht auf 'OK' geklickt. Handelsanfrage gescheitert. Versuche es erneut!"
+	}
+	
+	// Trade offer
+	"TradeOffer_Success"
+	{
+		"#format"	"{1:s}"
+		"en"	"Offer accepted! Welcome to the VIP community, {1} !"
+		"fr"	"Offre acceptée! Bienvenue dans la communauté VIP, {1} !"
+		"pl"	"Oferta zaakceptowana! Witaj {1} w społeczności VIPów!"
+		"ru"	"Предложение принято! Добро пожаловать в VIP группу, {1} !"
+		"de"	"Handelsanfrage akzeptiert! Wilkommen in der VIP Gesellschaft, {1} !"
+	}
+	
+	"TradeOffer_Declined"
+	{
+		"en"	"Offer declined. You are {fullred}NOT{default} a VIP."
+		"fr"	"L'offre a été refusé, tu n'est {fullred}PAS{default} un VIP."
+		"pl"	"Oferta anulowana. {fullred}Nie{default} jesteś VIP'em."
+		"ru"	"Предложение отклонено. Вы {fullred}не{default} VIP."
+		"de"	"Handelsanfrage abgelehnt. Du bist {fullred}KEIN{default} VIP."
+	}
+	
+	"TradeOffer_WaitItems"
+	{
+		"en"	"Please wait, I'm loading your availabes VIP packages that you can buy..."
+		"fr"	"Veuillez patienter, je charges les offres VIP spécialisé pour vous..."
+		"en"	"Poczekaj, ładuję wszystkie możliwe paczki VIPów do kupienia..."
+		"ru"	"Пожалуйста подождите, загружаю доступные VIP группы, которые Вы можете купить..."
+		"de"	"Bitte warte, ich lade deine verfügbaren VIP Pakete..."
+	}
+	
+	"TradeOffer_InventoryScanned"
+	{
+		"en"	"Creating the menu, please wait!"
+		"fr"	"Création du menu, veuillez patienter!"
+		"pl"	"Tworzę menu, poczekaj!"
+		"ru"	"Создаю меню, пожалуйста подождите!"
+		"de"	"Erstelle Menü, bitte warten!"
+	}
+	
+	"TradeOffer_Created"
+	{
+		"en"	"I created the trade offer, please confirm it through Steam!"
+		"fr"	"L'offre d'échange a été creé, S'il vous plaît merci de confirmer dans Steam!"
+		"pl"	"Wysłałem ofertę wymiany, potwierdź ją przez Steam!"
+		"ru"	"Я создал предложение обмена, пожалуйста подтвердите его в Steam!"
+		"de"	"Ich habe eine Handelsanfrage erstellt, bitte bestätige diese in Steam!"
+	}
+	
+	"TradeOffer_SelectTradeOffer"
+	{
+		"en"	"Please, select a VIP package."
+		"fr"	"S'il vous plaît, sélectionnez un forfait VIP."
+		"pl"	"Proszę wybrać paczkę VIP."
+		"ru"	"Пожалуйста, выберете нужную группу VIP."
+		"de"	"Bitte wähle ein VIP Paket."
+	}
+	
+	"TradeOffer_ItemsError"
+	{
+		"#format"	"{1:s}"
+		"en"	"Couldn't load your items for {1} inventory! Retry in a moment..."
+		"fr"	"Impossible de charger vos objets de votre inventaire {1}! Réessayez dans un instant..."
+		"pl"	"Nie można załadować przedmiotów z ekwipunku {1}! Próbuję ponownie..."
+		"ru"	"Не могу загрузить Ваши товары для инвентаря {1}! Попробуйте еще раз..."
+		"de"	"Ich konnte deine Items {1} nicht laden! Versuche es aber erneut in einem Moment..."
+	}
 }
