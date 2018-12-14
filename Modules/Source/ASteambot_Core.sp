@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"4.3"
+#define PLUGIN_VERSION 	"4.4"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Steam ID 64 fix
+*Steam ID 64 fix and older version support
 */
 
 public Plugin myinfo = 
@@ -693,12 +693,14 @@ public int Native_FindClientBySteam64(Handle plugin, int numParams)
 	GetNativeString(1, clientSteamID, sizeof(clientSteamID));
 	
 	char pSteamID64[100];
+	char pSteamID[100];
 	for (int i = MaxClients; i > 0; --i)
 	{
 		if (IsValidClient(i))
 		{
 			GetClientAuthId(i, AuthId_SteamID64, pSteamID64, sizeof(pSteamID64));
-			if (StrEqual(clientSteamID, pSteamID64))
+			GetClientAuthId(i, AuthId_Steam2, pSteamID, sizeof(pSteamID));
+			if (StrEqual(clientSteamID, pSteamID64) || StrEqual(clientSteamID, pSteamID))
 			{
 				return i;
 			}
