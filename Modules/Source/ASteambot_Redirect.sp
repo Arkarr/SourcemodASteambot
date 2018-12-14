@@ -9,7 +9,7 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.5"
+#define PLUGIN_VERSION 	"1.6"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
 
@@ -78,7 +78,7 @@ public ASteambot_Message(AS_MessageType MessageType, char[] msg, const int msgSi
 {
 	if(MessageType == AS_NOT_FRIENDS)
 	{
-		int client = FindClientBySteamID(msg);
+		int client = ASteambot_FindClientBySteam64(msg);
 		if(client != -1)
 		{
 			ASteambot_SendMesssage(AS_FRIEND_INVITE, msg);

@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.4"
+#define PLUGIN_VERSION 			"1.5"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -71,10 +71,7 @@ public OnAllPluginsLoaded()
 }
 
 public void OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_VIP");
-	
+{	
 	RegConsoleCmd("sm_donatevip", CMD_GetVP, "Create a trade offer and send it to the player.");
 	
 	LoadTranslations("ASteambot.vip.phrases");

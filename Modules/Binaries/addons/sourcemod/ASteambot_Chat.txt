@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.7"
+			"Latest"	"1.8"
 		}
 		
 		"Notes"	"Steam ID 64 fix"

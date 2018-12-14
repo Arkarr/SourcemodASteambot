@@ -7,7 +7,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.5"
+#define PLUGIN_VERSION 	"2.6"
 #define MODULE_NAME 	"[ASteambot - Report]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
 
@@ -51,10 +51,7 @@ public OnAllPluginsLoaded()
 }
 
 public OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Report");
-		
+{		
 	RegConsoleCmd("sm_report", CMD_Report, "Report a player by sending a message to admins through steam chat.");
 	
 	CVAR_Delay = CreateConVar("sm_asteambot_report_delay", "30.0", "Time, in seconds, to delay the target of sm_rocket's death.", FCVAR_NONE, true, 0.0);
@@ -280,7 +277,9 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 			}	
 			else
 			{
-				if (client == target)
+				Target[client] = target;
+				ReasonMenu(client);
+				/*if (client == target)
 				{
 					ReplyToCommand(client, "%s Why would you report yourself?", MODULE_NAME);
 				}	
@@ -288,7 +287,7 @@ public int ChooseTargetMenuHandler(Handle menu, MenuAction action, int client, i
 				{
 					Target[client] = target;
 					ReasonMenu(client);
-				}
+				}*/
 			}
 		}
 	}

@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.4"
+#define PLUGIN_VERSION 			"1.5"
 #define MODULE_NAME 			"[ASteambot - Server Offer]"
 
 #define ITEM_ID					"itemID"
@@ -212,7 +212,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	ExplodeString(message, "/", parts, 4, messageSize);
 	Format(steamID, sizeof(steamID), parts[0]);
 	
-	int client = FindClientBySteamID(steamID);
+	int client = ASteambot_FindClientBySteam64(steamID);
 	
 	if(MessageType == AS_SCAN_INVENTORY && client != -1)
 	{		

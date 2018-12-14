@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.3"
+#define PLUGIN_VERSION 			"1.4"
 #define MODULE_NAME 			"[ASteambot - Inventory Rank]"
 
 #define ITEM_ID					"itemID"
@@ -58,10 +58,7 @@ public OnAllPluginsLoaded()
 }
 
 public void OnPluginStart()
-{
-    if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_InventoryRank");
-	
+{	
 	RegConsoleCmd("sm_inventoryrank", CMD_InventoryRank, "Force the refresh of the tag");
 	RegConsoleCmd("sm_invrank", CMD_InventoryRank, "Force the refresh of the tag");
 	RegConsoleCmd("sm_ir", CMD_InventoryRank, "Force the refresh of the tag");

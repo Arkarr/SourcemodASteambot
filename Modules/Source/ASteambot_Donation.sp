@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.4"
+#define PLUGIN_VERSION 			"3.5"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -272,7 +272,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	Format(steamID, sizeof(steamID), parts[0]);
 	
 	int client = ASteambot_FindClientBySteam64(steamID);
-	
+	PrintToChatAll(">>> client : %i", client);
 	if(MessageType == AS_NOT_FRIENDS && client != -1)
 	{
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_NotFriends");
