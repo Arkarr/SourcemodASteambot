@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.1"
+#define PLUGIN_VERSION 	"2.2"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InviteToGroup.txt"
 
@@ -15,7 +15,7 @@ Handle CVAR_SteamGroupID;
 
 //Release note
 /*
-*Fixed late load problems, added more iunfos
+*Fixed steam invite
 */
 
 public OnAllPluginsLoaded()
@@ -89,7 +89,10 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		if(client != -1)
 		{
 			CPrintToChat(client, "%s {green}I can't invite you in my steamgroup, because we are not friend. Please accept my friend request and try again.", MODULE_NAME);
-			ASteambot_SendMesssage(AS_FRIEND_INVITE, message);
+			
+			char steamID[45];
+			GetClientAuthId(client, AuthId_Steam2, steamID, sizeof(steamID));
+			ASteambot_SendMesssage(AS_FRIEND_INVITE, steamID);
 		}
 		else
 		{

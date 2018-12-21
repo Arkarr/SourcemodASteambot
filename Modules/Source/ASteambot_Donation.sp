@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.5"
+#define PLUGIN_VERSION 			"3.6"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed bug with steamID 64 thing
+*Automatic friend invite on player !donate if not friend
 */
 
 public Plugin myinfo = 
@@ -272,7 +272,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	Format(steamID, sizeof(steamID), parts[0]);
 	
 	int client = ASteambot_FindClientBySteam64(steamID);
-	PrintToChatAll(">>> client : %i", client);
+	
 	if(MessageType == AS_NOT_FRIENDS && client != -1)
 	{
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_NotFriends");
@@ -426,32 +426,6 @@ public bool IsItemAllowed(const char[] itemName)
 	return !excluded;
 }
 
-/*public void CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
-{
-	if(!StrEqual(strinventory, "EMPTY"))
-	{
-		char[][] items = new char[itemCount][60];
-		
-		ExplodeString(strinventory, ",", items, itemCount, 60);
-		
-		for (int i = 0; i < itemCount; i++)
-		{
-			char itemInfos[3][30];
-			ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
-			
-			Handle TRIE_Item = CreateTrie();
-			SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
-			SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
-			SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
-			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
-			PushArrayCell(inventory, TRIE_Item);
-		}
-	}
-	else if(StrEqual(strinventory, "ERROR"))
-	{
-		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
-	}
-}*/
 public bool CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
 	if(!StrEqual(strinventory, "EMPTY"))

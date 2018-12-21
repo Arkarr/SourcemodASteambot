@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"3.5"
+			"Latest"	"3.6"
 		}
 		
-		"Notes"	"Fixed bug with steamID 64 thing"
+		"Notes"	"Automatic friend invite on player !donate if not friend"
 		"Notes"	"-----------"
 	}
 	
