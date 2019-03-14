@@ -54,7 +54,7 @@ public OnPluginStart()
 {		
 	RegConsoleCmd("sm_report", CMD_Report, "Report a player by sending a message to admins through steam chat.");
 	
-	CVAR_Delay = CreateConVar("sm_asteambot_report_delay", "30.0", "Time, in seconds, to delay the target of sm_rocket's death.", FCVAR_NONE, true, 0.0);
+	CVAR_Delay = CreateConVar("sm_asteambot_report_delay", "30.0", "Time, in seconds, between each reports.", FCVAR_NONE, true, 0.0);
 	
 	LoadTranslations("common.phrases");
 	LoadTranslations("core.phrases");
