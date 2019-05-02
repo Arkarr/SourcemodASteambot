@@ -6,16 +6,16 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.2"
+#define PLUGIN_VERSION 	"2.3"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InviteToGroup.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InviteToGroup.txt"
 
 Handle CVAR_SteamGroupID;
 
 
 //Release note
 /*
-*Fixed steam invite
+*Updater update file location
 */
 
 public OnAllPluginsLoaded()

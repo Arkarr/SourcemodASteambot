@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.4"
+#define PLUGIN_VERSION 			"1.5"
 #define MODULE_NAME 			"[ASteambot - Inventory Rank]"
 
 #define ITEM_ID					"itemID"
@@ -18,7 +18,7 @@
 #define ITEM_DONATED			"itemDonated"
 #define TRIE_RNAME				"rank_name"
 #define TRIE_RVALUE				"rank_value"
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_InventoryRank.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InventoryRank.txt"
 
 EngineVersion Game;
 
@@ -30,7 +30,7 @@ Handle ARRAY_Items[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Updater update file location
 */
 
 public Plugin myinfo = 

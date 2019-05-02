@@ -5,14 +5,14 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.4"
+#define PLUGIN_VERSION 			"1.5"
 #define MODULE_NAME 			"[ASteambot - Execute]"
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 
 //Release note
 /*
-* Re-compilling
+*Updater update file location
 */
 
 public Plugin myinfo = 

@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"2.2"
+			"Latest"	"2.3"
 		}
 		
-		"Notes"	"Fixed steam invite"
+		"Notes"	"Updater update file location"
 		"Notes"	"-----------"
 	}
 	

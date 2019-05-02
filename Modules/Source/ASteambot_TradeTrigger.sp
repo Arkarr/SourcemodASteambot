@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.4"
+#define PLUGIN_VERSION 			"1.5"
 #define MODULE_NAME 			"[ASteambot - Trade Trigger]"
 
 #define ITEM_ID					"itemID"
@@ -26,7 +26,7 @@
 #define QUERY_INSERT_MONEY		"INSERT INTO `t_client` (`client_steamid`,`client_balance`) VALUES (\"%s\", %.2f);"
 #define QUERY_UPDATE_MONEY		"UPDATE `t_client` SET `client_balance`=%.2f WHERE `client_steamid`=\"%s\""
 
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_TradeTrigger.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_TradeTrigger.txt"
 
 int lastSelectedGame[MAXPLAYERS + 1];
 
@@ -41,7 +41,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Updater update file location
 */
 
 public Plugin myinfo = 
@@ -186,7 +186,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		}
 		else
 		{
-			ProcessTradeOffer(client, credits);
+			//ProcessTradeOffer(client, credits);
 		}
 	}
 }

@@ -7,9 +7,9 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.6"
+#define PLUGIN_VERSION 	"2.7"
 #define MODULE_NAME 	"[ASteambot - Report]"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 Handle CVAR_Delay;
 Handle ARRAY_DisconnectedPlayers;
@@ -23,7 +23,7 @@ char TargetOffline[MAXPLAYERS + 1][50];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Updater update file location
 */
 
 public Plugin myinfo = 

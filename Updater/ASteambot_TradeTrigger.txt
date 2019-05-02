@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.4"
+			"Latest"	"1.5"
 		}
 		
-		"Notes"	"Fixed late load problems, added more infos"
+		"Notes"	"Updater update file location"
 		"Notes"	"-----------"
 	}
 	

@@ -6,9 +6,9 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.9"
+#define PLUGIN_VERSION 	"2.0"
 #define MODULE_NAME 	"[ASteambot - Chat]"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Chat.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Chat.txt"
 
 int connectionCount;
 
@@ -17,7 +17,7 @@ bool transferMessages;
 
 //Release note
 /*
-*Steam ID 64 fix
+*Updater update file location
 */
 
 public Plugin myinfo = 

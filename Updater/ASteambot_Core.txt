@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"4.7"
+			"Latest"	"4.8"
 		}
 		
-		"Notes"	"Steam ID 64 fix and older version support"
+		"Notes"	"Updater update file location"
 		"Notes"	"-----------"
 	}
 	

@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.7"
+		}
+		
+		"Notes"	"Updater update file location"
+		"Notes"	"-----------"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_TradeTokenSaver.smx"
+		"Source"	"Path_SM/scripting/ASteambot_TradeTokenSaver.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.tradetokensaver.phrases.txt"
+	}
+}

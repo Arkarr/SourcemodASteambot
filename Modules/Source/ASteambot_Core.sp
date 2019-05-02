@@ -8,13 +8,13 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"4.7"
+#define PLUGIN_VERSION 	"4.8"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
 #define M_NAME			"mName"
 #define MAX_DATA_SIZE   1000
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Core.txt"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Core.txt"
 
 Handle modules;
 Handle clientSocket;
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Steam ID 64 fix and older version support
+*Updater update file location
 */
 
 public Plugin myinfo = 

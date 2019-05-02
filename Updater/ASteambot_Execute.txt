@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.4"
+			"Latest"	"1.5"
 		}
 		
-		"Notes"	" Re-compilling"
+		"Notes"	"Updater update file location"
 		"Notes"	"-----------"
 	}
 	

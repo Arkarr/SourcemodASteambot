@@ -1,4 +1,3 @@
-
 #include <sourcemod>
 #include <sdktools>
 #include <ASteambot>
@@ -9,14 +8,14 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.6"
-#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Redirect.txt"
+#define PLUGIN_VERSION 	"1.7"
+#define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 
 
 //Release note
 /*
-*Fixed late load problems add more infos
+*Updater update file location
 */
 
 public OnAllPluginsLoaded()

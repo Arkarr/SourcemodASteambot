@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.5"
+#define PLUGIN_VERSION 			"1.6"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -21,7 +21,7 @@
 #define VIPP_NAME				"package_name"
 #define VIPP_ID					"id"
 
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_VIP.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_VIP.txt"
 
 float tradeValue[MAXPLAYERS + 1];
 
@@ -35,7 +35,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Updater update file location
 */
 
 public Plugin myinfo = 

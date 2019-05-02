@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.6"
+#define PLUGIN_VERSION 			"3.7"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -45,7 +45,7 @@
 #define CONFIG_ExcludedItems	"configs/ASDonation_ExcludedItems.ini"
 #define CONFIG_IncludedItems	"configs/ASDonation_IncludedItems.ini"
 
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_Donation.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Donation.txt"
 
 char store[15];
 
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Automatic friend invite on player !donate if not friend
+*Updater update file location
 */
 
 public Plugin myinfo = 

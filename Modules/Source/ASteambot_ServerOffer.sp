@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.5"
+#define PLUGIN_VERSION 			"1.6"
 #define MODULE_NAME 			"[ASteambot - Server Offer]"
 
 #define ITEM_ID					"itemID"
@@ -16,7 +16,7 @@
 #define ITEM_VALUE				"itemValue"
 #define ITEM_DISPLAY			"itemDisplay"
 #define ITEM_MESSAGE			"itemMsg"
-#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Modules/Binaries/addons/sourcemod/ASteambot_ServerOffer.txt"
+#define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_ServerOffer.txt"
 
 EngineVersion Game;
 
@@ -28,7 +28,7 @@ Handle ARRAY_Items[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Fixed late load problems, added more infos
+*Updater update file location
 */
 
 public Plugin myinfo = 
