@@ -1,6 +1,6 @@
 /*
 *
-*	Contains things for ASteambot plugin developpement <--- Best description ever, isn't it ?
+*	Contains things for ASteambot plugin developpement
 *
 */
 #if defined _INCLUDE_ASteambot
