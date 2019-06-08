@@ -8,7 +8,7 @@
 
 #pragma dynamic 131072
 
-#define PLUGIN_AUTHOR 			"Arkarr"
+#define PLUGIN_AUTHOR 		 	"Arkarr"
 #define PLUGIN_VERSION 			"1.6"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 

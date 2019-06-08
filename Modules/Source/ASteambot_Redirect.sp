@@ -8,7 +8,7 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.7"
+#define PLUGIN_VERSION 	"1.8"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 
@@ -22,7 +22,7 @@ public OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
-		ASteambot_RegisterModule("ASteambot_Report");
+		ASteambot_RegisterModule("ASteambot_Redirect");
 	else
 		SetFailState("ASteambot_Core is not present/not running. Plugin can't continue !");
 }
