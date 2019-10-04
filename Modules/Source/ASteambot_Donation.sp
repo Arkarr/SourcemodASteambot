@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.7"
+#define PLUGIN_VERSION 			"3.8"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Updater update file location
+*Added more translation
 */
 
 public Plugin myinfo = 
@@ -153,7 +153,7 @@ public void OnConfigsExecuted()
 	
 	valueMultiplier = GetConVarFloat(CVAR_ValueMultiplier);
 	
-	if(!StrEqual(store, STORE_NONE))
+	if(StrEqual(store, STORE_NONE))
 		SQL_TConnect(GotDatabase, dbconfig);
 }
 
@@ -430,6 +430,12 @@ public bool CreateInventory(int client, const char[] strinventory, int itemCount
 {
 	if(!StrEqual(strinventory, "EMPTY"))
 	{
+		if(StrEqual(strinventory, "TIME_OUT"))
+		{
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_BotInventoryScanTimeOut");
+			return true;
+		}
+		
 		char[][] items = new char[itemCount][60];
 		
 		ExplodeString(strinventory, ",", items, itemCount, 60);
@@ -687,6 +693,7 @@ public void GetPlayerCredits(Handle db, Handle results, const char[] error, any 
 	ReadPackString(data, offerID, sizeof(offerID));
 	value = ReadPackFloat(data);
 	
+	PrintToServer(">>>> %s", steamID);
 	int client = ASteambot_FindClientBySteam64(steamID);
 	
 	if (results == INVALID_HANDLE)
@@ -725,6 +732,8 @@ public void GotDatabase(Handle owner, Handle hndl, const char[] error, any data)
 		
 		if (DBFastQuery(QUERY_CREATE_T_CLIENTS))
 			PrintToServer("%s %t", MODULE_NAME, "Database_Success");
+		else
+			SetFailState("%s %t", MODULE_NAME, "Database_Failure");
 	}
 }
 

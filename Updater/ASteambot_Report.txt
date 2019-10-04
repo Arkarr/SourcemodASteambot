@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"2.7"
+			"Latest"	"2.8"
 		}
 		
 		"Notes"	"Updater update file location"

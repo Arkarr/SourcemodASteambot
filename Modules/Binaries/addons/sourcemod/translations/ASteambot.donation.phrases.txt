@@ -178,6 +178,11 @@
 		"de"	"Du must mindestens {1}$ in Items setzen um spenden zu können!"
 	}
 	
+	"TradeOffer_BotInventoryScanTimeOut"
+	{
+		"en"	"I am sorry, but I couldn't retrive your items right now. Try again in 30 seconds !"
+	}
+
 	// Menu
 	"menu_accept"
 	{

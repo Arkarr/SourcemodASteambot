@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"3.7"
+			"Latest"	"3.8"
 		}
 		
-		"Notes"	"Updater update file location"
+		"Notes"	"Added more translation"
 		"Notes"	"-----------"
 	}
 	

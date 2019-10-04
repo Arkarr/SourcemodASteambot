@@ -689,8 +689,28 @@ public bool IsValidClient(client)
 public int Native_FindClientBySteam64(Handle plugin, int numParams)
 {
 	char clientSteamID[100];
+	char steamId64;
 	
 	GetNativeString(1, clientSteamID, sizeof(clientSteamID));
+	
+	/*if(StrContains(clientSteamID, "STEAM_") == -1)
+	{
+		steamId64 = StringToInt(clientSteamID);
+		
+		int universe = (steamId64 >> 56) & 0xFF;
+		
+		if (universe == 1)
+			universe = 0;
+		
+		int accountIdLowBit = steamId64 & 1;
+		
+		int accountIdHighBits = (steamId64 >> 1) & 0x7FFFFFF;
+		
+		// should hopefully produce "STEAM_0:0:35928448"
+		Format(clientSteamID, sizeof(clientSteamID), "STEAM_%i:%i:%i", universe, accountIdLowBit, accountIdHighBits); 
+		
+		PrintToServer(">> %s", clientSteamID);
+	}*/
 	
 	char pSteamID64[100];
 	char pSteamID[100];
@@ -700,6 +720,7 @@ public int Native_FindClientBySteam64(Handle plugin, int numParams)
 		{
 			GetClientAuthId(i, AuthId_SteamID64, pSteamID64, sizeof(pSteamID64));
 			GetClientAuthId(i, AuthId_Steam2, pSteamID, sizeof(pSteamID));
+
 			if (StrEqual(clientSteamID, pSteamID64) || StrEqual(clientSteamID, pSteamID))
 			{
 				return i;
