@@ -58,6 +58,40 @@
 		"de"	"Du hast nicht auf 'OK' geklickt. Handelsanfrage gescheitert. Versuche es erneut!"
 	}
 	
+	"VIP_Ended"
+	{
+		"en"	"You don't have anymore VIP rights ! Get them back by trading again !"
+	}
+	
+	"VIP_Continue"
+	{
+		"en"	"Welcome back ! You are still VIP !"
+	}
+	
+	// Database
+	"Database_Success"
+	{
+		"en"	"Database connected and table created successfully!"
+		"fr"	"La connection a la base de données a été effectué et le tableau a été creé!"
+		"pl"	"Połączono z bazą danych i stworzono tabelki!"
+		"ru"	"База данных подключена и таблица успешно создана!"
+		"de"	"Datenbank verbunden und Tabellen erstellt!"
+	}
+	
+	"Database_Failure"
+	{
+		"#format"	"{1:s}"
+		"en"	"Database failure: {1}"
+		"fr"	"Base de données défecteux: {1}"
+		"pl"	"Błąd Bazy Danych: {1}"
+		"ru"	"Ошибка базы данных {1}"
+		"de"	"Datenbank Fehler: {1}"
+		"lv"	"Datubazes kluda: {1}"
+		"hu"	"Adatbázis hiba: {1}"
+		"pt-br"	"Falha na database: {1}"
+		"tr"	"Veritabani hatasi: {1}"
+	}
+	
 	// Trade offer
 	"TradeOffer_Success"
 	{
@@ -82,7 +116,7 @@
 	{
 		"en"	"Please wait, I'm loading your availabes VIP packages that you can buy..."
 		"fr"	"Veuillez patienter, je charges les offres VIP spécialisé pour vous..."
-		"en"	"Poczekaj, ładuję wszystkie możliwe paczki VIPów do kupienia..."
+		"pl"	"Poczekaj, ładuję wszystkie możliwe paczki VIPów do kupienia..."
 		"ru"	"Пожалуйста подождите, загружаю доступные VIP группы, которые Вы можете купить..."
 		"de"	"Bitte warte, ich lade deine verfügbaren VIP Pakete..."
 	}
@@ -103,6 +137,11 @@
 		"pl"	"Wysłałem ofertę wymiany, potwierdź ją przez Steam!"
 		"ru"	"Я создал предложение обмена, пожалуйста подтвердите его в Steam!"
 		"de"	"Ich habe eine Handelsanfrage erstellt, bitte bestätige diese in Steam!"
+	}
+	
+	"TradeOffer_TimeOut"
+	{
+		"en"	"I couldn't create the trade offer right now, try again in 1 minute !"
 	}
 	
 	"TradeOffer_SelectTradeOffer"

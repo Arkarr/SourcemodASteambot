@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.6"
+			"Latest"	"1.7"
 		}
 		
-		"Notes"	"Updater update file location"
+		"Notes"	" Removed dependcy"
 		"Notes"	"-----------"
 	}
 	

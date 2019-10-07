@@ -440,7 +440,7 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 	
 	PushArrayString(ARRAY_Data, receiveData);
 	
-	int stringSize = (MAX_DATA_SIZE) * GetArraySize(ARRAY_Data);
+	int stringSize = MAX_DATA_SIZE * GetArraySize(ARRAY_Data);
 	char[] finalData = new char[stringSize];
 	for (int i = 0; i < GetArraySize(ARRAY_Data); i++)
 	{
@@ -448,12 +448,16 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 		GetArrayString(ARRAY_Data, i, data, MAX_DATA_SIZE);
 		StrCat(finalData, stringSize, data);
 	}
+	
 	ClearArray(ARRAY_Data);
 	
 	if (StrContains(finalData, steambotPassword) == -1)
 	{
 		if (DEBUG)
+		{
+			PrintToServer("Data : %s", finalData);
 			PrintToServer(">>> PASSWORD INCORECT");
+		}
 		
 		return;
 	}

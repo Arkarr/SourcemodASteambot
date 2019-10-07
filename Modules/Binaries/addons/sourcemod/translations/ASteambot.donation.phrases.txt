@@ -171,16 +171,17 @@
 	"TradeOffer_ValueTooLow"
 	{
 		"#format"	"{1:.2f}"
-		"en"	"You need to put at least {1}$ as items to donate!"
-		"fr"	"Vous devez mettre au moins {1} $ en tant qu'objet à donner!"
-		"pl"	"Musisz dać przynajmniej {1}$ w przedmiotach aby wysłać dotację!"
-		"ru"	"Необходимо выбрать предметов на сумму не меньше {1} кредитов!"
-		"de"	"Du must mindestens {1}$ in Items setzen um spenden zu können!"
+		"en"		"You need to put at least {1}$ as items to donate!"
+		"fr"		"Vous devez mettre au moins {1} $ en tant qu'objet à donner!"
+		"pl"		"Musisz dać przynajmniej {1}$ w przedmiotach aby wysłać dotację!"
+		"ru"		"Необходимо выбрать предметов на сумму не меньше {1} кредитов!"
+		"de"		"Du must mindestens {1}$ in Items setzen um spenden zu können!"
 	}
 	
 	"TradeOffer_BotInventoryScanTimeOut"
 	{
-		"en"	"I am sorry, but I couldn't retrive your items right now. Try again in 30 seconds !"
+		"#format"	"{1:s}"
+		"en"		"I am sorry, but I couldn't retrive your {1} items right now. Try again in 30 seconds !"
 	}
 
 	// Menu

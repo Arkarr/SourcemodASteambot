@@ -2,14 +2,13 @@
 #include <sdktools>
 #include <ASteambot>
 #include <morecolors>
-#include <VIP-Manager>
 #undef REQUIRE_PLUGIN
 #include <updater>
 
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 		 	"Arkarr"
-#define PLUGIN_VERSION 			"1.6"
+#define PLUGIN_VERSION 			"1.7"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -18,24 +17,31 @@
 #define ITEM_DONATED			"itemDonated"
 #define VIPP_ITEMS				"items"
 #define VIPP_TIME				"vip_time"
+#define VIPP_FLAGS				"vip_flags"
 #define VIPP_NAME				"package_name"
 #define VIPP_ID					"id"
 
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_VIP.txt"
 
-float tradeValue[MAXPLAYERS + 1];
+#define QUERY_CREATE_T_VIP		"CREATE TABLE IF NOT EXISTS `t_vip_members` (`vip_steamid` VARCHAR(30) NOT NULL, `vip_flag` VARCHAR(200) NOT NULL, `vip_time` INT(30) NOT NULL, PRIMARY KEY (`vip_steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
+#define QUERY_CREATE_T_TRADE	"CREATE TABLE IF NOT EXISTS `t_vip_trade_logs` (`vip_steamid` VARCHAR(30) NOT NULL, `trade_id` VARCHAR(30) NOT NULL, `trade_status` VARCHAR(30) NOT NULL, PRIMARY KEY (`trade_id`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
+#define QUERY_ADD_VIP			"INSERT INTO `asteambot-vip`.`t_vip_members` (`vip_steamid`, `vip_flag`, `vip_time`) VALUES ('%s', '%s', '%i');"
+#define QUERY_ADD_TRADE			"INSERT INTO `asteambot-vip`.`t_vip_trade_logs` (`vip_steamid`, `trade_id`, `trade_status`) VALUES ('%s', '%s', '%s');"
+#define QUERY_UPD_TRADE			"UPDATE `asteambot-vip`.`t_vip_trade_logs` SET `trade_status` = '%s' WHERE `t_vip_trade_logs`.`trade_id` = '%s'; "
+#define QUERY_SELECT_VIP		"SELECT * FROM `t_vip_members` WHERE vip_steamid='%s'"
 
 int VIPDuration[MAXPLAYERS + 1];
+char VIPFlags[MAXPLAYERS + 1][200];
 
+Handle DATABASE;
 Handle ARRAY_Packages;
 Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
-
 //Release note
 /*
-*Updater update file location
+* Removed dependcy
 */
 
 public Plugin myinfo = 
@@ -52,14 +58,6 @@ public void OnLibraryAdded(const char[] name)
     if (StrEqual(name, "updater"))
         Updater_AddPlugin(UPDATE_URL);
 }
-
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
-{	
-	MarkNativeAsOptional("ModVIP");
-
-	return APLRes_Success;
-}
-
 
 public OnAllPluginsLoaded()
 {
@@ -88,6 +86,110 @@ public OnPluginEnd()
 public void OnConfigsExecuted()
 {
 	LoadVIPPackages();
+	
+	SQL_TConnect(ConnectToDatabaseResult, "ASteambot-VIP");
+}
+
+public void OnClientPostAdminFilter(int client)
+{
+	CheckVIPAccess(client);
+}
+
+public void OnRebuildAdminCache(AdminCachePart part)
+{
+	if(part == AdminCache_Overrides)
+	{
+		for (new i = 1; i <= MaxClients; i++)
+		{
+	    	if (IsClientInGame(i))
+	        	CheckVIPAccess(i);
+	    }
+	}
+}
+
+public void CheckVIPAccess(int client)
+{
+	char query[100];
+	char steamID[40];
+	
+	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
+	PrintToServer(query);
+	DBResultSet q = SQL_Query(DATABASE, query);
+	
+	if (q == null)
+	{
+		char error[255];
+		SQL_GetError(DATABASE, error, sizeof(error));
+		SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+	} 
+	else 
+	{
+		int day;
+		char flag[200];
+	
+		while (SQL_FetchRow(q))
+		{
+			SQL_FetchString(q, 0, steamID, sizeof(steamID));
+			SQL_FetchString(q, 1, flag, sizeof(flag));
+			day = SQL_FetchInt(q, 2);
+			
+			if(GetTime() > day)
+			{
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_Ended");
+			}
+			else
+			{
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_Continue");
+				
+				SetUserFlagBits(client, ParseFlagString(flag));
+			}
+		}
+		
+		delete q;
+	}
+}
+
+public void ConnectToDatabaseResult(Handle owner, Handle hndl, const char[] error, any data)
+{
+	if (hndl == INVALID_HANDLE)
+	{
+		SetFailState(error);
+	}
+	else
+	{
+		DATABASE = hndl;
+		
+		if (DBFastQuery(QUERY_CREATE_T_VIP) && DBFastQuery(QUERY_CREATE_T_TRADE))
+			PrintToServer("%s %t", MODULE_NAME, "Database_Success");
+		else
+			SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+	}
+}
+
+public bool DBFastQuery(const char[] sql)
+{
+	char error[400];
+	SQL_FastQuery(DATABASE, sql);
+	if (SQL_GetError(DATABASE, error, sizeof(error)))
+	{
+		PrintToServer("%s %t", MODULE_NAME, "Database_Failure", error);
+		return false;
+	}
+	
+	return true;
+}
+
+public int ParseFlagString(const char[] flags)
+{
+	char flagNames[32][16];
+	int flagCount = ExplodeString(flags, ",", flagNames, sizeof(flagNames), sizeof(flagNames[]));
+	int flag;
+	for (int i = 0; i < flagCount; i++) 
+		flag |= ReadFlagString(flagNames[i]);
+	
+	return flag;
 }
 
 public void LoadVIPPackages()
@@ -106,6 +208,7 @@ public void LoadVIPPackages()
 	char vippackage[255];
 	char items[255];
 	char time[255];
+	char flags[255];
 	
 	int id = 0;
 	do
@@ -113,10 +216,12 @@ public void LoadVIPPackages()
 		KvGetSectionName(kv, vippackage, sizeof(vippackage));
 		KvGetString(kv, VIPP_ITEMS, items, sizeof(items));
 		KvGetString(kv, VIPP_TIME, time, sizeof(time));
+		KvGetString(kv, VIPP_FLAGS, flags, sizeof(flags));
 		
 		Handle trie = CreateTrie();
 		SetTrieString(trie, VIPP_NAME, vippackage, false);
 		SetTrieValue(trie, VIPP_TIME, StringToInt(time), false);
+		SetTrieString(trie, VIPP_FLAGS, flags, false);
 		
 		char[][] iItems = new char[100][100];
 		int nbrItems = ExplodeString(items, ",", iItems, 40, 45);
@@ -151,8 +256,6 @@ public Action CMD_GetVP(int client, int args)
 	
 	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
 	
-	tradeValue[client] = 0.0;
-	
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
@@ -186,24 +289,54 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_InventoryScanned");
 		PrepareInventories(client, parts[1], parts[2], parts[3], messageSize)
 	}
-	else if (MessageType == AS_TRADEOFFER_DECLINED && client != -1)
+	else if (MessageType == AS_CREATE_TRADEOFFER)
 	{
-		CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined");
+		if(!StrEqual(parts[1], "-1"))
+		{			
+			if(client != -1)
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
+		
+			char query[300];
+			Format(query, sizeof(query), QUERY_ADD_TRADE, steamID, parts[1], "TRADEOFFER_UNCONFIRMED");
+			PrintToServer(query);
+			SQL_FastQuery(DATABASE, query);
+		}
+		else if (client != -1)
+		{
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_TimeOut");
+		}
 	}
-	else if (MessageType == AS_TRADEOFFER_SUCCESS && client != -1)
+	else if (MessageType == AS_TRADEOFFER_DECLINED)
 	{
-		/*char[] offerID = new char[messageSize];
-		char[] value = new char[messageSize];
+		if(client != -1)
+			CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined");
+			
+		char query[300];
 		
-		Format(offerID, messageSize, parts[1]);
-		Format(value, messageSize, parts[2]);*/
+		Format(query, sizeof(query), QUERY_UPD_TRADE, "TRADEOFFER_DECLINED", parts[1]);
+		PrintToServer(query);
+		SQL_FastQuery(DATABASE, query);
+	}
+	else if (MessageType == AS_TRADEOFFER_SUCCESS)
+	{
+		if(client != -1)
+		{
+			char pName[45];
+			GetClientName(client, pName, sizeof(pName));
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", pName);
+			SetUserFlagBits(client, ParseFlagString(VIPFlags[client]));
+		}
 		
-		char pName[45];
-		GetClientName(client, pName, sizeof(pName));
-		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", pName);
+		char queryAddVIP[400];
+		Format(queryAddVIP, sizeof(queryAddVIP), QUERY_ADD_VIP, steamID, VIPFlags[client], GetTime() + (VIPDuration[client] * 60 * 60 * 24));
 		
+		DBFastQuery(queryAddVIP);
 		
-		ModVIP(client, "add", 0, VIPDuration[client] );
+		char query[300];
+		
+		Format(query, sizeof(query), QUERY_UPD_TRADE, "TRADEOFFER_ACCEPTED", parts[1]);
+		PrintToServer(query);
+		SQL_FastQuery(DATABASE, query);
 	}
 }
 
@@ -217,38 +350,79 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 	ARRAY_ItemsCSGO[client] = CreateArray(csgo_icount);
 	ARRAY_ItemsDOTA2[client] = CreateArray(dota2_icount);
 	
+	bool inv_tf2 = CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
+	bool inv_csgo = CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
+	bool inv_dota2 = CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
+	
 	CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
 	CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
 	CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
 	
-	DisplayVIPPackageSelection(client);
+
+	char timeOut[100];
+	if(StrEqual(tf2, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "TF2");
+	}
+	
+	if(StrEqual(csgo, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "%s,CS:GO", timeOut);
+	}
+	
+	if(StrEqual(dota2, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "%s,Dota 2", timeOut);
+	}
+	
+	if(StrContains(timeOut, ",") == 0)
+		strcopy(timeOut, sizeof(timeOut), timeOut[1]);
+	
+	if(!inv_tf2 && !inv_csgo && !inv_dota2)
+    {
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_InventoryError");
+	}
+	else
+	{
+		DisplayVIPPackageSelection(client);
+		
+		if(strlen(timeOut) > 0)
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_BotInventoryScanTimeOut", timeOut);
+	}
 }
 
-public void CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
+public bool CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
-	if (!StrEqual(strinventory, "EMPTY"))
-	{
-		char[][] items = new char[itemCount][60];
+	if(StrEqual(strinventory, "EMPTY"))
+		return true;
 		
-		ExplodeString(strinventory, ",", items, itemCount, 60);
-		
-		for (int i = 0; i < itemCount; i++)
-		{
-			char itemInfos[3][30];
-			ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
-			
-			Handle TRIE_Item = CreateTrie();
-			SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
-			SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
-			SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
-			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
-			PushArrayCell(inventory, TRIE_Item);
-		}
-	}
-	else if (StrEqual(strinventory, "ERROR"))
+	if(StrEqual(strinventory, "TIME_OUT"))
+		return true;
+	
+	if(StrEqual(strinventory, "ERROR"))
 	{
 		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
+		return false;
 	}
+	
+	char[][] items = new char[itemCount][60];
+	
+	ExplodeString(strinventory, ",", items, itemCount, 60);
+	
+	for (int i = 0; i < itemCount; i++)
+	{
+		char itemInfos[3][30];
+		ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
+		
+		Handle TRIE_Item = CreateTrie();
+		SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
+		SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
+		SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
+		SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
+		PushArrayCell(inventory, TRIE_Item);
+	}
+	
+	return true;
 }
 
 public int CountCharInString(const char[] str, int c)
@@ -352,7 +526,6 @@ public Handle AvailabeVIPPackage(int client)
 		if (itemFound == GetArraySize(items))
 			PushArrayCell(ARRAY_ClientPackages, trie);
 			
-	
 		ResetInventories(client);
 	}
 	
@@ -416,6 +589,8 @@ public void ShowPackageMenu(int client, int packageID)
 	GetTrieString(VIPpackage, VIPP_NAME, packageName, sizeof(packageName));
 	GetTrieValue(VIPpackage, VIPP_ITEMS, items);
 	GetTrieValue(VIPpackage, VIPP_TIME, VIPDuration[client]);
+	GetTrieString(VIPpackage, VIPP_FLAGS, VIPFlags[client], sizeof(VIPFlags[]));
+	
 	
 	Handle menu = CreateMenu(MenuHandle_PackageSelect);
 	SetMenuTitle(menu, packageName);
@@ -426,10 +601,6 @@ public void ShowPackageMenu(int client, int packageID)
 		if(GetItemID(client, iname, itemID, sizeof(itemID)))
 		{
 			AddMenuItem(menu, itemID, iname, ITEMDRAW_DEFAULT);
-		}
-		else
-		{
-			PrintToServer("");
 		}
 	}
 	
@@ -456,8 +627,6 @@ public int MenuHandle_PackageSelect(Handle menu, MenuAction action, int client, 
 			}
 			
 			ASteambot_CreateTradeOffer(client, items);
-			
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
 		}
 		else
 		{

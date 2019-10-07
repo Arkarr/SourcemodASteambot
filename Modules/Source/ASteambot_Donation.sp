@@ -363,6 +363,26 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 	CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
 	CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
 	
+
+	char timeOut[100];
+	if(StrEqual(tf2, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "TF2");
+	}
+	
+	if(StrEqual(csgo, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "%s,CS:GO", timeOut);
+	}
+	
+	if(StrEqual(dota2, "TIME_OUT"))
+	{
+		Format(timeOut, sizeof(timeOut), "%s,Dota 2", timeOut);
+	}
+	
+	if(StrContains(timeOut, ",") == 0)
+		strcopy(timeOut, sizeof(timeOut), timeOut[1]);
+	
 	if(!inv_tf2 && !inv_csgo && !inv_dota2)
     {
 		lastSelectedGame[client] = -1;
@@ -374,6 +394,9 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 		lastSelectedGame[client] = -1;
 		
 		DisplayInventorySelectMenu(client);
+		
+		if(strlen(timeOut) > 0)
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_BotInventoryScanTimeOut", timeOut);
 	}
 }
 
@@ -428,44 +451,42 @@ public bool IsItemAllowed(const char[] itemName)
 
 public bool CreateInventory(int client, const char[] strinventory, int itemCount, Handle inventory)
 {
-	if(!StrEqual(strinventory, "EMPTY"))
-	{
-		if(StrEqual(strinventory, "TIME_OUT"))
-		{
-			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_BotInventoryScanTimeOut");
-			return true;
-		}
+	if(StrEqual(strinventory, "EMPTY"))
+		return true;
 		
-		char[][] items = new char[itemCount][60];
-		
-		ExplodeString(strinventory, ",", items, itemCount, 60);
-		
-		for (int i = 0; i < itemCount; i++)
-		{
-			char itemInfos[3][100];
-			ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
-			
-			Handle TRIE_Item = CreateTrie();
-			SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
-			SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
-			
-			if(IsItemAllowed(itemInfos[1]))
-			{
-				float value;
-				if(GetTrieValue(TRIE_OverridedPrices, itemInfos[1], value))
-					SetTrieValue(TRIE_Item, ITEM_VALUE, value);
-				else
-					SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
-				
-				SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
-				PushArrayCell(inventory, TRIE_Item);
-			}
-		}
-	}
-	else if(StrEqual(strinventory, "ERROR"))
+	if(StrEqual(strinventory, "TIME_OUT"))
+		return true;
+	
+	if(StrEqual(strinventory, "ERROR"))
 	{
 		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", strinventory);
 		return false;
+	}
+	
+	char[][] items = new char[itemCount][60];
+	
+	ExplodeString(strinventory, ",", items, itemCount, 60);
+	
+	for (int i = 0; i < itemCount; i++)
+	{
+		char itemInfos[3][100];
+		ExplodeString(items[i], "=", itemInfos, sizeof itemInfos, sizeof itemInfos[]);
+		
+		Handle TRIE_Item = CreateTrie();
+		SetTrieString(TRIE_Item, ITEM_ID, itemInfos[0]);
+		SetTrieString(TRIE_Item, ITEM_NAME, itemInfos[1]);
+		
+		if(IsItemAllowed(itemInfos[1]))
+		{
+			float value;
+			if(GetTrieValue(TRIE_OverridedPrices, itemInfos[1], value))
+				SetTrieValue(TRIE_Item, ITEM_VALUE, value);
+			else
+				SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
+			
+			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
+			PushArrayCell(inventory, TRIE_Item);
+		}
 	}
 	
 	return true;
@@ -485,10 +506,7 @@ public int CountCharInString(const char[] str, int c)
 } 
 
 public void DisplayInventorySelectMenu(int client)
-{
-	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_SelectItems");
-	CPrintToChat(client, "%s {yellow}%t", MODULE_NAME, "TradeOffer_Explication", minValue, maxValue);
-	
+{	
 	Handle menu = CreateMenu(MenuHandle_MainMenu);
 	SetMenuTitle(menu, "Select an inventory :");
 	
@@ -507,9 +525,11 @@ public void DisplayInventorySelectMenu(int client)
 	else
 		AddMenuItem(menu, "dota2", "Dota 2", ITEMDRAW_DISABLED);
 	
-	
 	SetMenuExitButton(menu, true);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+		
+	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_SelectItems");
+	CPrintToChat(client, "%s {yellow}%t", MODULE_NAME, "TradeOffer_Explication", minValue, maxValue);
 }
 
 public void DisplayInventory(int client, int inventoryID)
