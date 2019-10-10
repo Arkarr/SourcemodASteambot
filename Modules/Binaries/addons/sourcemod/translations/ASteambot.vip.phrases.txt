@@ -68,6 +68,23 @@
 		"en"	"Welcome back ! You are still VIP !"
 	}
 	
+	"VIP_EndTime"
+	{
+		"#format"	"{1:s}"
+		"en"		"Your VIP periode end the {1} ! You can't buy a new access now !"
+	}
+	
+	"VIP_BanSuccess"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} has now is access removed and can't order any VIP packages anymore !"
+	}
+	
+	"VIP_BanAbuse"
+	{
+		"en"		"You have abused of your rights and now you are banned from being a VIP !"
+	}
+	
 	// Database
 	"Database_Success"
 	{
@@ -142,6 +159,11 @@
 	"TradeOffer_TimeOut"
 	{
 		"en"	"I couldn't create the trade offer right now, try again in 1 minute !"
+	}
+	
+	"TradeOffer_BotInventoryScanTimeOut"
+	{
+		"en"	"I couldn't fetch your items right now, try again in 1 minute !"
 	}
 	
 	"TradeOffer_SelectTradeOffer"

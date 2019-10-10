@@ -25,10 +25,15 @@
 
 #define QUERY_CREATE_T_VIP		"CREATE TABLE IF NOT EXISTS `t_vip_members` (`vip_steamid` VARCHAR(30) NOT NULL, `vip_flag` VARCHAR(200) NOT NULL, `vip_time` INT(30) NOT NULL, PRIMARY KEY (`vip_steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
 #define QUERY_CREATE_T_TRADE	"CREATE TABLE IF NOT EXISTS `t_vip_trade_logs` (`vip_steamid` VARCHAR(30) NOT NULL, `trade_id` VARCHAR(30) NOT NULL, `trade_status` VARCHAR(30) NOT NULL, PRIMARY KEY (`trade_id`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
-#define QUERY_ADD_VIP			"INSERT INTO `asteambot-vip`.`t_vip_members` (`vip_steamid`, `vip_flag`, `vip_time`) VALUES ('%s', '%s', '%i');"
-#define QUERY_ADD_TRADE			"INSERT INTO `asteambot-vip`.`t_vip_trade_logs` (`vip_steamid`, `trade_id`, `trade_status`) VALUES ('%s', '%s', '%s');"
-#define QUERY_UPD_TRADE			"UPDATE `asteambot-vip`.`t_vip_trade_logs` SET `trade_status` = '%s' WHERE `t_vip_trade_logs`.`trade_id` = '%s'; "
-#define QUERY_SELECT_VIP		"SELECT * FROM `t_vip_members` WHERE vip_steamid='%s'"
+#define QUERY_CREATE_T_VIPBAN	"CREATE TABLE IF NOT EXISTS `t_vip_ban` (`steamid` VARCHAR(30) NOT NULL, `vip_ban_time` VARCHAR(30) NOT NULL, PRIMARY KEY (`steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
+#define QUERY_ADD_VIPBAN		"INSERT INTO `t_vip_ban` (`steamid`, `vip_ban_time`) VALUES ('%s', '%i');"
+#define QUERY_SELECT_VIPBAN		"SELECT * FROM `t_vip_ban` WHERE steamid='%s';"
+#define QUERY_ADD_VIP			"INSERT INTO `t_vip_members` (`vip_steamid`, `vip_flag`, `vip_time`) VALUES ('%s', '%s', '%i');"
+#define QUERY_ADD_TRADE			"INSERT INTO `t_vip_trade_logs` (`vip_steamid`, `trade_id`, `trade_status`) VALUES ('%s', '%s', '%s');"
+#define QUERY_UPD_TRADE			"UPDATE `t_vip_trade_logs` SET `trade_status` = '%s' WHERE `trade_id` = '%s'; "
+#define QUERY_SELECT_VIP		"SELECT * FROM `t_vip_members` WHERE vip_steamid='%s';"
+#define QUERY_DELETE_VIP		"DELETE FROM `t_vip_members` WHERE `vip_steamid`='%s' AND `vip_time` <= '%i';"
+#define QUERY_DELETE_VIP_FORCE	"DELETE FROM `t_vip_members` WHERE `vip_steamid`='%s';"
 
 int VIPDuration[MAXPLAYERS + 1];
 char VIPFlags[MAXPLAYERS + 1][200];
@@ -70,9 +75,11 @@ public OnAllPluginsLoaded()
 
 public void OnPluginStart()
 {	
-	RegConsoleCmd("sm_donatevip", CMD_GetVP, "Create a trade offer and send it to the player.");
+	RegConsoleCmd("sm_donatevip", CMD_GetVIP, "Create a trade offer and send it to the player.");
+	RegAdminCmd("sm_ban_vip", CMD_BanVIP, ADMFLAG_BAN, "Ban a user from buying VIP access.");
 	
 	LoadTranslations("ASteambot.vip.phrases");
+	LoadTranslations("common.phrases");
 
 	if (LibraryExists("updater"))
         Updater_AddPlugin(UPDATE_URL);
@@ -115,7 +122,6 @@ public void CheckVIPAccess(int client)
 	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
 	
 	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
-	PrintToServer(query);
 	DBResultSet q = SQL_Query(DATABASE, query);
 	
 	if (q == null)
@@ -135,9 +141,14 @@ public void CheckVIPAccess(int client)
 			SQL_FetchString(q, 1, flag, sizeof(flag));
 			day = SQL_FetchInt(q, 2);
 			
-			if(GetTime() > day)
+			int currentDaytime = GetTime();
+
+			if(currentDaytime > day)
 			{
 				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_Ended");
+				
+				Format(query, sizeof(query), QUERY_DELETE_VIP, steamID, currentDaytime);
+				DBFastQuery(query);
 			}
 			else
 			{
@@ -161,7 +172,7 @@ public void ConnectToDatabaseResult(Handle owner, Handle hndl, const char[] erro
 	{
 		DATABASE = hndl;
 		
-		if (DBFastQuery(QUERY_CREATE_T_VIP) && DBFastQuery(QUERY_CREATE_T_TRADE))
+		if (DBFastQuery(QUERY_CREATE_T_VIP) && DBFastQuery(QUERY_CREATE_T_TRADE) && DBFastQuery(QUERY_CREATE_T_VIPBAN))
 			PrintToServer("%s %t", MODULE_NAME, "Database_Success");
 		else
 			SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
@@ -240,7 +251,38 @@ public void LoadVIPPackages()
 	while (KvGotoNextKey(kv));
 }
 
-public Action CMD_GetVP(int client, int args)
+public Action CMD_BanVIP(int client, int args)
+{
+	char arg1[MAX_NAME_LENGTH];
+	GetCmdArg(1, arg1, sizeof(arg1));
+	
+	int target = FindTarget(client, arg1, true);
+	
+	if(target == -1)
+		return Plugin_Handled;
+	
+	char query[300];
+	char steamID[40];
+	
+	GetClientAuthId(target, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	Format(query, sizeof(query), QUERY_ADD_VIPBAN, steamID, GetTime());
+	DBFastQuery(query);
+
+	GetClientName(target, arg1, sizeof(arg1));
+
+	if(client != 0)
+		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_BanSuccess", arg1);
+	else
+		PrintToServer("%s %t", MODULE_NAME, "VIP_BanSuccess", arg1);
+	
+	Format(query, sizeof(query), QUERY_DELETE_VIP_FORCE, steamID);
+	DBFastQuery(query);
+	
+	return Plugin_Handled;
+}
+
+public Action CMD_GetVIP(int client, int args)
 {
 	if (client == 0)
 	{
@@ -253,6 +295,51 @@ public Action CMD_GetVP(int client, int args)
 		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "ASteambot_NotConnected");
 		return Plugin_Handled;
 	}
+	
+	char query[100];
+	char steamID[40];
+	
+	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
+	DBResultSet q = SQL_Query(DATABASE, query);
+	
+	if (q == null)
+	{
+		char error[255];
+		SQL_GetError(DATABASE, error, sizeof(error));
+		
+		SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+	} 
+	else if(SQL_GetRowCount(q) > 0)
+	{
+		int endTime;
+		char time[50];
+	
+		while (SQL_FetchRow(q))
+		{
+			SQL_FetchString(q, 0, steamID, sizeof(steamID));
+			endTime = SQL_FetchInt(q, 2);
+
+			if(endTime > GetTime())
+			{
+				FormatTime(time, sizeof(time), "%d/%m/%Y @ %H:%M:%S", endTime);
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_EndTime", time);
+		
+				return Plugin_Handled;
+			}
+		}
+	}
+
+	Format(query, sizeof(query), QUERY_SELECT_VIPBAN, steamID);
+	q = SQL_Query(DATABASE, query);
+	if(SQL_GetRowCount(q) > 0)
+	{
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "VIP_BanAbuse");
+		
+		return Plugin_Handled;
+	}
+	
 	
 	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
 	
@@ -327,12 +414,14 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 			SetUserFlagBits(client, ParseFlagString(VIPFlags[client]));
 		}
 		
-		char queryAddVIP[400];
-		Format(queryAddVIP, sizeof(queryAddVIP), QUERY_ADD_VIP, steamID, VIPFlags[client], GetTime() + (VIPDuration[client] * 60 * 60 * 24));
-		
-		DBFastQuery(queryAddVIP);
-		
 		char query[300];
+		
+		Format(query, sizeof(query), QUERY_DELETE_VIP, steamID, GetTime());
+		DBFastQuery(query);
+		
+		Format(query, sizeof(query), QUERY_ADD_VIP, steamID, VIPFlags[client], GetTime() + (VIPDuration[client] * 60 * 60 * 24));
+		DBFastQuery(query);
+		
 		
 		Format(query, sizeof(query), QUERY_UPD_TRADE, "TRADEOFFER_ACCEPTED", parts[1]);
 		PrintToServer(query);
@@ -387,7 +476,7 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 		DisplayVIPPackageSelection(client);
 		
 		if(strlen(timeOut) > 0)
-			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_BotInventoryScanTimeOut", timeOut);
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_ItemsError", timeOut);
 	}
 }
 
@@ -645,4 +734,4 @@ stock bool IsValidClient(int client)
 	if (client > MaxClients)return false;
 	if (!IsClientConnected(client))return false;
 	return IsClientInGame(client);
-} 
+}
