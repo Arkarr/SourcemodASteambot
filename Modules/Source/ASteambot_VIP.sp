@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 		 	"Arkarr"
-#define PLUGIN_VERSION 			"1.7"
+#define PLUGIN_VERSION 			"2.2"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -23,17 +23,26 @@
 
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_VIP.txt"
 
-#define QUERY_CREATE_T_VIP		"CREATE TABLE IF NOT EXISTS `t_vip_members` (`vip_steamid` VARCHAR(30) NOT NULL, `vip_flag` VARCHAR(200) NOT NULL, `vip_time` INT(30) NOT NULL, PRIMARY KEY (`vip_steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
+#define QUERY_UPDATE_DATABASE	"INSERT INTO t_vip_members_v2 (vip_steamid, vip_flag, vip_time, vip_immunity) SELECT * FROM t_vip_members;"
+#define QUERY_RECOVER_OLD_DATA	"UPDATE t_vip_members_v2 SET vip_active='1';"
+#define QUERY_DELETE_OLD_DATA	"DROP TABLE  t_vip_members;"
+#define QUERY_CREATE_T_VIP		"CREATE TABLE `t_vip_members_v2` (`vip_steamid` VARCHAR(30) NOT NULL, `vip_flag` VARCHAR(200) NOT NULL, `vip_time` INT(30) NOT NULL, `vip_immunity` INT(30) NOT NULL, `vip_active` INT(5) NOT NULL, PRIMARY KEY (`vip_steamid`)) ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
 #define QUERY_CREATE_T_TRADE	"CREATE TABLE IF NOT EXISTS `t_vip_trade_logs` (`vip_steamid` VARCHAR(30) NOT NULL, `trade_id` VARCHAR(30) NOT NULL, `trade_status` VARCHAR(30) NOT NULL, PRIMARY KEY (`trade_id`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
 #define QUERY_CREATE_T_VIPBAN	"CREATE TABLE IF NOT EXISTS `t_vip_ban` (`steamid` VARCHAR(30) NOT NULL, `vip_ban_time` VARCHAR(30) NOT NULL, PRIMARY KEY (`steamid`))ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;"
 #define QUERY_ADD_VIPBAN		"INSERT INTO `t_vip_ban` (`steamid`, `vip_ban_time`) VALUES ('%s', '%i');"
 #define QUERY_SELECT_VIPBAN		"SELECT * FROM `t_vip_ban` WHERE steamid='%s';"
-#define QUERY_ADD_VIP			"INSERT INTO `t_vip_members` (`vip_steamid`, `vip_flag`, `vip_time`) VALUES ('%s', '%s', '%i');"
+#define QUERY_ADD_VIP			"INSERT INTO `t_vip_members_v2` (`vip_steamid`, `vip_flag`, `vip_time`, `vip_active`) VALUES ('%s', '%s', '%i', '0');"
 #define QUERY_ADD_TRADE			"INSERT INTO `t_vip_trade_logs` (`vip_steamid`, `trade_id`, `trade_status`) VALUES ('%s', '%s', '%s');"
 #define QUERY_UPD_TRADE			"UPDATE `t_vip_trade_logs` SET `trade_status` = '%s' WHERE `trade_id` = '%s'; "
-#define QUERY_SELECT_VIP		"SELECT * FROM `t_vip_members` WHERE vip_steamid='%s';"
-#define QUERY_DELETE_VIP		"DELETE FROM `t_vip_members` WHERE `vip_steamid`='%s' AND `vip_time` <= '%i';"
-#define QUERY_DELETE_VIP_FORCE	"DELETE FROM `t_vip_members` WHERE `vip_steamid`='%s';"
+#define QUERY_SELECT_VIP		"SELECT * FROM `t_vip_members_v2` WHERE vip_steamid='%s' AND `vip_active` = 1;"
+#define QUERY_ACTIVATE_VIP		"UPDATE t_vip_members_v2 SET vip_active=1 WHERE vip_steamid='%s';"
+#define QUERY_DELETE_VIP		"DELETE FROM `t_vip_members_v2` WHERE `vip_steamid`='%s' AND `vip_time` <= '%i';"
+#define QUERY_DELETE_VIP_FORCE	"DELETE FROM `t_vip_members_v2` WHERE `vip_steamid`='%s';"
+#define QUERY_SELECT_TRADE_LOG	"SELECT trade_id FROM `t_vip_trade_logs` WHERE vip_steamid='%s' AND trade_status='%s';"
+
+#define TRADEOFFER_ACCEPTED 	"TradeOfferStateAccepted"
+#define TRADEOFFER_UNCONFIRMED 	"TradeOfferStateActive"
+#define TRADEOFFER_DECLINED 	"TradeOfferStateDeclined"
 
 int VIPDuration[MAXPLAYERS + 1];
 char VIPFlags[MAXPLAYERS + 1][200];
@@ -44,9 +53,11 @@ Handle ARRAY_ItemsTF2[MAXPLAYERS + 1];
 Handle ARRAY_ItemsCSGO[MAXPLAYERS + 1];
 Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
+Handle CVAR_MessageOnTradeSucess;
+
 //Release note
 /*
-* Removed dependcy
+* Added a command where you can check your trade offer status in case of bug
 */
 
 public Plugin myinfo = 
@@ -76,7 +87,11 @@ public OnAllPluginsLoaded()
 public void OnPluginStart()
 {	
 	RegConsoleCmd("sm_donatevip", CMD_GetVIP, "Create a trade offer and send it to the player.");
+	RegConsoleCmd("sm_vipstatus", CMD_GetVIPStatus, "Give current VIP information about the player executing the command.");
+	
 	RegAdminCmd("sm_ban_vip", CMD_BanVIP, ADMFLAG_BAN, "Ban a user from buying VIP access.");
+	
+	CVAR_MessageOnTradeSucess = CreateConVar("sm_asteambot_vip_message_on_trade_success", "", "Send this message on trade sucessful through steam chat.");
 	
 	LoadTranslations("ASteambot.vip.phrases");
 	LoadTranslations("common.phrases");
@@ -99,6 +114,8 @@ public void OnConfigsExecuted()
 
 public void OnClientPostAdminFilter(int client)
 {
+	VIPDuration[client] = 0;
+	VIPFlags[client] = "";
 	CheckVIPAccess(client);
 }
 
@@ -114,7 +131,7 @@ public void OnRebuildAdminCache(AdminCachePart part)
 	}
 }
 
-public void CheckVIPAccess(int client)
+void CheckVIPAccess(int client)
 {
 	char query[100];
 	char steamID[40];
@@ -135,6 +152,7 @@ public void CheckVIPAccess(int client)
 		int day;
 		char flag[200];
 	
+		PrintToServer(query);
 		while (SQL_FetchRow(q))
 		{
 			SQL_FetchString(q, 0, steamID, sizeof(steamID));
@@ -162,7 +180,7 @@ public void CheckVIPAccess(int client)
 	}
 }
 
-public void ConnectToDatabaseResult(Handle owner, Handle hndl, const char[] error, any data)
+void ConnectToDatabaseResult(Handle owner, Handle hndl, const char[] error, any data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
@@ -172,20 +190,41 @@ public void ConnectToDatabaseResult(Handle owner, Handle hndl, const char[] erro
 	{
 		DATABASE = hndl;
 		
-		if (DBFastQuery(QUERY_CREATE_T_VIP) && DBFastQuery(QUERY_CREATE_T_TRADE) && DBFastQuery(QUERY_CREATE_T_VIPBAN))
+		
+		if(DBFastQuery(QUERY_CREATE_T_VIP, false))
+		{
+			if(!DBFastQuery(QUERY_UPDATE_DATABASE) || !DBFastQuery(QUERY_RECOVER_OLD_DATA))
+				SetFailState("%s %t", MODULE_NAME, "Database_Failure", "Could not remove old tables.");
+			else
+				DBFastQuery(QUERY_DELETE_OLD_DATA);
+		}
+		
+		if (DBFastQuery(QUERY_CREATE_T_TRADE) && DBFastQuery(QUERY_CREATE_T_VIPBAN))
+		{
 			PrintToServer("%s %t", MODULE_NAME, "Database_Success");
+			
+			for (new i = 1; i <= MaxClients; i++)
+			{
+		    	if (IsClientInGame(i))
+		        	CheckVIPAccess(i);
+		    }
+		}
 		else
+		{
 			SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+		}
 	}
 }
 
-public bool DBFastQuery(const char[] sql)
+bool DBFastQuery(const char[] sql, bool errorReport = true)
 {
 	char error[400];
 	SQL_FastQuery(DATABASE, sql);
 	if (SQL_GetError(DATABASE, error, sizeof(error)))
 	{
-		PrintToServer("%s %t", MODULE_NAME, "Database_Failure", error);
+		if(errorReport)
+			PrintToServer("%s %t", MODULE_NAME, "Database_Failure", error);
+			
 		return false;
 	}
 	
@@ -217,7 +256,7 @@ public void LoadVIPPackages()
 	}
 	
 	char vippackage[255];
-	char items[255];
+	char items[10000];
 	char time[255];
 	char flags[255];
 	
@@ -235,7 +274,7 @@ public void LoadVIPPackages()
 		SetTrieString(trie, VIPP_FLAGS, flags, false);
 		
 		char[][] iItems = new char[100][100];
-		int nbrItems = ExplodeString(items, ",", iItems, 40, 45);
+		int nbrItems = ExplodeString(items, ",", iItems, 100, 100);
 		
 		Handle tmpArray = CreateArray(45);
 		for (int i = 0; i < nbrItems; i++)
@@ -351,6 +390,80 @@ public Action CMD_GetVIP(int client, int args)
 	return Plugin_Handled;
 }
 
+public Action CMD_GetVIPStatus(int client, int args)
+{
+	if (client == 0)
+	{
+		PrintToServer("%s %t", MODULE_NAME, "ingame");
+		return Plugin_Continue;
+	}
+	
+	char query[400];
+	char steamID[40];
+	
+	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
+	DBResultSet q = SQL_Query(DATABASE, query);
+	
+	if (q == null)
+	{
+		char error[255];
+		SQL_GetError(DATABASE, error, sizeof(error));
+		
+		SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+	} 
+	else if(SQL_GetRowCount(q) > 0)
+	{
+		int endTime;
+		char time[50];
+	
+		while (SQL_FetchRow(q))
+		{
+			SQL_FetchString(q, 0, steamID, sizeof(steamID));
+			endTime = SQL_FetchInt(q, 2);
+
+			if(endTime > GetTime())
+			{
+				FormatTime(time, sizeof(time), "%d/%m/%Y @ %H:%M:%S", endTime);
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_EndTime", time);
+				
+				return Plugin_Handled;
+			}
+		}
+	}
+	
+	//check trade offer logs		
+	Format(query, sizeof(query), QUERY_SELECT_TRADE_LOG, steamID, TRADEOFFER_UNCONFIRMED);
+	q = SQL_Query(DATABASE, query);
+	
+	if (q == null)
+	{
+		char error[255];
+		SQL_GetError(DATABASE, error, sizeof(error));
+		
+		SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
+	} 
+	else if(SQL_GetRowCount(q) > 0)
+	{
+		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_CheckingTradeOfferStatus", SQL_GetRowCount(q));
+		
+		char tradeOfferID[20];
+		while (SQL_FetchRow(q))
+		{
+			SQL_FetchString(q, 0, tradeOfferID, sizeof(tradeOfferID));
+
+			ASteambot_SendMesssage(AS_TRADEOFFER_INFORMATION, tradeOfferID);
+		}
+	}
+	else
+	{
+		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "VIP_NoTradeOffers");
+	}
+
+	return Plugin_Handled;
+}
+
 public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
 {
 	char[][] parts = new char[4][messageSize];
@@ -384,9 +497,15 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Created");
 		
 			char query[300];
-			Format(query, sizeof(query), QUERY_ADD_TRADE, steamID, parts[1], "TRADEOFFER_UNCONFIRMED");
+			Format(query, sizeof(query), QUERY_ADD_TRADE, steamID, parts[1], TRADEOFFER_UNCONFIRMED);
 			PrintToServer(query);
 			SQL_FastQuery(DATABASE, query);
+		
+			Format(query, sizeof(query), QUERY_DELETE_VIP, steamID, GetTime());
+			DBFastQuery(query);
+			
+			Format(query, sizeof(query), QUERY_ADD_VIP, steamID, VIPFlags[client], GetTime() + (VIPDuration[client] * 60 * 60 * 24));
+			DBFastQuery(query);
 		}
 		else if (client != -1)
 		{
@@ -400,7 +519,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 			
 		char query[300];
 		
-		Format(query, sizeof(query), QUERY_UPD_TRADE, "TRADEOFFER_DECLINED", parts[1]);
+		Format(query, sizeof(query), QUERY_UPD_TRADE, TRADEOFFER_DECLINED, parts[2]);
 		PrintToServer(query);
 		SQL_FastQuery(DATABASE, query);
 	}
@@ -416,16 +535,65 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		
 		char query[300];
 		
-		Format(query, sizeof(query), QUERY_DELETE_VIP, steamID, GetTime());
-		DBFastQuery(query);
-		
-		Format(query, sizeof(query), QUERY_ADD_VIP, steamID, VIPFlags[client], GetTime() + (VIPDuration[client] * 60 * 60 * 24));
-		DBFastQuery(query);
-		
-		
-		Format(query, sizeof(query), QUERY_UPD_TRADE, "TRADEOFFER_ACCEPTED", parts[1]);
-		PrintToServer(query);
+		Format(query, sizeof(query), QUERY_UPD_TRADE, TRADEOFFER_ACCEPTED, parts[2]);
 		SQL_FastQuery(DATABASE, query);
+		
+		Format(query, sizeof(query), QUERY_ACTIVATE_VIP, steamID);
+		DBFastQuery(query);
+			
+		char msg[400];
+		GetConVarString(CVAR_MessageOnTradeSucess, msg, sizeof(msg));
+		
+		if(strlen(msg) > 0)
+		{
+			Format(msg, sizeof(msg), "%s/%s", steamID, msg);
+			ASteambot_SendMesssage(AS_SIMPLE, msg);
+		}
+	}
+	else if (MessageType == AS_TRADEOFFER_INFORMATION)
+	{
+		if(StrEqual(parts[1], TRADEOFFER_ACCEPTED))
+		{
+			char query[300];
+			
+			Format(query, sizeof(query), QUERY_DELETE_VIP, steamID, GetTime());
+			DBFastQuery(query);
+		
+			Format(query, sizeof(query), QUERY_ACTIVATE_VIP, steamID);
+			DBFastQuery(query);
+				
+			Format(query, sizeof(query), QUERY_UPD_TRADE, TRADEOFFER_ACCEPTED, parts[2]);
+			SQL_FastQuery(DATABASE, query);
+				
+			if(client != -1)
+			{
+				char pName[45];
+				GetClientName(client, pName, sizeof(pName));
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", pName);
+				SetUserFlagBits(client, ParseFlagString(VIPFlags[client]));
+			}
+			
+			CheckVIPAccess(client);
+			
+			char msg[400];
+			GetConVarString(CVAR_MessageOnTradeSucess, msg, sizeof(msg));
+			
+			if(strlen(msg) > 0)
+			{
+				Format(msg, sizeof(msg), "%s/%s", steamID, msg);
+				ASteambot_SendMesssage(AS_SIMPLE, msg);
+			}
+		}
+		else if(StrEqual(parts[1], TRADEOFFER_UNCONFIRMED))
+		{
+			if(client != -1)
+				CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Unconfirmed");
+		}
+		else if(StrEqual(parts[1], TRADEOFFER_DECLINED))
+		{
+			if(client != -1)
+				CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined");
+		}
 	}
 }
 

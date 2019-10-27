@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"4.8"
+#define PLUGIN_VERSION 	"5.0"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Updater update file location
+*Updated to SM 1.10
 */
 
 public Plugin myinfo = 
@@ -693,11 +693,12 @@ public bool IsValidClient(client)
 public int Native_FindClientBySteam64(Handle plugin, int numParams)
 {
 	char clientSteamID[100];
-	char steamId64;
 	
 	GetNativeString(1, clientSteamID, sizeof(clientSteamID));
 	
-	/*if(StrContains(clientSteamID, "STEAM_") == -1)
+	/*
+	char steamId64;
+	if(StrContains(clientSteamID, "STEAM_") == -1)
 	{
 		steamId64 = StringToInt(clientSteamID);
 		

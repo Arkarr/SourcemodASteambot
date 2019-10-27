@@ -93,6 +93,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	MarkNativeAsOptional("SMRPG_AddClientExperience");
 	
 	return APLRes_Success;
+	
+	
 }
 
 public OnAllPluginsLoaded()

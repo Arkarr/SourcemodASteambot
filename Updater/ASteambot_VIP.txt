@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.7"
+			"Latest"	"2.2"
 		}
 		
-		"Notes"	" Removed dependcy"
+		"Notes"	" Added a command where you can check your trade offer status in case of bug"
 		"Notes"	"-----------"
 	}
 	

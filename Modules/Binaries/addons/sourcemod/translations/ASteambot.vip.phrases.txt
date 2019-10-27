@@ -85,6 +85,17 @@
 		"en"		"You have abused of your rights and now you are banned from being a VIP !"
 	}
 	
+	"VIP_CheckingTradeOfferStatus"
+	{
+		"#format"	"{1:d}"
+		"en"		"Checking {1} trade(s) offer(s) status ! Please wait..."
+	}
+	
+	"VIP_NoTradeOffers"
+	{
+		"en"		"You don't have any active trade offer with me !"
+	}
+	
 	// Database
 	"Database_Success"
 	{
@@ -127,6 +138,11 @@
 		"pl"	"Oferta anulowana. {fullred}Nie{default} jesteś VIP'em."
 		"ru"	"Предложение отклонено. Вы {fullred}не{default} VIP."
 		"de"	"Handelsanfrage abgelehnt. Du bist {fullred}KEIN{default} VIP."
+	}
+	
+	"TradeOffer_Unconfirmed"
+	{
+		"en"	"Offer unconfirmed. Confirm it before becoming a VIP !"
 	}
 	
 	"TradeOffer_WaitItems"
