@@ -74,7 +74,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ASteambot_RegisterModule", Native_RegisterModule);
 	CreateNative("ASteambot_RemoveModule", Native_RemoveModule);
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
-	CreateNative("ASteambot_SendMesssage", Native_SendMesssage);
+	CreateNative("ASteambot_SendMessage", Native_SendMessage);
 	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
 	CreateNative("ASteambot_FindClientBySteam64", Native_FindClientBySteam64);
 	
@@ -214,7 +214,7 @@ public int Native_IsConnected(Handle plugin, int numParams)
 	return connected;
 }
 
-public int Native_SendMesssage(Handle plugin, int numParams)
+public int Native_SendMessage(Handle plugin, int numParams)
 {
 	if (!ASteambot_IsConnected())
 		return false;
