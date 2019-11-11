@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.5"
+#define PLUGIN_VERSION 			"2.0"
 #define MODULE_NAME 			"[ASteambot - Inventory Rank]"
 
 #define ITEM_ID					"itemID"
@@ -30,7 +30,7 @@ Handle ARRAY_Items[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -294,7 +294,7 @@ stock void GetSteamInventoryValue(int client)
 		
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-	ASteambot_SendMesssage(AS_SCAN_INVENTORY, clientSteamID);
+	ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
 }
 
 stock bool IsValidClient(int client)

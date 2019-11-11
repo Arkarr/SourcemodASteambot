@@ -4,12 +4,12 @@
 #include <morecolors>
 #include <base64>
 #undef REQUIRE_PLUGIN
-#include <zephyrus_store>
+#include <store>
 #include <warden>
 #include <hosties>
 #include <lastrequest>
 #include <myjailshop>
-#include <smstore/store/store-backend>
+#include <store-backend>
 #include <smrpg>
 #include <shavit>
 #include <updater>
@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"3.8"
+#define PLUGIN_VERSION 			"4.0"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Added more translation
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -97,7 +97,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	
 }
 
-public OnAllPluginsLoaded()
+public void OnAllPluginsLoaded()
 {
 	//Ensure that there is not late-load problems.
     if (LibraryExists("ASteambot"))
@@ -136,7 +136,7 @@ public void OnLibraryAdded(const char[] name)
         Updater_AddPlugin(UPDATE_URL);
 }
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	ASteambot_RemoveModule();
 }
@@ -234,7 +234,7 @@ public Action CMD_Donate(int client, int args)
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
-	ASteambot_SendMesssage(AS_SCAN_INVENTORY, clientSteamID);
+	ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
 	
 	return Plugin_Handled;
 }
@@ -256,7 +256,7 @@ public Action CMD_AsFriends(int client, int args)
 	char clientSteamID[30];
 	
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-	ASteambot_SendMesssage(AS_FRIEND_INVITE, clientSteamID);
+	ASteambot_SendMessage(AS_FRIEND_INVITE, clientSteamID);
 	
 	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_FriendInvitSend");
 

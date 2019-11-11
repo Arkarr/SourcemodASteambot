@@ -7,7 +7,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.8"
+#define PLUGIN_VERSION 	"3.0"
 #define MODULE_NAME 	"[ASteambot - Report]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Report.txt"
 
@@ -23,7 +23,7 @@ char TargetOffline[MAXPLAYERS + 1][50];
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -74,7 +74,7 @@ public void OnClientPutInServer(int client)
 {
 	Target[client] = 0;
 	LastUsedReport[client] = GetGameTime();
-	for (new z = 1; z <= GetMaxClients(); z++)
+	for (new z = 1; z <= MaxClients; z++)
 	{
 		if (Target[z] == client) Target[z] = 0;
 	}
@@ -189,7 +189,7 @@ stock ReportPlayer(client, target, char[] reason)
 	CloseHandle(file);
 	
 	PrintToChat(client, "%s Report submitted.", MODULE_NAME);
-	for (new z = 1; z <= GetMaxClients(); z++)
+	for (new z = 1; z <= MaxClients; z++)
 	{
 		if (!IsValidClient(z)) continue;
 		if (CheckCommandAccess(z, "sm_admin", ADMFLAG_GENERIC))
@@ -209,7 +209,7 @@ stock ReportPlayer(client, target, char[] reason)
 	
 	char message[100];
 	Format(message, sizeof(message), "%s/%s/%s", ID1, ID2, reason);
-	ASteambot_SendMesssage(AS_REPORT_PLAYER, message);
+	ASteambot_SendMessage(AS_REPORT_PLAYER, message);
 	
 	LastUsedReport[client] = GetGameTime();
 }
@@ -235,7 +235,7 @@ public void ChooseTargetMenu(int client)
 		AddMenuItem(smMenu, steamID, playerName);
 	}
 		
-	for (new z = 1; z <= GetMaxClients(); z++)
+	for (new z = 1; z <= MaxClients; z++)
 	{
 		if (!IsValidClient(z))
 			continue;

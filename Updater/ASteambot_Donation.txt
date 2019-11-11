@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"3.8"
+			"Latest"	"4.0"
 		}
 		
-		"Notes"	"Added more translation"
+		"Notes"	"Added support for SM 1.10"
 		"Notes"	"-----------"
 	}
 	

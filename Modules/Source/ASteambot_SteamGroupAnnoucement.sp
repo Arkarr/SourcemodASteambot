@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"1.8"
+#define PLUGIN_VERSION 	"2.0"
 #define MODULE_NAME 	"[ANY] ASteambot Steam Group Annoucement"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_SteamGroupAnnoucement.txt"
 
@@ -16,7 +16,7 @@ char groupID[50];
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -85,7 +85,7 @@ public Action CMD_PostAnnoucement(int client, int args)
 	GetCmdArg(2, content, sizeof(content));
 	
 	Format(msg, sizeof(msg),  "%s/%s/%s", groupID, headLine, content);
-	ASteambot_SendMesssage(AS_SG_ANNOUCEMENT, msg);
+	ASteambot_SendMessage(AS_SG_ANNOUCEMENT, msg);
 	
 	if(client != 0)
 			CPrintToChat(client, "%s {fullred} Annoucement sent !", MODULE_NAME);

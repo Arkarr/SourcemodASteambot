@@ -5,14 +5,14 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"1.6"
+#define PLUGIN_VERSION 			"2.0"
 #define MODULE_NAME 			"[ASteambot - Execute]"
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Execute.txt"
 
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 

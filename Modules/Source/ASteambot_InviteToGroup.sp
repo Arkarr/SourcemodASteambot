@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.3"
+#define PLUGIN_VERSION 	"3.0"
 #define MODULE_NAME 	"[ANY] ASteambot Invite To Group"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_InviteToGroup.txt"
 
@@ -15,7 +15,7 @@ Handle CVAR_SteamGroupID;
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public OnAllPluginsLoaded()
@@ -75,7 +75,7 @@ public Action CMD_JoinSteamGroup(int client, int args)
 	GetConVarString(CVAR_SteamGroupID, groupID, sizeof(groupID));
 	
 	Format(msg, sizeof(msg),  "%s/%s", steamID, groupID);
-	ASteambot_SendMesssage(AS_INVITE_GROUP, msg);
+	ASteambot_SendMessage(AS_INVITE_GROUP, msg);
 	
 	return Plugin_Handled;
 }
@@ -92,7 +92,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 			
 			char steamID[45];
 			GetClientAuthId(client, AuthId_Steam2, steamID, sizeof(steamID));
-			ASteambot_SendMesssage(AS_FRIEND_INVITE, steamID);
+			ASteambot_SendMessage(AS_FRIEND_INVITE, steamID);
 		}
 		else
 		{

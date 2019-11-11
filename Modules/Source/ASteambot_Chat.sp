@@ -6,7 +6,7 @@
 #include <updater>
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"2.0"
+#define PLUGIN_VERSION 	"2.1"
 #define MODULE_NAME 	"[ASteambot - Chat]"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Chat.txt"
 
@@ -17,7 +17,7 @@ bool transferMessages;
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -61,7 +61,7 @@ public void OnMapEnd()
 {
 	connectionCount = 0;
 	transferMessages = false;
-	ASteambot_SendMesssage(AS_UNHOOK_CHAT, "");
+	ASteambot_SendMessage(AS_UNHOOK_CHAT, "");
 }
 
 public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
@@ -88,5 +88,5 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
 		
 	char text[200];
 	Format(text, sizeof(text), "%N : %s", client, sArgs)
-	ASteambot_SendMesssage(AS_HOOK_CHAT, text);
+	ASteambot_SendMessage(AS_HOOK_CHAT, text);
 }

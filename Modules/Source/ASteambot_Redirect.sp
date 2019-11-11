@@ -3,19 +3,18 @@
 #include <ASteambot>
 #include <adminmenu>
 #include <morecolors>
-#include <redirect/version.sp>
 #undef REQUIRE_PLUGIN
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Redirect]"
-#define PLUGIN_VERSION 	"1.8"
+#define PLUGIN_VERSION 	"2.0"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_Redirect.txt"
 
 
 
 //Release note
 /*
-*Updater update file location
+*Added support for SM 1.10
 */
 
 public OnAllPluginsLoaded()
@@ -69,7 +68,7 @@ public OnAskClientConnect(int client, char[] ip, char[] password)
 	    Format(buffer, sizeof(buffer), "%s/steam://connect/%s/%s", steamId, ip, password);
 	    
 	    PrintToServer(buffer);
-	    ASteambot_SendMesssage(AS_SIMPLE, buffer);
+	    ASteambot_SendMessage(AS_SIMPLE, buffer);
 	}
 }
 
@@ -80,7 +79,7 @@ public ASteambot_Message(AS_MessageType MessageType, char[] msg, const int msgSi
 		int client = ASteambot_FindClientBySteam64(msg);
 		if(client != -1)
 		{
-			ASteambot_SendMesssage(AS_FRIEND_INVITE, msg);
+			ASteambot_SendMessage(AS_FRIEND_INVITE, msg);
 			CPrintToChat(client, "{green}%s{default} You are not friend with me and I can't send you steam messages. I sent you a friend invite.", MODULE_NAME);
 		}
 	}

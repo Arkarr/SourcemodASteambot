@@ -385,7 +385,7 @@ public Action CMD_GetVIP(int client, int args)
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
-	ASteambot_SendMesssage(AS_SCAN_INVENTORY, clientSteamID);
+	ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
 	
 	return Plugin_Handled;
 }
@@ -453,7 +453,7 @@ public Action CMD_GetVIPStatus(int client, int args)
 		{
 			SQL_FetchString(q, 0, tradeOfferID, sizeof(tradeOfferID));
 
-			ASteambot_SendMesssage(AS_TRADEOFFER_INFORMATION, tradeOfferID);
+			ASteambot_SendMessage(AS_TRADEOFFER_INFORMATION, tradeOfferID);
 		}
 	}
 	else
@@ -480,7 +480,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		char clientSteamID[30];
 		
 		GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-		ASteambot_SendMesssage(AS_FRIEND_INVITE, clientSteamID);
+		ASteambot_SendMessage(AS_FRIEND_INVITE, clientSteamID);
 		
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_FriendInvitSend");
 	}
@@ -547,7 +547,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		if(strlen(msg) > 0)
 		{
 			Format(msg, sizeof(msg), "%s/%s", steamID, msg);
-			ASteambot_SendMesssage(AS_SIMPLE, msg);
+			ASteambot_SendMessage(AS_SIMPLE, msg);
 		}
 	}
 	else if (MessageType == AS_TRADEOFFER_INFORMATION)
@@ -581,7 +581,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 			if(strlen(msg) > 0)
 			{
 				Format(msg, sizeof(msg), "%s/%s", steamID, msg);
-				ASteambot_SendMesssage(AS_SIMPLE, msg);
+				ASteambot_SendMessage(AS_SIMPLE, msg);
 			}
 		}
 		else if(StrEqual(parts[1], TRADEOFFER_UNCONFIRMED))

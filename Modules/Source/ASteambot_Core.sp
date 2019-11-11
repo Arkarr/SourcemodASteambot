@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"5.0"
+#define PLUGIN_VERSION 	"5.1"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Updated to SM 1.10
+*Added support for SM 1.10
 */
 
 public Plugin myinfo = 
@@ -403,7 +403,7 @@ public OnClientSocketConnected(Handle socket, any arg)
 	connected = true;
 }
 
-public OnClientSocketError(Handle socket, const int errorType, const int errorNum, any ary)
+public void OnClientSocketError(Handle socket, const int errorType, const int errorNum, any ary)
 {
 	connected = false;
 	LogError("%s - socket error %d (error number %d)", MODULE_NAME, errorType, errorNum);
