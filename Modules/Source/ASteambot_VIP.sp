@@ -133,7 +133,7 @@ public void OnRebuildAdminCache(AdminCachePart part)
 
 void CheckVIPAccess(int client)
 {
-	char query[100];
+	char query[200];
 	char steamID[40];
 	
 	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));

@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"5.1"
+#define PLUGIN_VERSION 	"5.2"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -451,15 +451,16 @@ public OnChildSocketReceive(Handle socket, char[] receiveData, const int dataSiz
 	
 	ClearArray(ARRAY_Data);
 	
-	if (StrContains(finalData, steambotPassword) == -1)
+	
+	if (DEBUG)
 	{
-		if (DEBUG)
-		{
-			PrintToServer("Data : %s", finalData);
-			PrintToServer(">>> PASSWORD INCORECT");
-		}
+		PrintToServer("Data : %s", finalData);
 		
-		return;
+		if (StrContains(finalData, steambotPassword) == -1)
+		{
+			PrintToServer(">>> PASSWORD INCORECT OR NOT FOUND");
+			return;
+		}
 	}
 	
 	ReplaceString(finalData, stringSize, steambotPassword, "");
