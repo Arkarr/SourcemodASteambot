@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"5.2"
+#define PLUGIN_VERSION 	"5.3"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -48,7 +48,7 @@ bool connected;
 
 //Release note
 /*
-*Added support for SM 1.10
+*Fixed an issue with the CreateTradeOffer native while sending null as param.
 */
 
 public Plugin myinfo = 
@@ -251,22 +251,25 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 	
 	//Handle module = GetModuleByPlugin(plugin);
 	
+	char item[30];
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
 	Format(message, sizeof(message), "%s/", clientSteamID)
 	
-	char item[30];
-	for (int i = 0; i < GetArraySize(ItemList); i++)
+	if(ItemList != null)
 	{
-		GetArrayString(ItemList, i, item, sizeof(item));
-		
-		if (i + 1 != GetArraySize(ItemList))
-			Format(item, sizeof(item), "%s,", item);
-		else
-			Format(item, sizeof(item), "%s", item);
-		
-		StrCat(message, sizeof(message), item);
+		for (int i = 0; i < GetArraySize(ItemList); i++)
+		{
+			GetArrayString(ItemList, i, item, sizeof(item));
+			
+			if (i + 1 != GetArraySize(ItemList))
+				Format(item, sizeof(item), "%s,", item);
+			else
+				Format(item, sizeof(item), "%s", item);
+			
+			StrCat(message, sizeof(message), item);
+		}
 	}
 	
 	StrCat(message, sizeof(message), "/");
