@@ -106,6 +106,16 @@
 		"de"	"Handelsanfrage abgelehnt, dir wurden keine Credits gutgeschrieben."
 	}
 	
+	"TradeOffer_TokenMissing"
+	{
+		"en"	"Trade token is missing ! Trade offer cancelled."
+	}
+	
+	"TradeOffer_TokenInvalid"
+	{
+		"en"	"Trade token is invalid ! Trade offer cancelled."
+	}
+	
 	"TradeOffer_WaitItems"
 	{
 		"en"	"Please wait, I'm loading your items..."
