@@ -43,6 +43,8 @@ public void OnLibraryAdded(const char[] name)
 public OnPluginStart()
 {	
 	RegConsoleCmd("sm_asteambot_trade_token", CMD_ASTradeToken, "Save/Update trade token.");
+	RegConsoleCmd("sm_trade_token", CMD_ASTradeToken, "Save/Update trade token.");
+	RegConsoleCmd("sm_token", CMD_ASTradeToken, "Save/Update trade token.");
 	
 	LoadTranslations("ASteambot.tradetokenupdater.phrases.txt");
 	
