@@ -145,6 +145,16 @@
 		"en"	"Offer unconfirmed. Confirm it before becoming a VIP !"
 	}
 	
+	"TradeOffer_TokenMissing"
+	{
+		"en"	"Trade token is missing ! Trade offer cancelled."
+	}
+	
+	"TradeOffer_TokenInvalid"
+	{
+		"en"	"Trade token is invalid ! Trade offer cancelled."
+	}
+	
 	"TradeOffer_WaitItems"
 	{
 		"en"	"Please wait, I'm loading your availabes VIP packages that you can buy..."

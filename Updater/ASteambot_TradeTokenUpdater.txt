@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.0"
+		}
+		
+		"Notes"	"Initial release"
+		"Notes"	"-----------"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_TradeTokenUpdater.smx"
+		"Source"	"Path_SM/scripting/ASteambot_TradeTokenUpdater.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.tradetokenupdater.phrases.txt"
+	}
+}

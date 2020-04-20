@@ -1,0 +1,42 @@
+"Phrases"
+{
+	// ASteambot
+	"ASteambot_NotConnected"
+	{
+		"en"	"ASteambot is not connected! Try again later."
+		"fr"	"ASteambot n'est pas connecté! Réessayez plus tard."
+		"pl"	"ASteambot nie jest połączony! Spróbuj później."
+		"ru"	"ASteambot не подключен! Попробуйте позже."
+		"de"	"ASteambot ist nicht verbunden! Versuche es später erneut."
+	}
+	
+	"ASteambot_invalid_trade_token"
+	{
+		"en"	"Usage: {lime}sm_asteambot_trade_token {fullred}'{default}[TRADE-URL]{fullred}'"
+		"de"	"Anwendung: sm_asteambot_trade_token {fullred}'{default}[TRADE-URL]{fullred}'"
+	}
+	
+	"ASteambot_invalid_trade_token_url"
+	{
+		"en"	"Trade token can be found here:"
+		"de"	"Der aufgenommene Handel findet sich hier:"
+	}
+	
+	"ASteambot_invalid_trade_token_url_2"
+	{
+		"en"	"Bottom of the page (Third-Party Sites)"
+		"de"	"Ende der Seite"
+	}
+	
+	"ASteambot_valid_trade_token_saved"
+	{
+		"#format"	"{1:s}"
+		"en"		"Token ({1}) has been saved!"
+		"de"		"Token ({1}) wurde gespeichert!"
+	}
+	
+	"ASteambot_error_while_saving_token"
+	{
+		"en"		"Unknow error occured !"
+	}
+}

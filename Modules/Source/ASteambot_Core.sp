@@ -4,11 +4,12 @@
 #include <ASteambot>
 #undef REQUIRE_PLUGIN
 #include <updater>
+#include <morecolors>
 
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"5.3"
+#define PLUGIN_VERSION 	"6.0"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -83,7 +84,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 
-public Action CMD_AStats(int client, int args)
+public Action CMD_ASStats(int client, int args)
 {
 	if (client == 0)
 	{
@@ -315,7 +316,8 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 
 public void OnPluginStart()
 {
-	RegAdminCmd("sm_asteambot_stats", CMD_AStats, ADMFLAG_CONFIG, "Display stats about network data of ASteambot.");
+										//hehe
+	RegAdminCmd("sm_asteambot_stats", CMD_ASStats, ADMFLAG_CONFIG, "Display stats about network data of ASteambot.");
 	
 	g_fwdASteambotMessage = CreateGlobalForward("ASteambot_Message", ET_Ignore, Param_Cell, Param_String, Param_Cell);
 	

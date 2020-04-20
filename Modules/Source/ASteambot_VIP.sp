@@ -476,13 +476,20 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	
 	if (MessageType == AS_NOT_FRIENDS && client != -1)
 	{
-		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_NotFriends");
+		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "Steam_NotFriends");
 		char clientSteamID[30];
 		
 		GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 		ASteambot_SendMessage(AS_FRIEND_INVITE, clientSteamID);
 		
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_FriendInvitSend");
+	}
+	else if (MessageType == AS_TRADE_TOKEN && client != -1)
+	{
+		if (StrEqual(parts[1], "trade_token_not_found"))
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_TokenMissing");
+		else if (StrEqual(parts[1], "trade_token_invalid")) 
+			CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "TradeOffer_TokenInvalid");
 	}
 	else if (MessageType == AS_SCAN_INVENTORY && client != -1)
 	{

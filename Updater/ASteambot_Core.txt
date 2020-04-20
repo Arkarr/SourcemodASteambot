@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"5.3"
+			"Latest"	"6.0"
 		}
 		
 		"Notes"	"Fixed an issue with the CreateTradeOffer native while sending null as param."
