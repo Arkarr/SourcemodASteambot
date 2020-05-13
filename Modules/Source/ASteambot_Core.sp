@@ -272,6 +272,10 @@ public int Native_CreateTradeOffer(Handle plugin, int numParams)
 			StrCat(message, sizeof(message), item);
 		}
 	}
+	else
+	{
+		StrCat(message, sizeof(message), "NULL");
+	}
 	
 	StrCat(message, sizeof(message), "/");
 	
