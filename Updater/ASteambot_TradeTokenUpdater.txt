@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.0"
+			"Latest"	"1.1"
 		}
 		
 		"Notes"	"Initial release"

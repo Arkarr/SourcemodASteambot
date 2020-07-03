@@ -7,7 +7,7 @@
 #include <updater>
 
 #define MODULE_NAME		"[ASteambot - Trade Token Updater]"
-#define PLUGIN_VERSION 	"1.0"
+#define PLUGIN_VERSION 	"1.1"
 #define UPDATE_URL    	"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_TradeTokenUpdater.txt"
 
 
@@ -59,6 +59,12 @@ public OnPluginEnd()
 
 public Action CMD_ASTradeToken(int client, int args)
 {
+	if(client == 0)
+	{
+		PrintToServer("%s This command can be used in-game only !", MODULE_NAME);
+		return Plugin_Handled;
+	}
+	
 	if (args < 1)
 	{
 		CPrintToChat(client, "%s {fullred}%t", MODULE_NAME, "ASteambot_invalid_trade_token");
