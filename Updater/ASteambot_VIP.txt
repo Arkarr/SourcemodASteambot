@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"2.2"
+			"Latest"	"2.3"
 		}
 		
 		"Notes"	" Added a command where you can check your trade offer status in case of bug"

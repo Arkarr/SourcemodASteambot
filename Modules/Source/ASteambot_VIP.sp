@@ -8,7 +8,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 		 	"Arkarr"
-#define PLUGIN_VERSION 			"2.2"
+#define PLUGIN_VERSION 			"2.3"
 #define MODULE_NAME 			"[ASteambot - VIP]"
 
 #define ITEM_ID					"itemID"
@@ -137,6 +137,9 @@ void CheckVIPAccess(int client)
 	char steamID[40];
 	
 	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	if(StrEqual(steamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+		return;
 	
 	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
 	DBResultSet q = SQL_Query(DATABASE, query);
@@ -305,6 +308,9 @@ public Action CMD_BanVIP(int client, int args)
 	
 	GetClientAuthId(target, AuthId_SteamID64, steamID, sizeof(steamID));
 	
+	if(StrEqual(steamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+		return Plugin_Handled;
+	
 	Format(query, sizeof(query), QUERY_ADD_VIPBAN, steamID, GetTime());
 	DBFastQuery(query);
 
@@ -339,6 +345,9 @@ public Action CMD_GetVIP(int client, int args)
 	char steamID[40];
 	
 	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+		
+	if(StrEqual(steamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+		return Plugin_Handled;
 	
 	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
 	DBResultSet q = SQL_Query(DATABASE, query);
@@ -385,6 +394,9 @@ public Action CMD_GetVIP(int client, int args)
 	char clientSteamID[40];
 	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
 	
+	if(StrEqual(clientSteamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+		return Plugin_Handled;
+	
 	ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
 	
 	return Plugin_Handled;
@@ -402,6 +414,9 @@ public Action CMD_GetVIPStatus(int client, int args)
 	char steamID[40];
 	
 	GetClientAuthId(client, AuthId_SteamID64, steamID, sizeof(steamID));
+	
+	if(StrEqual(steamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+		return Plugin_Handled;
 	
 	Format(query, sizeof(query), QUERY_SELECT_VIP, steamID);
 	DBResultSet q = SQL_Query(DATABASE, query);
@@ -480,6 +495,10 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		char clientSteamID[30];
 		
 		GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
+		
+		if(StrEqual(clientSteamID, "STEAM_ID_STOP_IGNORING_RETVALS"))
+			return;
+		
 		ASteambot_SendMessage(AS_FRIEND_INVITE, clientSteamID);
 		
 		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "Steam_FriendInvitSend");
