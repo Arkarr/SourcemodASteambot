@@ -1,0 +1,46 @@
+"Phrases"
+{
+	// Commands
+	"ingame"
+	{
+		"en"	"This command can be usued only in game!"
+		"fr"	"Cette commande ne peut être utilisée que dans le jeu!"
+		"pl"	"Ta komenda może być użyta tylko w grze!"
+		"ru"	"Эта команда может использована только в игре!"
+		"de"	"Dieses Kommando kann nur ingame genutzt werden!"
+	}
+	
+	// Common
+	"Done"
+	{
+		"en"	"Done!"
+		"fr"	"Fait!"
+		"pl"	"Gotowe!"
+		"ru"	"Готово!"
+		"de"	"Erledigt!"
+		"lv"	"Pabeigts!"
+		"hu"	"Kész!"
+		"pt-br"	"Feito!"
+		"tr"	"Tamamlandi!"
+	}
+	
+	// ASteambot
+	"ASteambot_NotConnected"
+	{
+		"en"	"ASteambot is not connected! Try again later."
+		"fr"	"ASteambot n'est pas connecté! Réessayez plus tard."
+		"pl"	"ASteambot nie jest połączony! Spróbuj ponownie później."
+		"ru"	"ASteambot не подключен! Попробуйте позже."
+		"de"	"ASteambot ist nicht verbunden! Versuche es später erneut."
+	}
+	
+	"ASteambot_GroupChatAnnoucement_Usage"
+	{
+		"en"	"Usage: !sm_group_chat_annoucement [MESSAGE]"
+	}
+	
+	"ASteambot_Timeout"
+	{
+		"en"	"You can't do that now. Please wait %.2f seconds !"
+	}
+}
