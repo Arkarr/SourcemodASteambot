@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"4.0"
+#define PLUGIN_VERSION 			"4.2"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -175,7 +175,7 @@ public void LoadOverridedPrices()
 	{
 		char bit[2][64];
 		if(StrContains(line, "=") != -1 && ExplodeString(line, "=", bit, sizeof bit, sizeof bit[]) == 2)
-			SetTrieValue(TRIE_OverridedPrices, bit[0], (StringToFloat(bit[1])/GetConVarFloat(CVAR_ValueMultiplier)));
+			SetTrieValue(TRIE_OverridedPrices, bit[0], (StringToFloat(bit[1])));
 	}
 	
 	CloseHandle(fileHandle);
@@ -491,7 +491,7 @@ public bool CreateInventory(int client, const char[] strinventory, int itemCount
 			if(GetTrieValue(TRIE_OverridedPrices, itemInfos[1], value))
 				SetTrieValue(TRIE_Item, ITEM_VALUE, value);
 			else
-				SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2]));
+				SetTrieValue(TRIE_Item, ITEM_VALUE, StringToFloat(itemInfos[2])/GetConVarFloat(CVAR_ValueMultiplier));
 			
 			SetTrieValue(TRIE_Item, ITEM_DONATED, 0);
 			PushArrayCell(inventory, TRIE_Item);

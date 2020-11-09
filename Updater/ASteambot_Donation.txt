@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"4.0"
+			"Latest"	"4.2"
 		}
 		
 		"Notes"	"Added support for SM 1.10"
