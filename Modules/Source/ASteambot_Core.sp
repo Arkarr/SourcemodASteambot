@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 	"Arkarr"
-#define PLUGIN_VERSION 	"6.0"
+#define PLUGIN_VERSION 	"6.1"
 #define MODULE_NAME 	"[ASteambot - Core]"
 #define M_PLUGIN		"plugin"
 #define M_ID			"mID"
@@ -49,7 +49,8 @@ bool connected;
 
 //Release note
 /*
-*Fixed an issue with the CreateTradeOffer native while sending null as param.
+*Fix creating trade offer when no player items are requested.
+*Thank you, dvarnai
 */
 
 public Plugin myinfo = 

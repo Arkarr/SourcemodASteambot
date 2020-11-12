@@ -4,10 +4,11 @@
 	{
 		"Version"
 		{
-			"Latest"	"6.0"
+			"Latest"	"6.1"
 		}
 		
-		"Notes"	"Fixed an issue with the CreateTradeOffer native while sending null as param."
+		"Notes"	"Fix creating trade offer when no player items are requested."
+		"Notes"	"Thank you, dvarnai"
 		"Notes"	"-----------"
 	}
 	
