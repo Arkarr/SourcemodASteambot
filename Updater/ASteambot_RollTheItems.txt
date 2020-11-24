@@ -1,0 +1,20 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.0"
+		}
+		
+		"Notes"	" Initial release"
+		"Notes"	"-----------"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/ASteambot_RollTheItems.smx"
+		"Source"	"Path_SM/scripting/ASteambot_RollTheItems.sp"
+		"Plugin"	"Path_SM/translations/ASteambot.rolltheitems.phrases.txt"
+	}
+}

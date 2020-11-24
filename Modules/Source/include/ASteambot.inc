@@ -74,6 +74,12 @@ native void ASteambot_SendMessage(AS_MessageType MessageType, const char[] messa
  * @return          Nothing.
  */ 
 native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID, Handle ArrayMyAssetID = null, float fakeValue = -1.0); 
+/** 
+ * Send a message to ASteambot (Maximum char 900). 
+ * 
+ * @return          Nothing.
+ */ 
+native void ASteambot_CreateTradeOfferBySteamID(const char[] steamID, Handle ArrayAssetID, Handle ArrayMyAssetID = null, float fakeValue = -1.0); 
 
 /** 
  * Fire when ever you get a message from ASteambot.

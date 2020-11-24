@@ -11,7 +11,6 @@
 
 #define UPDATE_URL    			"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_GroupChatAnnoucement.txt"
 
-
 Handle CVAR_Cooldown;
 Handle CVAR_GroupChatName;
 Handle CVAR_GroupChannelName;
@@ -26,7 +25,7 @@ float playerTimeout[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Initial release
+*	Initial release
 */
 
 public Plugin myinfo = 

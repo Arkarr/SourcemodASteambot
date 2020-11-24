@@ -17,7 +17,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 			"Arkarr"
-#define PLUGIN_VERSION 			"4.2"
+#define PLUGIN_VERSION 			"4.3"
 #define MODULE_NAME 			"[ASteambot - Donation]"
 
 #define ITEM_ID					"itemID"
@@ -72,7 +72,7 @@ Handle ARRAY_ItemsDOTA2[MAXPLAYERS + 1];
 
 //Release note
 /*
-*Added support for SM 1.10
+*Fixed a small issue and performance improved slighty
 */
 
 public Plugin myinfo = 
@@ -92,9 +92,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	MarkNativeAsOptional("Store_GiveCreditsToUsers");
 	MarkNativeAsOptional("SMRPG_AddClientExperience");
 	
-	return APLRes_Success;
-	
-	
+	return APLRes_Success;	
 }
 
 public void OnAllPluginsLoaded()
@@ -366,12 +364,7 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 	
 	bool inv_tf2 = CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
 	bool inv_csgo = CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
-	bool inv_dota2 = CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
-	
-	CreateInventory(client, tf2, tf2_icount, ARRAY_ItemsTF2[client]);
-	CreateInventory(client, csgo, csgo_icount, ARRAY_ItemsCSGO[client]);
-	CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);
-	
+	bool inv_dota2 = CreateInventory(client, dota2, dota2_icount, ARRAY_ItemsDOTA2[client]);	
 
 	char timeOut[100];
 	if(StrEqual(tf2, "TIME_OUT"))

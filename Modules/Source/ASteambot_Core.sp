@@ -78,6 +78,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ASteambot_IsConnected", Native_IsConnected);
 	CreateNative("ASteambot_SendMessage", Native_SendMessage);
 	CreateNative("ASteambot_CreateTradeOffer", Native_CreateTradeOffer);
+	CreateNative("ASteambot_CreateTradeOfferBySteamID", Native_CreateTradeOfferBySteamID);
 	CreateNative("ASteambot_FindClientBySteam64", Native_FindClientBySteam64);
 	
 	RegPluginLibrary("ASteambot");
@@ -240,6 +241,81 @@ public int Native_SendMessage(Handle plugin, int numParams)
 	SendMessage(plugin, messageType, message, sizeof(message));
 	
 	return true;
+}
+
+public int Native_CreateTradeOfferBySteamID(Handle plugin, int numParams)
+{
+	char message[MAX_DATA_SIZE]; //bad
+	char item[30];
+	char clientSteamID[40];
+	
+	GetNativeString(1, clientSteamID, sizeof(clientSteamID));
+	Handle ItemList = GetNativeCell(2);
+	Handle MyItemList = GetNativeCell(3);
+	float fakeValue = GetNativeCell(4);
+	
+	//Handle module = GetModuleByPlugin(plugin);
+	
+	Format(message, sizeof(message), "%s/", clientSteamID)
+	
+	if(ItemList != null)
+	{
+		for (int i = 0; i < GetArraySize(ItemList); i++)
+		{
+			GetArrayString(ItemList, i, item, sizeof(item));
+			
+			if (i + 1 != GetArraySize(ItemList))
+				Format(item, sizeof(item), "%s,", item);
+			else
+				Format(item, sizeof(item), "%s", item);
+			
+			StrCat(message, sizeof(message), item);
+		}
+	}
+	else
+	{
+		StrCat(message, sizeof(message), "NULL");
+	}
+	
+	StrCat(message, sizeof(message), "/");
+	
+	if (MyItemList != INVALID_HANDLE && GetArraySize(MyItemList) > 0)
+	{
+		for (int i = 0; i < GetArraySize(MyItemList); i++)
+		{
+			GetArrayString(MyItemList, i, item, sizeof(item));
+			
+			if (i + 1 != GetArraySize(MyItemList))
+				Format(item, sizeof(item), "%s,", item);
+			else
+				Format(item, sizeof(item), "%s", item);
+			
+			StrCat(message, sizeof(message), item);
+		}
+	}
+	else
+	{
+		StrCat(message, sizeof(message), "NULL");
+	}
+	
+	
+	if (fakeValue != 1.0)
+	{
+		char fakeVal[100];
+		Format(fakeVal, sizeof(fakeVal), "/%.2f", fakeValue);
+		StrCat(message, sizeof(message), fakeVal);
+	}
+	else
+	{
+		StrCat(message, sizeof(message), "/-1");
+	}
+	
+	//int id;
+	//GetTrieValue(module, M_ID, id);
+	
+	//SendMessage(id, AS_CREATE_TRADEOFFER, message, sizeof(message));
+	
+	SendMessage(plugin, AS_CREATE_TRADEOFFER, message, sizeof(message));
 }
 
 public int Native_CreateTradeOffer(Handle plugin, int numParams)

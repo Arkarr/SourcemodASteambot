@@ -7,7 +7,7 @@
 			"Latest"	"1.0"
 		}
 		
-		"Notes"	"Initial release"
+		"Notes"	"	Initial release"
 		"Notes"	"-----------"
 	}
 	
