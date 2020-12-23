@@ -18,15 +18,15 @@
 #define ITEM_VALUE					"itemValue"
 #define ITEM_DONATED				"itemDonated"
 
-#define DB_INIT_TABLE_ROULETTE 			"CREATE TABLE IF NOT EXISTS `rolltheitems`.`t_roulette` ( `ID` INT(11) NOT NULL AUTO_INCREMENT, `roulette_status` INT(11) NOT NULL, `roulette_winner` BIGINT(20) NULL DEFAULT NULL, `winner_trade_offer` VARCHAR(45) NOT NULL, PRIMARY KEY (`ID`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4;"
-#define DB_INIT_TABLE_TRADES 			"CREATE TABLE IF NOT EXISTS `rolltheitems`.`t_trades` ( `ID` INT(11) NOT NULL AUTO_INCREMENT, `trade_id` BIGINT(20) NOT NULL, `trade_steamid` BIGINT(20) NOT NULL, `trade_value` DOUBLE NOT NULL, `t_roulette_ID` INT(11) NOT NULL, PRIMARY KEY (`ID`), INDEX `fk_t_trades_t_roulette_idx` (`t_roulette_ID` ASC), CONSTRAINT `fk_t_trades_t_roulette` FOREIGN KEY (`t_roulette_ID`) REFERENCES `rolltheitems`.`t_roulette` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4;"
-#define DB_SELECT_CURRENT_ROULETTE_ID	"SELECT ID FROM t_roulette WHERE roulette_status=1"
-#define DB_SELECT_LAST_ROULETTE_ID		"SELECT ID FROM t_roulette ORDER BY ID DESC LIMIT 1"
+#define DB_INIT_TABLE_ROULETTE 			"CREATE TABLE IF NOT EXISTS `rolltheitems`.`t_roulette_v2` ( `ID` INT(11) NOT NULL AUTO_INCREMENT, `roulette_status` INT(11) NOT NULL, `roulette_winner` BIGINT(20) NULL DEFAULT NULL, `winner_trade_offer` VARCHAR(45) NOT NULL, PRIMARY KEY (`ID`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4;"
+#define DB_INIT_TABLE_TRADES 			"CREATE TABLE IF NOT EXISTS `rolltheitems`.`t_trades` ( `ID` INT(11) NOT NULL AUTO_INCREMENT, `trade_id` BIGINT(20) NOT NULL, `trade_steamid` BIGINT(20) NOT NULL, `trade_value` DOUBLE NOT NULL, `t_roulette_ID` INT(11) NOT NULL, PRIMARY KEY (`ID`), INDEX `fk_t_trades_t_roulette_idx` (`t_roulette_ID` ASC), CONSTRAINT `fk_t_trades_t_roulette` FOREIGN KEY (`t_roulette_ID`) REFERENCES `rolltheitems`.`t_roulette_v2` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4;"
+#define DB_SELECT_CURRENT_ROULETTE_ID	"SELECT ID FROM t_roulette_v2 WHERE roulette_status=1"
+#define DB_SELECT_LAST_ROULETTE_ID		"SELECT ID FROM t_roulette_v2 ORDER BY ID DESC LIMIT 1"
 #define DB_SELECT_ROLL_DETAILS			"SELECT trade_steamid, trade_value FROM t_trades WHERE t_roulette_ID=%i ORDER BY trade_value ASC"
 #define DB_INSERT_SUCCESSFUL_TRADE		"INSERT INTO `t_trades` (`trade_id`, `trade_steamid`, `trade_value`, `t_roulette_ID`) VALUES ('%s', '%s', '%.2f', '%i')"
-#define DB_UPDATE_ROULETTE_GAME			"UPDATE `t_roulette` SET `roulette_status` = %i, `roulette_winner` = '%s', `winner_trade_offer` = '%s' WHERE `t_roulette`.`ID` = %i;"
-#define DB_UPDATE_ROULETTE_WINNER_OFFER "UPDATE `t_roulette` SET `winner_trade_offer` = '%s' WHERE `t_roulette`.`ID` = %i;"
-#define DB_INSERT_ROULETTE_GAME			"INSERT INTO `t_roulette` (`ID`, `roulette_status`, `roulette_winner`, `winner_trade_offer`) VALUES ('%i', '1', NULL, 'NOT_CREATED');"
+#define DB_UPDATE_ROULETTE_GAME			"UPDATE `t_roulette_v2` SET `roulette_status` = %i, `roulette_winner` = '%s', `winner_trade_offer` = '%s' WHERE `t_roulette_v2`.`ID` = %i;"
+#define DB_UPDATE_ROULETTE_WINNER_OFFER "UPDATE `t_roulette_v2` SET `winner_trade_offer` = '%s' WHERE `t_roulette_v2`.`ID` = %i;"
+#define DB_INSERT_ROULETTE_GAME			"INSERT INTO `t_roulette_v2` (`ID`, `roulette_status`, `roulette_winner`, `winner_trade_offer`) VALUES ('%i', '1', NULL, 'NOT_CREATED');"
 
 #define GAMEID_TF2			440
 #define GAMEID_CSGO			730
@@ -62,6 +62,7 @@ Handle ARRAY_BotItemsCSGO;
 Handle ARRAY_BotItemsDOTA2;
 Handle CVAR_MinimumPlayer;
 Handle CVAR_WinnerAnnouncement;
+Handle CVAR_TradeOfferType;
 
 //Release note
 /*
@@ -91,20 +92,31 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_asteambot_rolltheitems", CMD_RollTheItems, "Enter the roulette round.");
 	RegConsoleCmd("sm_asteambot_rti", CMD_RollTheItems, "Enter the roulette round.");
 	
+	RegConsoleCmd("sm_as_test", CMD_test);
+	
 	CreateConVar("sm_asteambot_roll_the_items_version", PLUGIN_VERSION, "Standard plugin version ConVar. Please don't change me!", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
 	
-	CVAR_MinimumPlayer = CreateConVar("sm_asteambot_roll_the_items_minimum_players", "5", "Minimum number of players required to start the roulette", _, true, 2.0);
-	CVAR_WinnerAnnouncement = CreateConVar("sm_asteambot_roll_the_items_winner_annoucement", "5", "Seconds before annoucing the winner", _, true, 3.0);
+	CVAR_MinimumPlayer = CreateConVar("sm_asteambot_roll_the_items_minimum_players", "5", "Minimum number of players required to start the roulette (minimum 2)", _, true, 2.0);
+	CVAR_WinnerAnnouncement = CreateConVar("sm_asteambot_roll_the_items_winner_annoucement", "5", "Seconds before annoucing the winner (minimum 3.0)", _, true, 3.0);
+	CVAR_TradeOfferType = CreateConVar("sm_asteambot_roll_the_items_trade_offer_type", "1", "Trade offer type to use : tradeoffer = 1 OR ingame = 2", _, true, 1.0, true, 2.0);
 	
 	if (LibraryExists("updater"))
 		Updater_AddPlugin(UPDATE_URL);
 	
 	LoadTranslations("ASteambot.rolltheitems.phrases");
+	
+	AutoExecConfig(true, "asteambot_rolltheitems", "asteambot")
+}
+
+public Action CMD_test(int client, int args)
+{
+	
+	return Plugin_Handled;
 }
 
 public void OnConfigsExecuted()
 {
-	STACK_Prizes = CreateStack(100);
+	STACK_Prizes = CreateStack(200);
 	RouletteTrie = CreateArray(100);
 	ItemsToGive = CreateArray(100);
 	HUDManager = CreateHudSynchronizer();
@@ -257,12 +269,30 @@ public void AskPlayerToWait(int client)
 
 public void LoadInventory(int client)
 {
-	CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
+	if(GetConVarInt(CVAR_TradeOfferType) == 1)
+	{
+		CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_WaitItems");
+		
+		char clientSteamID[40];
+		GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
+		
+		ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
+	}
+	else
+	{
+		char clientSteamIDGame[120];
+		GetClientAuthId(client, AuthId_Steam2, clientSteamIDGame, sizeof(clientSteamIDGame));
+		
+		switch(GetEngineVersion())
+		{
+			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_CSGO); }
+			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_DOTA2); }
+			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_TF2); }
+		}
+		
+		ASteambot_SendMessage(AS_CREATE_QUICK_TRADE, clientSteamIDGame);
+	}
 	
-	char clientSteamID[40];
-	GetClientAuthId(client, AuthId_Steam2, clientSteamID, sizeof(clientSteamID));
-	
-	ASteambot_SendMessage(AS_SCAN_INVENTORY, clientSteamID);
 }
 
 public int ASteambot_Message(AS_MessageType MessageType, char[] message, const int messageSize)
@@ -290,15 +320,15 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	{
 		if(StrEqual(steamID, BotSteamID))
 		{
-			char winner[100];
+			char winner[200];
 			PopStackString(STACK_Prizes, winner, sizeof(winner));
 			
-			char bit[3][50];
+			char bit[4][200];
 			ExplodeString(winner, "|", bit, sizeof bit, sizeof bit[]);
 			
 			PrepareInventories(-1, parts[1], parts[2], parts[3], messageSize);
 			
-			FindAndGiveItem(bit[0], StringToFloat(bit[1]), StringToFloat(bit[2]));
+			FindAndGiveItem(bit[0], StringToFloat(bit[1]), StringToFloat(bit[2]), StringToInt(bit[3]));
 		}
 		else
 		{
@@ -312,7 +342,31 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	}
 	else if (MessageType == AS_TRADEOFFER_DECLINED && client != -1)
 	{
-		CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined");
+		char[] value = new char[100];
+		
+		Format(value, messageSize, parts[2]);
+		ReplaceString(value, messageSize, ",", ".");
+		
+		float credits = StringToFloat(value);
+		
+		//Is trade a withdraw ?
+		
+		//No
+		if(credits != -1)
+		{
+			CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined");
+		}
+		//Yes
+		else
+		{
+			ReplaceString(parts[3], 40, "roulette_id_", "", false);
+			
+			char dbquery[200];
+			Format(dbquery, sizeof(dbquery), DB_UPDATE_ROULETTE_WINNER_OFFER, "OFFER_REJECTED", StringToInt(parts[3]));
+			DBFastQuery(dbquery, true);
+			
+			CPrintToChat(client, "%s {red}%t", MODULE_NAME, "TradeOffer_Declined_Donation");
+		}	
 	}
 	else if (MessageType == AS_STEAM_ID)
 	{
@@ -329,16 +383,27 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		
 		float credits = StringToFloat(value);
 		
-		if(credits == -1)
-			return;
+		//Is trade a withdraw ?
 		
-		if(client != -1)
-			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
+		//No
+		if(credits != -1)
+		{
+			if(client != -1)
+				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
 		
-		char dbquery[200];
-		Format(dbquery, sizeof(dbquery), DB_INSERT_SUCCESSFUL_TRADE, offerID, steamID, credits, currentRollRoundID);
-		PrintToServer(dbquery);
-		SQL_TQuery(DATABASE, TQuery_InsertNewTradeSuccess, dbquery, RouletteTrie);
+			char dbquery[200];
+			Format(dbquery, sizeof(dbquery), DB_INSERT_SUCCESSFUL_TRADE, offerID, steamID, credits, currentRollRoundID);
+			SQL_TQuery(DATABASE, TQuery_InsertNewTradeSuccess, dbquery, RouletteTrie);
+		}
+		//Yes
+		else
+		{
+			ReplaceString(parts[3], 40, "roulette_id_", "", false);
+			
+			char dbquery[200];
+			Format(dbquery, sizeof(dbquery), DB_UPDATE_ROULETTE_WINNER_OFFER, "OFFER_ACCEPTED", StringToInt(parts[3]));
+			DBFastQuery(dbquery, true);
+		}
 	}
 }
 
@@ -375,19 +440,13 @@ public void PrepareInventories(int client, const char[] tf2, const char[] csgo, 
 	
 	char timeOut[100];
 	if (StrEqual(tf2, "TIME_OUT"))
-	{
 		Format(timeOut, sizeof(timeOut), "TF2");
-	}
 	
 	if (StrEqual(csgo, "TIME_OUT"))
-	{
 		Format(timeOut, sizeof(timeOut), "%s,CS:GO", timeOut);
-	}
 	
 	if (StrEqual(dota2, "TIME_OUT"))
-	{
 		Format(timeOut, sizeof(timeOut), "%s,Dota 2", timeOut);
-	}
 	
 	if (StrContains(timeOut, ",") == 0)
 		strcopy(timeOut, sizeof(timeOut), timeOut[1]);
@@ -631,21 +690,19 @@ public void CreateTradeOffer(int client, float tv)
 		}
 	}
 	
-	ASteambot_CreateTradeOffer(client, items, INVALID_HANDLE, tv);
+	ASteambot_CreateTradeOffer(client, items, INVALID_HANDLE, tv, "");
 }
 
 public void GiveoutPrice(const char[] steamID, float value, float valueMax)
 {
-	PrintToServer("Giving to %s price for a value of %.2f", steamID, value);
-	
-	char winner[100];
-	Format(winner, sizeof(winner), "%s|%.2f|%.2f", steamID, value, valueMax);
-	PushStackString(STACK_Prizes, winner)
+	char winner[200];
+	Format(winner, sizeof(winner), "%s|%.2f|%.2f|%i", steamID, value, valueMax, currentRollRoundID);
+	PushStackString(STACK_Prizes, winner);
 	
 	ASteambot_SendMessage(AS_SCAN_INVENTORY, BotSteamID);
 }
 
-public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue)
+public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue, int rollID)
 {
 	Handle inventory = null;
 	
@@ -688,7 +745,9 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 			break;
 	}
 	
-	ASteambot_CreateTradeOfferBySteamID(steamID, null, botItems);
+	char args[200];
+	Format(args, sizeof(args), "roulette_id_%i", rollID);
+	ASteambot_CreateTradeOfferBySteamID(steamID, INVALID_HANDLE, botItems, _, args);
 }
 
 public int CalculateWinner(float &percent, char[] steamID, int steamIDsize)
@@ -722,7 +781,7 @@ public int CalculateWinner(float &percent, char[] steamID, int steamIDsize)
 			GetArrayString(RouletteTrie, i, info, sizeof(info));
 			ExplodeString(info, "|", bit, sizeof bit, sizeof bit[]);
 		
-			float winnerValue = (rouletteSum * 0.75);
+			float winnerValue = (rouletteSum * 0.85);
 			float winnerBet = StringToFloat(bit[1]);
 			
 			if(winnerValue < winnerBet)
@@ -753,8 +812,6 @@ public Action PrintWinner(Handle tmr)
 		char steamID[45];
 		int client = CalculateWinner(percent, steamID, sizeof(steamID));
 		
-		PrintToServer(">>> Data %i - %s - %.2f", client, steamID, percent);
-		
 		char hudmsg[100];
 		if(client != -1)
 			Format(hudmsg, sizeof(hudmsg), "Winner is \n%N\nWon with a probability of %.2f%% !", client, percent);
@@ -775,43 +832,50 @@ public Action PrintWinner(Handle tmr)
 		Format(query, sizeof(query), DB_UPDATE_ROULETTE_GAME, ROLL_STATUS_ENDED, steamID, "OFFER_CREATED", currentRollRoundID);
 		DBFastQuery(query, false);
 		
+		EmitGameSoundToAll("Achievement.Earned");
+		
 		PrepareRoulette();
 	}
 	else
 	{
+		EmitGameSoundToAll("Vote.Created");
+		
 		if(displayWinnerID == GetArraySize(RouletteTrie))
 			displayWinnerID = 0;
 			
 		timerWinner -= 0.25;
-		
-		char info[100];
-		char bit[2][50];
-		GetArrayString(RouletteTrie, displayWinnerID, info, sizeof(info));
-		ExplodeString(info, "|", bit, sizeof bit, sizeof bit[]);
-		
-		float pValue = StringToFloat(bit[1]);
-		float percent = (pValue / rouletteSum)*100;
-		
-		int client = ASteambot_FindClientBySteam64(bit[0]);
-		
-		char hudmsg[100];
-		if(client != -1)
-			Format(hudmsg, sizeof(hudmsg), "/!\\ Selecting winner /!\\\n%N (%.2f%%)", client, percent);
-		else
-			Format(hudmsg, sizeof(hudmsg), "/!\\ Selecting winner /!\\\n%s (%.2f%%)", bit[0], percent);
-		
-		
-		SetHudTextParams(-1.0,  0.25, 0.25, 25, 255, 25, 150);
-		
-		for (int i = 1; i <= MaxClients; i++)
-		{
-			if (!IsClientInGame(i) || IsFakeClient(i))
-				continue;
 			
-			ShowSyncHudText(i, HUDManager, "%s", hudmsg);
+		if(GetConVarFloat(CVAR_WinnerAnnouncement) > timerWinner)
+		{
+			char info[100];
+			char bit[2][50];
+			GetArrayString(RouletteTrie, displayWinnerID, info, sizeof(info));
+			ExplodeString(info, "|", bit, sizeof bit, sizeof bit[]);
+			
+			float pValue = StringToFloat(bit[1]);
+			float percent = (pValue / rouletteSum)*100;
+			
+			int client = ASteambot_FindClientBySteam64(bit[0]);
+			
+			char hudmsg[100];
+			if(client != -1)
+				Format(hudmsg, sizeof(hudmsg), "/!\\ Selecting winner /!\\\n%N (%.2f%%)", client, percent);
+			else
+				Format(hudmsg, sizeof(hudmsg), "/!\\ Selecting winner /!\\\n%s (%.2f%%)", bit[0], percent);
+			
+			
+			SetHudTextParams(-1.0,  0.25, 0.25, 25, 255, 25, 150);
+			
+			for (int i = 1; i <= MaxClients; i++)
+			{
+				if (!IsClientInGame(i) || IsFakeClient(i))
+					continue;
+				
+				ShowSyncHudText(i, HUDManager, "%s", hudmsg);
+			}
+			
+			displayWinnerID++;
 		}
-		
-		displayWinnerID++;
 	}
 }
 
@@ -849,13 +913,15 @@ public Action PrintRouletteDetails(Handle tmr)
 			else
 				Format(hudmsg, sizeof(hudmsg), "%s<disconnected> have a chance of winning of %.2f%%\n", hudmsg, percent);
 		}
+	
+		Format(hudmsg, sizeof(hudmsg), "%sTotal roulette value : %.2f$\n\n", hudmsg, rouletteSum);
+			
+		Format(hudmsg, sizeof(hudmsg), "%sType !asteambot_rti to join the roulette\nand get a chance to win !\n", hudmsg);
 	}
 	else
 	{
 		Format(hudmsg, sizeof(hudmsg), "%sNo roulette opened yet. Use !asteambot_rti\n", hudmsg);
 	}
-	
-	Format(hudmsg, sizeof(hudmsg), "%sTotal roulette value : %.2f$", hudmsg, rouletteSum);
 	
 	for (int i = 1; i <= MaxClients; i++)
 	{
@@ -908,7 +974,7 @@ public void LoadCurrentRoll(int rollID)
 
 public int DBGetRouletteNextID()
 {
-	char query[100];
+	char query[400];
 	Format(query, sizeof(query), DB_SELECT_CURRENT_ROULETTE_ID);
 	
 	DBResultSet hQuery = SQL_Query(DATABASE, query);
@@ -927,6 +993,7 @@ public int DBGetRouletteNextID()
 		if (hQuery == null)
 			return -1;
 		
+		result = 0;
 		while (SQL_FetchRow(hQuery))
 			result = SQL_FetchInt(hQuery, 0) + 1;
 		
@@ -1008,7 +1075,7 @@ public void TQuery_LoadCurrentRoll(Handle owner, Handle db, const char[] error, 
 	{
 		displayWinnerID = 0;
 		currentRollStatus = ROLL_STATUS_ENDED;
-		timerWinner = GetConVarFloat(CVAR_WinnerAnnouncement);
+		timerWinner = GetConVarFloat(CVAR_WinnerAnnouncement)+3;
 		
 		if (TMR_PrintRouletteDetails != INVALID_HANDLE)
 		{
@@ -1033,7 +1100,7 @@ public bool DBFastQuery(const char[] sql, bool errorReport)
 	if (SQL_GetError(DATABASE, error, sizeof(error)))
 	{
 		if (errorReport)
-			PrintToServer("%s %t", MODULE_NAME, "Database_Failure", error);
+			SetFailState("%s %t", MODULE_NAME, "Database_Failure", error);
 		
 		return false;
 	}

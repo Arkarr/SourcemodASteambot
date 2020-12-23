@@ -254,7 +254,11 @@ public int Native_CreateTradeOfferBySteamID(Handle plugin, int numParams)
 	Handle MyItemList = GetNativeCell(3);
 	float fakeValue = GetNativeCell(4);
 	
-	//Handle module = GetModuleByPlugin(plugin);
+	int commentLength;
+	GetNativeStringLength(5, commentLength);
+	
+	char[] comment = new char[commentLength + 1];
+	GetNativeString(5, comment, commentLength + 1);
 	
 	Format(message, sizeof(message), "%s/", clientSteamID)
 	
@@ -310,10 +314,8 @@ public int Native_CreateTradeOfferBySteamID(Handle plugin, int numParams)
 		StrCat(message, sizeof(message), "/-1");
 	}
 	
-	//int id;
-	//GetTrieValue(module, M_ID, id);
-	
-	//SendMessage(id, AS_CREATE_TRADEOFFER, message, sizeof(message));
+	Format(comment, commentLength+5, "/%s", comment);
+	StrCat(message, sizeof(message), comment);
 	
 	SendMessage(plugin, AS_CREATE_TRADEOFFER, message, sizeof(message));
 }

@@ -30,7 +30,8 @@ enum AS_MessageType
     AS_SG_ANNOUCEMENT,
     AS_STEAM_ID,
     AS_TRADEOFFER_INFORMATION,
-    AS_SEND_CHAT_GROUP_MSG
+    AS_SEND_CHAT_GROUP_MSG,
+    AS_CREATE_QUICK_TRADE
 };
 
 /** 
@@ -73,13 +74,14 @@ native void ASteambot_SendMessage(AS_MessageType MessageType, const char[] messa
  * 
  * @return          Nothing.
  */ 
-native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID, Handle ArrayMyAssetID = null, float fakeValue = -1.0); 
+native void ASteambot_CreateTradeOffer(int client, Handle ArrayAssetID = null, Handle ArrayMyAssetID = null, float fakeValue = -1.0, const char[] args = null, const int messageSize = 0); 
+
 /** 
  * Send a message to ASteambot (Maximum char 900). 
  * 
  * @return          Nothing.
  */ 
-native void ASteambot_CreateTradeOfferBySteamID(const char[] steamID, Handle ArrayAssetID, Handle ArrayMyAssetID = null, float fakeValue = -1.0); 
+native void ASteambot_CreateTradeOfferBySteamID(const char[] steamID, Handle ArrayAssetID = null, Handle ArrayMyAssetID = null, float fakeValue = -1.0, const char[] args = null, const int messageSize = 0); 
 
 /** 
  * Fire when ever you get a message from ASteambot.

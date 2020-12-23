@@ -86,6 +86,12 @@
 		"fr"	"L'offre a été refusé, tu ne sera pas enregistré pour la prochaine roulette."
 	}
 	
+	"TradeOffer_Declined_Donation"
+	{
+		"en"	"Offer rejected, thanks for refusing your prize and making a donation to the server <3 !"
+		"fr"	"L'offre a été refusé, merci d'avoir refusé ton prix et faire une donation pour le serveur !"
+	}
+	
 	"TradeOffer_TokenMissing"
 	{
 		"en"	"Trade token is missing ! Trade offer cancelled."
