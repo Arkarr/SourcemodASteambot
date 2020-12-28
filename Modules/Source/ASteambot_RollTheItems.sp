@@ -743,7 +743,6 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 			if(FindStringInArray(ItemsToGive, itemID) != -1)
 				continue;
 			
-			PrintToServer("")
 			if(minValueFound == false && minvalue + 0.2 <= itemValue && itemValue <= maxvalue)
 			{
 				stash -= itemValue;
@@ -794,7 +793,7 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 			GetArrayString(botItems, i, itemID, sizeof(itemID));
 			
 			if(i+1 != GetArraySize(botItems))
-				Format(itemID, sizeof(itemID), ",");
+				Format(itemID, sizeof(itemID), "%s,", itemID);
 				
 			StrCat(clientSteamIDGame, sizeof(clientSteamIDGame), itemID);
 		}
