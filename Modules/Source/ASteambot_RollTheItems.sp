@@ -285,9 +285,9 @@ public void LoadInventory(int client)
 		
 		switch(GetEngineVersion())
 		{
-			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_CSGO); }
-			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_DOTA2); }
-			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/", clientSteamIDGame, GAMEID_TF2); }
+			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_CSGO); }
+			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_DOTA2); }
+			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_TF2); }
 		}
 		
 		ASteambot_SendMessage(AS_CREATE_QUICK_TRADE, clientSteamIDGame);
@@ -371,6 +371,16 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 	else if (MessageType == AS_STEAM_ID)
 	{
 		Format(BotSteamID, sizeof(BotSteamID), steamID);
+	}
+	else if (MessageType == AS_CREATE_QUICK_TRADE && client != -1)
+	{
+		//SteamID = parts[0]
+		//Bot trade status = parts[1]
+		
+		if(StrEqual("BUSY", parts[1]))
+			CPrintToChat(client, "%s {yellow}%t", MODULE_NAME, "TradeOffer_Busy");
+		else if(StrEqual("OK", parts[1]))
+			CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Ok");
 	}
 	else if (MessageType == AS_TRADEOFFER_SUCCESS)
 	{
@@ -718,36 +728,80 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 	bool minValueFound = false;
 	Handle botItems = CreateArray(100);
 	
-	for (int i = 0; i < GetArraySize(inventory); i++)
+	for (int j = 0; j < 2; j++)
 	{
-		Handle trie = GetArrayCell(inventory, i);
-		GetTrieString(trie, ITEM_NAME, itemName, sizeof(itemName));
-		GetTrieString(trie, ITEM_ID, itemID, sizeof(itemID));
-		GetTrieValue(trie, ITEM_VALUE, itemValue);
-		
-		if(FindStringInArray(ItemsToGive, itemID) != -1)
-			continue;
-		
-		if(minValueFound == false && minvalue + 0.6 <= itemValue && itemValue >= minvalue)
-		{
-			stash -= itemValue;
-			minValueFound = true;
-		}
-		else
-		{
-			stash -= itemValue;
-		}
-		
-		PushArrayString(botItems, itemID);
-		PushArrayString(ItemsToGive, itemID);
-		
 		if(stash <= 0.0)
 			break;
+				
+		for (int i = 0; i < GetArraySize(inventory); i++)
+		{
+			Handle trie = GetArrayCell(inventory, i);
+			GetTrieString(trie, ITEM_NAME, itemName, sizeof(itemName));
+			GetTrieString(trie, ITEM_ID, itemID, sizeof(itemID));
+			GetTrieValue(trie, ITEM_VALUE, itemValue);
+			
+			if(FindStringInArray(ItemsToGive, itemID) != -1)
+				continue;
+			
+			PrintToServer("")
+			if(minValueFound == false && minvalue + 0.2 <= itemValue && itemValue <= maxvalue)
+			{
+				stash -= itemValue;
+				minValueFound = true;
+			
+				PushArrayString(botItems, itemID);
+				PushArrayString(ItemsToGive, itemID);
+			}
+			else if(minValueFound == true && itemValue <= stash)
+			{
+				stash -= itemValue;
+			
+				PushArrayString(botItems, itemID);
+				PushArrayString(ItemsToGive, itemID);
+			}
+			
+			if(stash <= 0.0)
+				break;
+		}
+		
+		//No item found in bot's inventory that match minimum value, in that case loop again and fill trade with items
+		minValueFound = true;
 	}
 	
-	char args[200];
-	Format(args, sizeof(args), "roulette_id_%i", rollID);
-	ASteambot_CreateTradeOfferBySteamID(steamID, INVALID_HANDLE, botItems, _, args);
+	//TODO: Quick trade offer
+	if(GetConVarInt(CVAR_TradeOfferType) == 1)
+	{
+		char args[200];
+		Format(args, sizeof(args), "roulette_id_%i", rollID);
+		ASteambot_CreateTradeOfferBySteamID(steamID, INVALID_HANDLE, botItems, _, args);
+	}
+	else
+	{
+		int client = ASteambot_FindClientBySteam64(steamID);
+		
+		char clientSteamIDGame[2000];
+		GetClientAuthId(client, AuthId_Steam2, clientSteamIDGame, sizeof(clientSteamIDGame));
+		
+		switch(GetEngineVersion())
+		{
+			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_CSGO); }
+			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_DOTA2); }
+			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_TF2); }
+		}
+		
+		for(int i = 0; i < GetArraySize(botItems); i++)
+		{
+			GetArrayString(botItems, i, itemID, sizeof(itemID));
+			
+			if(i+1 != GetArraySize(botItems))
+				Format(itemID, sizeof(itemID), ",");
+				
+			StrCat(clientSteamIDGame, sizeof(clientSteamIDGame), itemID);
+		}
+		
+		PrintToServer(clientSteamIDGame);
+		ASteambot_SendMessage(AS_CREATE_QUICK_TRADE, clientSteamIDGame);
+	}
 }
 
 public int CalculateWinner(float &percent, char[] steamID, int steamIDsize)

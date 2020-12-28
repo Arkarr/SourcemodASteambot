@@ -111,6 +111,16 @@
 		"de"	"Bitte warte, ich lade gerade deine Items..."
 	}
 	
+	"TradeOffer_Busy"
+	{
+		"en"	"I am currently busy trading with another player and I can't send you a trade offer now. Try again later !"
+	}
+	
+	"TradeOffer_Ok"
+	{
+		"en"	"Everything okay ! Sending you a trade invitation now... !"
+	}
+	
 	"TradeOffer_InventoryScanned"
 	{
 		"en"	"Creating the menu, please wait!"
