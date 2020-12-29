@@ -285,9 +285,9 @@ public void LoadInventory(int client)
 		
 		switch(GetEngineVersion())
 		{
-			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_CSGO); }
-			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_DOTA2); }
-			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette/", clientSteamIDGame, GAMEID_TF2); }
+			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette//false", clientSteamIDGame, GAMEID_CSGO); }
+			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette//false", clientSteamIDGame, GAMEID_DOTA2); }
+			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/item deposit for roulette//false", clientSteamIDGame, GAMEID_TF2); }
 		}
 		
 		ASteambot_SendMessage(AS_CREATE_QUICK_TRADE, clientSteamIDGame);
@@ -396,7 +396,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 		//Is trade a withdraw ?
 		
 		//No
-		if(credits != -1)
+		if(credits > 0)
 		{
 			if(client != -1)
 				CPrintToChat(client, "%s {green}%t", MODULE_NAME, "TradeOffer_Success", credits);
