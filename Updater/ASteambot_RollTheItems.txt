@@ -4,10 +4,10 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.0"
+			"Latest"	"1.2"
 		}
 		
-		"Notes"	" Initial release"
+		"Notes"	" Modified the way prize is calculated"
 		"Notes"	"-----------"
 	}
 	

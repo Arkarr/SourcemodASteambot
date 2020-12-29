@@ -9,7 +9,7 @@
 #pragma dynamic 131072
 
 #define PLUGIN_AUTHOR 				"Arkarr"
-#define PLUGIN_VERSION 				"1.0"
+#define PLUGIN_VERSION 				"1.2"
 #define MODULE_NAME 				"[ASteambot - Roll The Items]"
 #define UPDATE_URL    				"https://raw.githubusercontent.com/Arkarr/SourcemodASteambot/master/Updater/ASteambot_RollTheItems.txt"
 
@@ -66,7 +66,7 @@ Handle CVAR_TradeOfferType;
 
 //Release note
 /*
-* Initial release
+* Modified the way prize is calculated
 */
 
 public Plugin myinfo = 
@@ -328,7 +328,7 @@ public int ASteambot_Message(AS_MessageType MessageType, char[] message, const i
 			
 			PrepareInventories(-1, parts[1], parts[2], parts[3], messageSize);
 			
-			FindAndGiveItem(bit[0], StringToFloat(bit[1]), StringToFloat(bit[2]), StringToInt(bit[3]));
+			FindAndGiveItem(bit[0], StringToFloat(bit[2]), StringToFloat(bit[1]), StringToInt(bit[3]));
 		}
 		else
 		{
@@ -706,7 +706,7 @@ public void CreateTradeOffer(int client, float tv)
 public void GiveoutPrice(const char[] steamID, float value, float valueMax)
 {
 	char winner[200];
-	Format(winner, sizeof(winner), "%s|%.2f|%.2f|%i", steamID, value, valueMax, currentRollRoundID);
+	Format(winner, sizeof(winner), "%s|%.4f|%.4f|%i", steamID, value, valueMax, currentRollRoundID);
 	PushStackString(STACK_Prizes, winner);
 	
 	ASteambot_SendMessage(AS_SCAN_INVENTORY, BotSteamID);
@@ -728,6 +728,9 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 	bool minValueFound = false;
 	Handle botItems = CreateArray(100);
 	
+				
+	PrintToServer("MAXVAL: %.2f MINVAL: %.2f", maxvalue, minvalue);
+			
 	for (int j = 0; j < 2; j++)
 	{
 		if(stash <= 0.0)
@@ -743,7 +746,7 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 			if(FindStringInArray(ItemsToGive, itemID) != -1)
 				continue;
 			
-			if(minValueFound == false && minvalue + 0.2 <= itemValue && itemValue <= maxvalue)
+			if(minValueFound == false && minvalue <= itemValue && itemValue <= maxvalue)
 			{
 				stash -= itemValue;
 				minValueFound = true;
@@ -783,9 +786,9 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 		
 		switch(GetEngineVersion())
 		{
-			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_CSGO); }
-			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_DOTA2); }
-			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/roulette win/", clientSteamIDGame, GAMEID_TF2); }
+			case Engine_CSGO: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/You won the roulette ! Here is your prize!/", clientSteamIDGame, GAMEID_CSGO); }
+			case Engine_DOTA: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/You won the roulette ! Here is your prize!/", clientSteamIDGame, GAMEID_DOTA2); }
+			case Engine_TF2: { Format(clientSteamIDGame, sizeof(clientSteamIDGame), "%s/%i/You won the roulette ! Here is your prize!/", clientSteamIDGame, GAMEID_TF2); }
 		}
 		
 		for(int i = 0; i < GetArraySize(botItems); i++)
@@ -798,7 +801,8 @@ public void FindAndGiveItem(const char[] steamID, float maxvalue, float minvalue
 			StrCat(clientSteamIDGame, sizeof(clientSteamIDGame), itemID);
 		}
 		
-		PrintToServer(clientSteamIDGame);
+		StrCat(clientSteamIDGame, sizeof(clientSteamIDGame), "/true");
+		
 		ASteambot_SendMessage(AS_CREATE_QUICK_TRADE, clientSteamIDGame);
 	}
 }
@@ -834,13 +838,24 @@ public int CalculateWinner(float &percent, char[] steamID, int steamIDsize)
 			GetArrayString(RouletteTrie, i, info, sizeof(info));
 			ExplodeString(info, "|", bit, sizeof bit, sizeof bit[]);
 		
-			float winnerValue = (rouletteSum * 0.85);
-			float winnerBet = StringToFloat(bit[1]);
+			// Trade example
+			//Player1 : 0.05
+			//Player2 : 0.09
+			//Total   : 0.14
 			
-			if(winnerValue < winnerBet)
+			//Winner value : 0,119
+			//Winner bet   : 0,090 + 0,02175 = 0,11175
+			//Rest         : 0,029
+			
+			float winnerValue = (rouletteSum * 0.85); // 85% of the total bet value
+			float winnerBet = StringToFloat(bit[1]);  // Highest value of the most expensive receiving gift
+			winnerBet += (winnerValue - winnerBet) * 0.75; // add +75% of the rest to the most expensieve receiving gift
+			
+			//In case the loosers have put much much MUCH less than the winner, give everything to winner without taking marging
+			if(winnerBet > winnerValue)
 				winnerValue = rouletteSum;
 				
-			GiveoutPrice(bit[0], winnerValue, winnerBet);
+			GiveoutPrice(bit[0], winnerBet, winnerValue);
 			
 			strcopy(steamID, steamIDsize, bit[0]);
 			
